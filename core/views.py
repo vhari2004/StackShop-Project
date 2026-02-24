@@ -1,13 +1,14 @@
 from django.shortcuts import render,redirect
 from .models import CustomUser
 from django.contrib.auth import login,logout,authenticate
-from django.contrib.auth.decorators import login_required
+# from django.contrib.auth.decorators import login_required
 from core.decorators import admin_required,customer_required,seller_required
 
 def home_view(request):
+    user=request.user
     if user.is_authenticated:
-        user=request.user
-    return render(request,'core_templates/homepage.html',{'user':user})
+        return render(request,'core_templates/homepage.html',{'user':user})
+    return render(request,'core_templates/homepage.html')
 
 def register_view(request):
     return render(request,'core_templates/registerpage.html')

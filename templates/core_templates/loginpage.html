@@ -1,15 +1,20 @@
 <!DOCTYPE html>
-<html lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>StackShop E-commerce Login</title>
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script id="tailwind-config">
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>StackShop E-commerce Login</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
@@ -26,133 +31,181 @@
                     fontFamily: {
                         "display": ["Public Sans", "sans-serif"]
                     },
-                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
                 },
             },
         }
     </script>
-<style>::-webkit-scrollbar {
+    <style>
+        ::-webkit-scrollbar {
             width: 8px;
         }
+
         ::-webkit-scrollbar-track {
             background: transparent;
         }
+
         ::-webkit-scrollbar-thumb {
             background: #ACBAC4;
             border-radius: 4px;
         }
+
         ::-webkit-scrollbar-thumb:hover {
             background: #30374f;
         }
     </style>
 </head>
+
 <body class="font-display antialiased text-primary h-screen w-full overflow-hidden">
-<div class="flex flex-col md:flex-row h-full w-full bg-nude-bg">
-<div class="hidden md:flex md:w-1/2 relative bg-primary overflow-hidden">
-<img alt="Modern retail architecture or product showcase abstract" class="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-overlay" data-alt="Modern corporate architecture with glass patterns abstract" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlXjslWvsJ2Z0CPv70U7LtqiWf9kGg-9VHL1jLLAMiAGo1Mzw0f4AsWA64VQLJ144j0t2GAao2_pwsky_iy8S78nOY4vXTZ1nNOPwYabgyugnSZiWPKYwwpe7M_PFpnilbbT6_tWpjZwKbJ27_012SX6ThE3jbPBiCI4vCSyx1AgD-AZHE_vk5qlZjhR3ZrVp6pfOWtSwbgm5N2kBoNINqZmuhZ-uaoNatKdtKs-MfvT4OFpVJyeMdkIsyCZX66PSbr2BN8DZX1_r0"/>
-<div class="absolute inset-0 bg-gradient-to-br from-primary via-primary/90 to-primary/80 mix-blend-multiply"></div>
-<div class="absolute top-0 right-0 w-64 h-64 bg-accent-gold opacity-10 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
-<div class="absolute bottom-0 left-0 w-96 h-96 bg-accent-blue opacity-10 rounded-full blur-3xl transform -translate-x-1/3 translate-y-1/3"></div>
-<div class="relative z-10 flex flex-col justify-between h-full p-12 lg:p-16 text-white w-full">
-<div>
-<div class="w-12 h-12 bg-accent-gold rounded-lg flex items-center justify-center mb-8 shadow-lg">
-<span class="material-icons-round text-primary text-2xl">shopping_bag</span>
-</div>
-</div>
-<div class="space-y-6">
-<h1 class="text-4xl lg:text-5xl font-bold leading-tight tracking-tight text-white">
-                        Shop Smarter at <br/>
-<span class="text-accent-gold">StackShop.</span>
-</h1>
-<p class="text-accent-blue text-lg max-w-md font-light">
-                        Your one-stop destination for curated excellence. Discover products that define quality and style.
+    <div class="flex flex-col md:flex-row h-full w-full bg-nude-bg">
+        <div class="hidden md:flex md:w-1/2 relative bg-primary overflow-hidden">
+            <img alt="Modern retail architecture or product showcase abstract"
+                class="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-overlay"
+                data-alt="Modern corporate architecture with glass patterns abstract"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlXjslWvsJ2Z0CPv70U7LtqiWf9kGg-9VHL1jLLAMiAGo1Mzw0f4AsWA64VQLJ144j0t2GAao2_pwsky_iy8S78nOY4vXTZ1nNOPwYabgyugnSZiWPKYwwpe7M_PFpnilbbT6_tWpjZwKbJ27_012SX6ThE3jbPBiCI4vCSyx1AgD-AZHE_vk5qlZjhR3ZrVp6pfOWtSwbgm5N2kBoNINqZmuhZ-uaoNatKdtKs-MfvT4OFpVJyeMdkIsyCZX66PSbr2BN8DZX1_r0" />
+            <div
+                class="absolute inset-0 bg-gradient-to-br from-primary via-primary/90 to-primary/80 mix-blend-multiply">
+            </div>
+            <div
+                class="absolute top-0 right-0 w-64 h-64 bg-accent-gold opacity-10 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2">
+            </div>
+            <div
+                class="absolute bottom-0 left-0 w-96 h-96 bg-accent-blue opacity-10 rounded-full blur-3xl transform -translate-x-1/3 translate-y-1/3">
+            </div>
+            <div class="relative z-10 flex flex-col justify-between h-full p-12 lg:p-16 text-white w-full">
+                <div>
+                    <div class="w-12 h-12 bg-accent-gold rounded-lg flex items-center justify-center mb-8 shadow-lg">
+                        <span class="material-icons-round text-primary text-2xl">shopping_bag</span>
+                    </div>
+                </div>
+                <div class="space-y-6">
+                    <h1 class="text-4xl lg:text-5xl font-bold leading-tight tracking-tight text-white">
+                        Shop Smarter at <br />
+                        <span class="text-accent-gold">StackShop.</span>
+                    </h1>
+                    <p class="text-accent-blue text-lg max-w-md font-light">
+                        Your one-stop destination for curated excellence. Discover products that define quality and
+                        style.
                     </p>
-</div>
-<div class="text-sm text-accent-blue/60 font-medium tracking-wide">
+                </div>
+                <div class="text-sm text-accent-blue/60 font-medium tracking-wide">
                     © 2026 StackShop Inc.
                 </div>
-</div>
-</div>
-<div class="w-full md:w-1/2 flex flex-col justify-center items-center p-6 sm:p-12 lg:p-24 bg-nude-bg relative">
-<div class="md:hidden absolute top-6 left-6 flex items-center gap-2">
-<div class="w-8 h-8 bg-primary rounded flex items-center justify-center">
-<span class="material-icons-round text-accent-gold text-sm">shopping_bag</span>
-</div>
-<span class="font-bold text-primary tracking-tight">StackShop</span>
-</div>
-<div class="w-full max-w-md space-y-8">
-<div class="text-center md:text-left space-y-2">
-<h2 class="text-3xl font-bold text-primary tracking-tight">Welcome back</h2>
-<p class="text-primary/60 text-sm">Please enter your details to sign in.</p>
-</div>
-<form action="#" class="space-y-6" method="POST">
-<div class="space-y-1.5">
-<label class="block text-sm font-semibold text-primary ml-1" for="email">Email</label>
-<div class="relative">
-<input autocomplete="email" class="appearance-none block w-full px-4 py-3.5 pl-11 border border-primary/10 rounded-lg placeholder-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white text-primary transition-all duration-200 shadow-sm" id="email" name="email" placeholder="name@company.com" required="" type="email"/>
-<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-primary/40">
-<span class="material-icons-round text-lg">mail</span>
-</div>
-</div>
-</div>
-<div class="space-y-1.5">
-<div class="flex items-center justify-between ml-1">
-<label class="block text-sm font-semibold text-primary" for="password">Password</label>
-</div>
-<div class="relative">
-<input autocomplete="current-password" class="appearance-none block w-full px-4 py-3.5 pl-11 border border-primary/10 rounded-lg placeholder-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white text-primary transition-all duration-200 shadow-sm" id="password" name="password" placeholder="••••••••" required="" type="password"/>
-<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-primary/40">
-<span class="material-icons-round text-lg">lock</span>
-</div>
-<button class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-primary/40 hover:text-primary transition-colors cursor-pointer" type="button">
-<span class="material-icons-round text-lg">visibility_off</span>
-</button>
-</div>
-<div class="flex justify-end mt-1">
-<a class="text-xs font-semibold text-primary hover:text-primary/70 transition-colors border-b border-transparent hover:border-primary/30 pb-px" href="#">Forgot password?</a>
-</div>
-</div>
-<div>
-<button class="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-lg shadow-md text-sm font-semibold text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all transform active:scale-[0.99]" type="submit">
+            </div>
+        </div>
+        <div class="w-full md:w-1/2 flex flex-col justify-center items-center p-6 sm:p-12 lg:p-24 bg-nude-bg relative">
+            <div class="md:hidden absolute top-6 left-6 flex items-center gap-2">
+                <div class="w-8 h-8 bg-primary rounded flex items-center justify-center">
+                    <span class="material-icons-round text-accent-gold text-sm">shopping_bag</span>
+                </div>
+                <span class="font-bold text-primary tracking-tight">StackShop</span>
+            </div>
+            <div class="w-full max-w-md space-y-8">
+                <div class="text-center md:text-left space-y-2">
+                    <h2 class="text-3xl font-bold text-primary tracking-tight">Welcome back</h2>
+                    <p class="text-primary/60 text-sm">Please enter your details to sign in.</p>
+                </div>
+                <form action="#" class="space-y-6" method="POST">
+                    {%csrf_token%}
+                    <div class="space-y-1.5">
+                        <label class="block text-sm font-semibold text-primary ml-1" for="email">Email</label>
+                        <div class="relative">
+                            <input autocomplete="email"
+                                class="appearance-none block w-full px-4 py-3.5 pl-11 border border-primary/10 rounded-lg placeholder-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white text-primary transition-all duration-200 shadow-sm"
+                                id="email" name="email" placeholder="name@company.com" required="" type="email" />
+                            <div
+                                class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-primary/40">
+                                <span class="material-icons-round text-lg">mail</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-1.5">
+                        <div class="flex items-center justify-between ml-1">
+                            <label class="block text-sm font-semibold text-primary" for="password">Password</label>
+                        </div>
+                        <div class="relative">
+                            <input autocomplete="current-password"
+                                class="appearance-none block w-full px-4 py-3.5 pl-11 border border-primary/10 rounded-lg placeholder-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white text-primary transition-all duration-200 shadow-sm"
+                                id="password" name="password" placeholder="••••••••" required="" type="password" />
+                            <div
+                                class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-primary/40">
+                                <span class="material-icons-round text-lg">lock</span>
+                            </div>
+                            <button
+                                class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-primary/40 hover:text-primary transition-colors cursor-pointer"
+                                type="button">
+                                <span class="material-icons-round text-lg">visibility_off</span>
+                            </button>
+                        </div>
+                        <div class="flex justify-end mt-1">
+                            <a class="text-xs font-semibold text-primary hover:text-primary/70 transition-colors border-b border-transparent hover:border-primary/30 pb-px"
+                                href="#">Forgot password?</a>
+                        </div>
+                    </div>
+                    <div>
+                        <button
+                            class="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-lg shadow-md text-sm font-semibold text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all transform active:scale-[0.99]"
+                            type="submit">
                             Sign in
                         </button>
-</div>
-</form>
-<div class="relative">
-<div class="absolute inset-0 flex items-center">
-<div class="w-full border-t border-primary/10"></div>
-</div>
-<div class="relative flex justify-center text-sm">
-<span class="px-3 bg-nude-bg text-primary/50 font-medium">Or continue with</span>
-</div>
-</div>
-<div class="grid grid-cols-2 gap-4">
-<button class="w-full inline-flex justify-center items-center py-3 px-4 rounded-lg shadow-sm bg-white border border-primary/5 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary/10 transition-colors text-sm font-medium text-primary" type="button">
-<svg aria-hidden="true" class="h-5 w-5 mr-2" viewBox="0 0 24 24">
-<path d="M12.0003 20.45c4.6667 0 8.45-3.7833 8.45-8.45 0-4.6667-3.7833-8.45-8.45-8.45-4.6667 0-8.45 3.7833-8.45 8.45 8.45Z" fill="#fff" fill-opacity="0" stroke="none"></path>
-<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
-<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
-<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
-<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
-</svg>
+                    </div>
+                </form>
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-primary/10"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-3 bg-nude-bg text-primary/50 font-medium">Or continue with</span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <button
+                        class="w-full inline-flex justify-center items-center py-3 px-4 rounded-lg shadow-sm bg-white border border-primary/5 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary/10 transition-colors text-sm font-medium text-primary"
+                        type="button">
+                        <svg aria-hidden="true" class="h-5 w-5 mr-2" viewBox="0 0 24 24">
+                            <path
+                                d="M12.0003 20.45c4.6667 0 8.45-3.7833 8.45-8.45 0-4.6667-3.7833-8.45-8.45-8.45-4.6667 0-8.45 3.7833-8.45 8.45 8.45Z"
+                                fill="#fff" fill-opacity="0" stroke="none"></path>
+                            <path
+                                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                                fill="#4285F4"></path>
+                            <path
+                                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                                fill="#34A853"></path>
+                            <path
+                                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                                fill="#FBBC05"></path>
+                            <path
+                                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                                fill="#EA4335"></path>
+                        </svg>
                         Google
                     </button>
-<button class="w-full inline-flex justify-center items-center py-3 px-4 rounded-lg shadow-sm bg-primary text-white hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary/50 transition-colors text-sm font-medium" type="button">
-<svg aria-hidden="true" class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-<path d="M13.135 6.056c-.186-1.586 1.12-2.906 2.592-2.906.12 0 .235.01.35.03-.38 1.684-1.638 2.972-3.056 2.876H13.135zM15.42 6.55c-1.272 0-2.31.733-2.93 1.785-.436.745-.667 1.62-.65 2.502.04 2.18 1.408 4.223 3.297 5.252 1.09.593 2.152.613 3.125.138.995-.487 1.704-1.397 1.956-2.518-.08-.035-.164-.067-.25-.1-.702-.27-1.32-.733-1.785-1.336-.713-.923-.974-2.126-.704-3.264.123-.518.36-1.006.69-1.432-.47-.577-1.09-1.026-1.803-1.28-.42-.15-.86-.233-1.306-.245h-.64z"></path>
-<path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm3.85 14.125c-.754.37-1.564.558-2.396.558-.337 0-.678-.03-1.02-.092-2.18-.396-3.87-2.36-3.87-4.59 0-2.57 2.08-4.65 4.65-4.65.65 0 1.28.13 1.86.38.25.11.49.24.72.39-.75 1.05-1.04 2.37-1.04 2.37.28 1.14 1.25 2.12 2.37 2.37 0 0 .53 1.39-1.28 3.26z"></path>
-</svg>
+                    <button
+                        class="w-full inline-flex justify-center items-center py-3 px-4 rounded-lg shadow-sm bg-primary text-white hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary/50 transition-colors text-sm font-medium"
+                        type="button">
+                        <svg aria-hidden="true" class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M13.135 6.056c-.186-1.586 1.12-2.906 2.592-2.906.12 0 .235.01.35.03-.38 1.684-1.638 2.972-3.056 2.876H13.135zM15.42 6.55c-1.272 0-2.31.733-2.93 1.785-.436.745-.667 1.62-.65 2.502.04 2.18 1.408 4.223 3.297 5.252 1.09.593 2.152.613 3.125.138.995-.487 1.704-1.397 1.956-2.518-.08-.035-.164-.067-.25-.1-.702-.27-1.32-.733-1.785-1.336-.713-.923-.974-2.126-.704-3.264.123-.518.36-1.006.69-1.432-.47-.577-1.09-1.026-1.803-1.28-.42-.15-.86-.233-1.306-.245h-.64z">
+                            </path>
+                            <path
+                                d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm3.85 14.125c-.754.37-1.564.558-2.396.558-.337 0-.678-.03-1.02-.092-2.18-.396-3.87-2.36-3.87-4.59 0-2.57 2.08-4.65 4.65-4.65.65 0 1.28.13 1.86.38.25.11.49.24.72.39-.75 1.05-1.04 2.37-1.04 2.37.28 1.14 1.25 2.12 2.37 2.37 0 0 .53 1.39-1.28 3.26z">
+                            </path>
+                        </svg>
                         Apple
                     </button>
-</div>
-<p class="text-center text-sm text-primary/70">
-                    Don't have an account? 
-                    <a class="font-semibold text-primary hover:text-primary-hover underline decoration-transparent hover:decoration-primary/30 transition-all" href="#">Sign up now</a>
-</p>
-</div>
-<div class="absolute bottom-6 right-6 text-primary/10 select-none pointer-events-none">
-<span class="material-icons-round text-8xl transform -rotate-12">shopping_cart</span>
-</div>
-</div>
-</div>
-</body></html>
+                </div>
+                <p class="text-center text-sm text-primary/70">
+                    Don't have an account?
+                    <a class="font-semibold text-primary hover:text-primary-hover underline decoration-transparent hover:decoration-primary/30 transition-all"
+                        href="#">Sign up now</a>
+                </p>
+            </div>
+            <div class="absolute bottom-6 right-6 text-primary/10 select-none pointer-events-none">
+                <span class="material-icons-round text-8xl transform -rotate-12">shopping_cart</span>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
