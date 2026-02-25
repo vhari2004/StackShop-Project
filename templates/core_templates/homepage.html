@@ -1,12 +1,16 @@
+{% load static%}
 <!DOCTYPE html>
 <html class="light" lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>StackShop - Home</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link type="icon/" rel="icon" href="/static/favicon.ico" />
     <script>
         tailwind.config = {
             theme: {
@@ -25,113 +29,149 @@
         }
     </script>
     <style>
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
 
 <body class="bg-light text-dark font-display flex flex-col min-h-screen">
-    
-    <header class="max-w-7xl mx-auto w-full pt-6 px-4 z-50">
-        <nav class="bg-dark text-light rounded-xl px-6 py-4 flex items-center justify-between shadow-lg">
+
+    <header class="w-full pt-6 px-4 z-50">
+        <nav class="w-full bg-dark text-light rounded-xl px-6 py-4 flex items-center justify-between shadow-lg">
             <div class="flex items-center gap-3 cursor-pointer">
-                <svg class="w-8 h-8 text-light" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                </svg>
+                <img alt="Logo" class="w-12 h-12 text-accent" fill="currentColor"
+                    src="{% static 'core/homehtml/logo_icon.png' %}" />
                 <span class="text-xl font-bold tracking-wide">StackShop</span>
             </div>
-            
+
             <div class="flex-1 max-w-xl mx-12 hidden md:block">
                 <div class="relative group">
-                    <input class="w-full bg-light/10 border border-muted/30 rounded-lg py-2 pl-10 pr-4 text-sm text-light focus:outline-none focus:border-muted focus:ring-1 focus:ring-muted transition-all placeholder-muted/70" placeholder="Search products, brands..." type="text" />
-                    <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-muted/70 text-sm">search</span>
+                    <input
+                        class="w-full bg-light/10 border border-muted/30 rounded-lg py-2 pl-10 pr-4 text-sm text-light focus:outline-none focus:border-muted focus:ring-1 focus:ring-muted transition-all placeholder-muted/70"
+                        placeholder="Search products, brands..." type="text" />
+                    <span
+                        class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-muted/70 text-sm">search</span>
                 </div>
             </div>
-            
+
             <div class="flex items-center gap-8">
                 <div class="hidden lg:flex items-center gap-6 text-sm font-semibold text-muted">
                     <a class="hover:text-light transition-colors" href="#">Categories</a>
                     <a class="hover:text-light transition-colors" href="#">Deals</a>
                     <a class="hover:text-light transition-colors" href="{%url 'product_list'%}">New Arrival</a>
-                    
+
                     <div class="relative group py-2">
                         <button class="flex items-center gap-1 hover:text-light transition-colors focus:outline-none">
-                            More <span class="material-icons text-sm transition-transform duration-300 group-hover:rotate-180">expand_more</span>
+                            More <span
+                                class="material-icons text-sm transition-transform duration-300 group-hover:rotate-180">expand_more</span>
                         </button>
-                        
-                        <div class="absolute top-full right-0 mt-1 w-56 bg-light text-dark rounded-xl shadow-2xl border border-muted/30 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0 z-50">
+
+                        <div
+                            class="absolute top-full right-0 mt-1 w-56 bg-light text-dark rounded-xl shadow-2xl border border-muted/30 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0 z-50">
                             <div class="absolute -top-4 left-0 w-full h-4"></div>
-                            
+
                             <div class="p-2 flex flex-col">
-                                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-accent/50 transition-colors group/item">
-                                    <span class="material-icons text-muted group-hover/item:text-dark transition-colors">notifications_none</span>
+                                <a href="#"
+                                    class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-accent/50 transition-colors group/item">
+                                    <span
+                                        class="material-icons text-muted group-hover/item:text-dark transition-colors">notifications_none</span>
                                     <span class="font-bold text-sm">Notification</span>
                                 </a>
-                                <a href="{%url 'seller-bridge'%}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-accent/50 transition-colors group/item">
-                                    <span class="material-icons text-muted group-hover/item:text-dark transition-colors">storefront</span>
+                                {% if user.is_authenticated%}
+                                <a href="{%url 'seller-bridge'%}"
+                                    class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-accent/50 transition-colors group/item">
+                                    <span
+                                        class="material-icons text-muted group-hover/item:text-dark transition-colors">storefront</span>
                                     <span class="font-bold text-sm">Become a Seller</span>
                                 </a>
-                                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-accent/50 transition-colors group/item">
-                                    <span class="material-icons text-muted group-hover/item:text-dark transition-colors">support_agent</span>
+                                {%endif%}
+                                <a href="#"
+                                    class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-accent/50 transition-colors group/item">
+                                    <span
+                                        class="material-icons text-muted group-hover/item:text-dark transition-colors">support_agent</span>
                                     <span class="font-bold text-sm">Customer Care 24/7</span>
                                 </a>
                             </div>
                         </div>
                     </div>
                 </div>
-                
+
                 {% if user.is_authenticated %}
                 <div class="flex items-center gap-4 border-l border-muted/30 pl-8 text-muted">
-                    
+
                     <div class="relative group py-2">
                         <button class="flex items-center gap-1 hover:text-light transition-colors focus:outline-none">
                             <span class="material-icons text-xl">person_outline</span>
-                            <span class="text-sm hidden sm:inline font-semibold"><a href="{% url 'customer_dashboard' %}">My Account</a></span>
+                            <span class="text-sm hidden sm:inline font-semibold"><a
+                                    href="{% url 'customer_dashboard' %}">My Account</a></span>
                         </button>
 
-                        <div class="absolute top-full right-0 mt-1 w-64 bg-light text-dark rounded-xl shadow-2xl border border-muted/30 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0 z-50">
+                        <div
+                            class="absolute top-full right-0 mt-1 w-64 bg-light text-dark rounded-xl shadow-2xl border border-muted/30 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0 z-50">
                             <div class="absolute -top-4 right-0 w-full h-4"></div>
-                            
+
                             <div class="p-2 flex flex-col max-h-[70vh] overflow-y-auto hide-scrollbar">
-                                
+
                                 <div class="px-4 py-3 mb-1 border-b border-muted/30">
                                     <p class="text-xs text-muted uppercase tracking-widest font-bold">Signed in as</p>
                                     <p class="text-sm font-extrabold truncate">{{ user.username|default:"guest" }}</p>
                                 </div>
 
-                                <a href="{%url 'profile'%}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors group/item">
-                                    <span class="material-icons text-[18px] text-muted group-hover/item:text-dark transition-colors">badge</span>
+                                <a href="{%url 'profile'%}"
+                                    class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors group/item">
+                                    <span
+                                        class="material-icons text-[18px] text-muted group-hover/item:text-dark transition-colors">badge</span>
                                     <span class="font-bold text-sm">My Profile</span>
                                 </a>
-                                <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors group/item">
-                                    <span class="material-icons text-[18px] text-muted group-hover/item:text-dark transition-colors">inventory_2</span>
+                                <a href="#"
+                                    class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors group/item">
+                                    <span
+                                        class="material-icons text-[18px] text-muted group-hover/item:text-dark transition-colors">inventory_2</span>
                                     <span class="font-bold text-sm">Orders</span>
                                 </a>
-                                <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors group/item">
-                                    <span class="material-icons text-[18px] text-muted group-hover/item:text-dark transition-colors">favorite_border</span>
+                                <a href="#"
+                                    class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors group/item">
+                                    <span
+                                        class="material-icons text-[18px] text-muted group-hover/item:text-dark transition-colors">favorite_border</span>
                                     <span class="font-bold text-sm">Wishlist</span>
                                 </a>
-                                <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors group/item">
-                                    <span class="material-icons text-[18px] text-muted group-hover/item:text-dark transition-colors">notifications</span>
+                                <a href="#"
+                                    class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors group/item">
+                                    <span
+                                        class="material-icons text-[18px] text-muted group-hover/item:text-dark transition-colors">notifications</span>
                                     <span class="font-bold text-sm">Notification</span>
                                 </a>
-                                <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors group/item">
-                                    <span class="material-icons text-[18px] text-muted group-hover/item:text-dark transition-colors">location_on</span>
+                                <a href="#"
+                                    class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors group/item">
+                                    <span
+                                        class="material-icons text-[18px] text-muted group-hover/item:text-dark transition-colors">location_on</span>
                                     <span class="font-bold text-sm">Saved Address</span>
                                 </a>
-                                <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors group/item">
-                                    <span class="material-icons text-[18px] text-muted group-hover/item:text-dark transition-colors">credit_card</span>
+                                <a href="#"
+                                    class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors group/item">
+                                    <span
+                                        class="material-icons text-[18px] text-muted group-hover/item:text-dark transition-colors">credit_card</span>
                                     <span class="font-bold text-sm">Saved Cards</span>
                                 </a>
-                                <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors group/item">
-                                    <span class="material-icons text-[18px] text-muted group-hover/item:text-dark transition-colors">card_giftcard</span>
+                                <a href="#"
+                                    class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors group/item">
+                                    <span
+                                        class="material-icons text-[18px] text-muted group-hover/item:text-dark transition-colors">card_giftcard</span>
                                     <span class="font-bold text-sm">Giftcards</span>
                                 </a>
 
                                 <div class="border-t border-muted/30 my-1"></div>
-                                
-                                <a href="{%url 'logout'%}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors group/item text-red-500">
-                                    <span class="material-icons text-[18px] text-red-400 group-hover/item:text-red-600 transition-colors">logout</span>
+
+                                <a href="{%url 'logout'%}"
+                                    class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors group/item text-red-500">
+                                    <span
+                                        class="material-icons text-[18px] text-red-400 group-hover/item:text-red-600 transition-colors">logout</span>
                                     <span class="font-bold text-sm">Logout</span>
                                 </a>
                             </div>
@@ -140,13 +180,21 @@
 
                     <button class="relative hover:text-light transition-colors ml-2">
                         <span class="material-icons text-xl">shopping_bag</span>
-                        <span class="absolute -top-1.5 -right-1.5 bg-accent text-dark text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
+                        <span
+                            class="absolute -top-1.5 -right-1.5 bg-accent text-dark text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
                     </button>
                 </div>
                 {% else %}
                 <div class="flex items-center gap-4 border-l border-muted/30 pl-8">
-                    <a class="text-sm font-bold text-muted hover:text-light transition-colors" href="{% url 'login' %}">Login</a>
-                    <a class="text-sm font-bold bg-accent text-dark px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors shadow-sm" href="{% url 'register' %}">Sign Up</a>
+                    <a class="text-sm font-bold text-muted hover:text-light transition-colors"
+                    href="{% url 'login' %}">Login</a>
+                    <a class="text-sm font-bold bg-accent text-dark px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors shadow-sm"
+                    href="{% url 'register' %}">Sign Up</a>
+                    <a href="{%url 'seller-bridge'%}"
+                        class="text-sm font-bold bg-accent text-dark px-4 py-1 rounded-lg hover:bg-opacity-90 transition-colors shadow-sm">
+                        <span class="material-icons text-dark">storefront</span>
+                        <span class="font-bold text-sm uppercase tracking-wide">Become Seller</span>
+                    </a>
                 </div>
                 {% endif %}
             </div>
@@ -155,48 +203,63 @@
 
     <section class="max-w-7xl mx-auto w-full px-4 mt-6">
         <div class="flex items-center gap-3 overflow-x-auto hide-scrollbar pb-2">
-            <button class="flex-shrink-0 flex items-center gap-2 bg-accent/30 border border-muted/50 text-dark rounded-full px-5 py-2 hover:bg-accent hover:border-dark transition-all text-sm font-bold">
+            <button
+                class="flex-shrink-0 flex items-center gap-2 bg-accent/30 border border-muted/50 text-dark rounded-full px-5 py-2 hover:bg-accent hover:border-dark transition-all text-sm font-bold">
                 <span class="material-icons text-dark text-lg">devices</span> Electronics
             </button>
-            <button class="flex-shrink-0 flex items-center gap-2 bg-transparent border border-muted text-dark rounded-full px-5 py-2 hover:bg-accent hover:border-dark transition-all text-sm font-bold">
+            <button
+                class="flex-shrink-0 flex items-center gap-2 bg-transparent border border-muted text-dark rounded-full px-5 py-2 hover:bg-accent hover:border-dark transition-all text-sm font-bold">
                 <span class="material-icons text-dark text-lg">checkroom</span> Fashion
             </button>
-            <button class="flex-shrink-0 flex items-center gap-2 bg-transparent border border-muted text-dark rounded-full px-5 py-2 hover:bg-accent hover:border-dark transition-all text-sm font-bold">
+            <button
+                class="flex-shrink-0 flex items-center gap-2 bg-transparent border border-muted text-dark rounded-full px-5 py-2 hover:bg-accent hover:border-dark transition-all text-sm font-bold">
                 <span class="material-icons text-dark text-lg">chair</span> Home Decor
             </button>
-            <button class="flex-shrink-0 flex items-center gap-2 bg-transparent border border-muted text-dark rounded-full px-5 py-2 hover:bg-accent hover:border-dark transition-all text-sm font-bold">
+            <button
+                class="flex-shrink-0 flex items-center gap-2 bg-transparent border border-muted text-dark rounded-full px-5 py-2 hover:bg-accent hover:border-dark transition-all text-sm font-bold">
                 <span class="material-icons text-dark text-lg">fitness_center</span> Wellness
             </button>
-            <button class="flex-shrink-0 flex items-center gap-2 bg-transparent border border-muted text-dark rounded-full px-5 py-2 hover:bg-accent hover:border-dark transition-all text-sm font-bold">
+            <button
+                class="flex-shrink-0 flex items-center gap-2 bg-transparent border border-muted text-dark rounded-full px-5 py-2 hover:bg-accent hover:border-dark transition-all text-sm font-bold">
                 <span class="material-icons text-dark text-lg">auto_awesome</span> Luxury
             </button>
         </div>
     </section>
 
     <main class="max-w-7xl mx-auto w-full px-4 mt-6 relative group">
-        <div class="relative overflow-hidden rounded-xl bg-accent h-[480px] flex items-center border border-muted shadow-sm">
-            
-            <button class="absolute left-4 z-20 bg-dark/20 hover:bg-dark text-light w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100">
+        <div
+            class="relative overflow-hidden rounded-xl bg-accent h-[480px] flex items-center border border-muted shadow-sm">
+
+            <button
+                class="absolute left-4 z-20 bg-dark/20 hover:bg-dark text-light w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100">
                 <span class="material-icons">chevron_left</span>
             </button>
 
             <div class="relative z-10 pl-16 max-w-2xl w-full">
-                <span class="inline-block bg-dark text-light text-xs font-bold px-3 py-1 rounded mb-4 tracking-widest uppercase">Season Picks</span>
-                <h1 class="text-6xl font-extrabold text-dark leading-tight mb-6">Trending <br /><span class="italic text-muted/80">Now</span></h1>
-                <p class="text-lg text-dark/80 mb-8 max-w-md font-medium">Discover our curated collection of contemporary essentials, where sophisticated design meets everyday functionality.</p>
+                <span
+                    class="inline-block bg-dark text-light text-xs font-bold px-3 py-1 rounded mb-4 tracking-widest uppercase">Season
+                    Picks</span>
+                <h1 class="text-6xl font-extrabold text-dark leading-tight mb-6">Trending <br /><span
+                        class="italic text-muted/80">Now</span></h1>
+                <p class="text-lg text-dark/80 mb-8 max-w-md font-medium">Discover our curated collection of
+                    contemporary essentials, where sophisticated design meets everyday functionality.</p>
                 <div class="flex items-center gap-4">
-                    <button class="bg-dark text-light px-8 py-3 rounded-lg font-bold hover:bg-opacity-90 transition-colors flex items-center gap-2 shadow-md">
+                    <button
+                        class="bg-dark text-light px-8 py-3 rounded-lg font-bold hover:bg-opacity-90 transition-colors flex items-center gap-2 shadow-md">
                         Shop Collection <span class="material-icons">arrow_forward</span>
                     </button>
                 </div>
             </div>
 
             <div class="absolute right-0 top-0 h-full w-1/2 hidden md:block">
-                <img alt="Trending Product" class="w-full h-full object-cover object-center mix-blend-multiply opacity-90" src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=1000" />
+                <img alt="Trending Product"
+                    class="w-full h-full object-cover object-center mix-blend-multiply opacity-90"
+                    src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=1000" />
                 <div class="absolute inset-0 bg-gradient-to-r from-accent to-transparent"></div>
             </div>
 
-            <button class="absolute right-4 z-20 bg-dark/20 hover:bg-dark text-light w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100">
+            <button
+                class="absolute right-4 z-20 bg-dark/20 hover:bg-dark text-light w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100">
                 <span class="material-icons">chevron_right</span>
             </button>
 
@@ -210,21 +273,24 @@
 
     <section class="max-w-7xl mx-auto w-full px-4 mt-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="bg-dark text-light rounded-xl p-5 flex items-center justify-center gap-4 shadow-sm hover:-translate-y-1 transition-transform">
+            <div
+                class="bg-dark text-light rounded-xl p-5 flex items-center justify-center gap-4 shadow-sm hover:-translate-y-1 transition-transform">
                 <span class="material-icons text-3xl text-accent">local_shipping</span>
                 <div>
                     <h4 class="font-bold text-sm uppercase tracking-wide">Free Shipping</h4>
                     <p class="text-xs text-muted">On orders over $100</p>
                 </div>
             </div>
-            <div class="bg-dark text-light rounded-xl p-5 flex items-center justify-center gap-4 shadow-sm hover:-translate-y-1 transition-transform">
+            <div
+                class="bg-dark text-light rounded-xl p-5 flex items-center justify-center gap-4 shadow-sm hover:-translate-y-1 transition-transform">
                 <span class="material-icons text-3xl text-accent">support_agent</span>
                 <div>
                     <h4 class="font-bold text-sm uppercase tracking-wide">24/7 Support</h4>
                     <p class="text-xs text-muted">Here to help anytime</p>
                 </div>
             </div>
-            <div class="bg-dark text-light rounded-xl p-5 flex items-center justify-center gap-4 shadow-sm hover:-translate-y-1 transition-transform">
+            <div
+                class="bg-dark text-light rounded-xl p-5 flex items-center justify-center gap-4 shadow-sm hover:-translate-y-1 transition-transform">
                 <span class="material-icons text-3xl text-accent">security</span>
                 <div>
                     <h4 class="font-bold text-sm uppercase tracking-wide">Secure Checkout</h4>
@@ -241,12 +307,16 @@
                 View All <span class="material-icons text-sm">arrow_forward</span>
             </a>
         </div>
-        
+
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg border border-muted/50 transition-all duration-300 flex flex-col">
+            <div
+                class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg border border-muted/50 transition-all duration-300 flex flex-col">
                 <div class="aspect-square bg-light relative overflow-hidden border-b border-muted/30">
-                    <img alt="Product" class="w-full h-full object-cover mix-blend-multiply p-4 transition-transform duration-500 group-hover:scale-105" src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=500" />
-                    <button class="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center text-muted hover:text-dark hover:bg-accent border border-muted shadow-sm transition-all">
+                    <img alt="Product"
+                        class="w-full h-full object-cover mix-blend-multiply p-4 transition-transform duration-500 group-hover:scale-105"
+                        src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=500" />
+                    <button
+                        class="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center text-muted hover:text-dark hover:bg-accent border border-muted shadow-sm transition-all">
                         <span class="material-icons text-sm">favorite_border</span>
                     </button>
                 </div>
@@ -255,17 +325,22 @@
                     <h3 class="font-bold text-dark text-lg mb-2">Swift Run Sneakers</h3>
                     <div class="mt-auto flex items-center justify-between pt-4">
                         <span class="text-xl font-extrabold text-dark">$120.00</span>
-                        <button class="bg-dark text-light p-2 rounded hover:bg-accent hover:text-dark transition-colors border border-transparent hover:border-dark">
+                        <button
+                            class="bg-dark text-light p-2 rounded hover:bg-accent hover:text-dark transition-colors border border-transparent hover:border-dark">
                             <span class="material-icons text-sm">add_shopping_cart</span>
                         </button>
                     </div>
                 </div>
             </div>
 
-            <div class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg border border-muted/50 transition-all duration-300 flex flex-col">
+            <div
+                class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg border border-muted/50 transition-all duration-300 flex flex-col">
                 <div class="aspect-square bg-light relative overflow-hidden border-b border-muted/30">
-                    <img alt="Product" class="w-full h-full object-cover mix-blend-multiply p-4 transition-transform duration-500 group-hover:scale-105" src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=500" />
-                    <button class="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center text-muted hover:text-dark hover:bg-accent border border-muted shadow-sm transition-all">
+                    <img alt="Product"
+                        class="w-full h-full object-cover mix-blend-multiply p-4 transition-transform duration-500 group-hover:scale-105"
+                        src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=500" />
+                    <button
+                        class="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center text-muted hover:text-dark hover:bg-accent border border-muted shadow-sm transition-all">
                         <span class="material-icons text-sm">favorite_border</span>
                     </button>
                 </div>
@@ -274,30 +349,33 @@
                     <h3 class="font-bold text-dark text-lg mb-2">Studio Bass Headphones</h3>
                     <div class="mt-auto flex items-center justify-between pt-4">
                         <span class="text-xl font-extrabold text-dark">$299.00</span>
-                        <button class="bg-dark text-light p-2 rounded hover:bg-accent hover:text-dark transition-colors border border-transparent hover:border-dark">
+                        <button
+                            class="bg-dark text-light p-2 rounded hover:bg-accent hover:text-dark transition-colors border border-transparent hover:border-dark">
                             <span class="material-icons text-sm">add_shopping_cart</span>
                         </button>
                     </div>
                 </div>
             </div>
-            
+
         </div>
     </section>
 
     <footer class="bg-dark text-light pt-16 pb-8 border-t-4 border-accent mt-auto">
         <div class="max-w-7xl mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-                
+
                 <div>
                     <div class="flex items-center gap-3 mb-6">
-                        <svg class="w-6 h-6 text-accent" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        <svg class="w-6 h-6 text-accent" fill="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
                         </svg>
                         <span class="text-xl font-bold tracking-wide">StackShop</span>
                     </div>
-                    <p class="text-muted text-sm leading-relaxed mb-6 font-medium">Elevating your lifestyle through curated collections. Quality is our standard, elegance is our soul.</p>
+                    <p class="text-muted text-sm leading-relaxed mb-6 font-medium">Elevating your lifestyle through
+                        curated collections. Quality is our standard, elegance is our soul.</p>
                 </div>
-                
+
                 <div>
                     <h4 class="text-sm uppercase tracking-widest font-extrabold mb-6 text-accent">Quick Links</h4>
                     <ul class="space-y-3 text-muted text-sm font-bold">
@@ -306,7 +384,7 @@
                         <li><a class="hover:text-light transition-colors" href="#">Careers</a></li>
                     </ul>
                 </div>
-                
+
                 <div>
                     <h4 class="text-sm uppercase tracking-widest font-extrabold mb-6 text-accent">Client Services</h4>
                     <ul class="space-y-3 text-muted text-sm font-bold">
@@ -315,20 +393,25 @@
                         <li><a class="hover:text-light transition-colors" href="#">FAQ</a></li>
                     </ul>
                 </div>
-                
+
                 <div>
                     <h4 class="text-sm uppercase tracking-widest font-extrabold mb-6 text-accent">Newsletter</h4>
                     <p class="text-muted text-sm mb-4 font-medium">Subscribe for early access to new drops.</p>
                     <form class="space-y-3" method="POST" action="#">
                         {% csrf_token %}
-                        <input class="w-full bg-light text-dark border border-muted rounded py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-accent transition-all placeholder-muted" placeholder="Email Address" type="email" required />
-                        <button type="submit" class="w-full bg-accent text-dark py-2.5 rounded font-bold hover:bg-opacity-80 transition-all border border-dark">Join Inner Circle</button>
+                        <input
+                            class="w-full bg-light text-dark border border-muted rounded py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-accent transition-all placeholder-muted"
+                            placeholder="Email Address" type="email" required />
+                        <button type="submit"
+                            class="w-full bg-accent text-dark py-2.5 rounded font-bold hover:bg-opacity-80 transition-all border border-dark">Join
+                            Inner Circle</button>
                     </form>
                 </div>
 
             </div>
-            
-            <div class="border-t border-muted/20 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-muted text-xs uppercase font-bold tracking-widest">
+
+            <div
+                class="border-t border-muted/20 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-muted text-xs uppercase font-bold tracking-widest">
                 <p>© 2026 StackShop. All rights reserved.</p>
                 <div class="flex gap-6">
                     <a class="hover:text-light transition-colors" href="#">Privacy</a>
@@ -339,4 +422,5 @@
     </footer>
 
 </body>
+
 </html>

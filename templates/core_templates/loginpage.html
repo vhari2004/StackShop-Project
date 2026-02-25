@@ -7,13 +7,23 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-[#F0F0DB] font-sans flex flex-col min-h-screen text-[#30364F]">
-
-    <nav class="bg-[#30364F] text-[#F0F0DB] p-4 shadow-md">
-        <div class="container mx-auto flex justify-between items-center">
-            <a href="#" class="font-bold text-xl tracking-wide">StackShop</a>
-            <a href="#" class="text-sm font-semibold hover:text-[#ACBAC4] transition-colors">Return to Shop</a>
-        </div>
-    </nav>
+    <header class="w-full pt-6 px-4 z-50">
+        <nav class="bg-[#30364F] text-[#F0F0DB] rounded-xl px-6 py-4 flex items-center justify-between shadow-lg w-full">
+            <a href="{%url 'home'%}" class="flex items-center gap-3 cursor-pointer hover:opacity-90 transition-opacity">
+                <svg class="w-8 h-8 text-[#F0F0DB]" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+                <span class="text-xl font-bold tracking-wide">StackShop</span>
+            </a>
+            
+            <a href="{%url 'home'%}" class="text-sm font-bold text-[#ACBAC4] hover:text-[#F0F0DB] transition-colors flex items-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Return to Shop
+            </a>
+        </nav>
+    </header>
 
     <main class="flex-grow flex items-center justify-center p-4">
         <div class="bg-[#E1D9BC] p-8 rounded-xl shadow-lg w-full max-w-md border border-[#ACBAC4]">
