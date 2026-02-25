@@ -10,9 +10,9 @@
     <header class="w-full pt-6 px-4 z-50">
         <nav class="bg-[#30364F] text-[#F0F0DB] rounded-xl px-6 py-4 flex items-center justify-between shadow-lg w-full">
             <a href="{%url 'home'%}" class="flex items-center gap-3 cursor-pointer hover:opacity-90 transition-opacity">
-                <svg class="w-8 h-8 text-[#F0F0DB]" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                </svg>
+{% load static%}
+                <img alt="Logo" class="w-12 h-12 text-accent" fill="currentColor"
+                    src="{% static 'core/homehtml/stackshoplogo.png' %}" />
                 <span class="text-xl font-bold tracking-wide">StackShop</span>
             </a>
             

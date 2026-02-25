@@ -46,7 +46,7 @@
         <nav class="w-full bg-dark text-light rounded-xl px-6 py-4 flex items-center justify-between shadow-lg">
             <div class="flex items-center gap-3 cursor-pointer">
                 <img alt="Logo" class="w-12 h-12 text-accent" fill="currentColor"
-                    src="{% static 'core/homehtml/logo_icon.png' %}" />
+                    src="{% static 'core/homehtml/stackshoplogo.png' %}" />
                 <span class="text-xl font-bold tracking-wide">StackShop</span>
             </div>
 
@@ -187,9 +187,9 @@
                 {% else %}
                 <div class="flex items-center gap-4 border-l border-muted/30 pl-8">
                     <a class="text-sm font-bold text-muted hover:text-light transition-colors"
-                    href="{% url 'login' %}">Login</a>
+                        href="{% url 'login' %}">Login</a>
                     <a class="text-sm font-bold bg-accent text-dark px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors shadow-sm"
-                    href="{% url 'register' %}">Sign Up</a>
+                        href="{% url 'register' %}">Sign Up</a>
                     <a href="{%url 'seller-bridge'%}"
                         class="text-sm font-bold bg-accent text-dark px-4 py-1 rounded-lg hover:bg-opacity-90 transition-colors shadow-sm">
                         <span class="material-icons text-dark">storefront</span>
@@ -200,7 +200,6 @@
             </div>
         </nav>
     </header>
-
     <section class="max-w-7xl mx-auto w-full px-4 mt-6">
         <div class="flex items-center gap-3 overflow-x-auto hide-scrollbar pb-2">
             <button
@@ -226,32 +225,34 @@
         </div>
     </section>
 
-    <main class="max-w-7xl mx-auto w-full px-4 mt-6 relative group">
+    <main class="max-w-7xl mx-auto w-full px-4 mt-6 flex flex-col lg:flex-row gap-6">
+
         <div
-            class="relative overflow-hidden rounded-xl bg-accent h-[480px] flex items-center border border-muted shadow-sm">
+            class="relative overflow-hidden rounded-xl bg-accent h-[480px] flex items-center border border-muted shadow-sm w-full lg:w-3/4 group">
 
             <button
                 class="absolute left-4 z-20 bg-dark/20 hover:bg-dark text-light w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100">
                 <span class="material-icons">chevron_left</span>
             </button>
 
-            <div class="relative z-10 pl-16 max-w-2xl w-full">
+            <div class="relative z-10 pl-8 md:pl-16 max-w-xl w-full">
                 <span
                     class="inline-block bg-dark text-light text-xs font-bold px-3 py-1 rounded mb-4 tracking-widest uppercase">Season
                     Picks</span>
-                <h1 class="text-6xl font-extrabold text-dark leading-tight mb-6">Trending <br /><span
+                <h1 class="text-5xl md:text-6xl font-extrabold text-dark leading-tight mb-4">Trending <br /><span
                         class="italic text-muted/80">Now</span></h1>
-                <p class="text-lg text-dark/80 mb-8 max-w-md font-medium">Discover our curated collection of
+                <p class="text-base md:text-lg text-dark/80 mb-8 max-w-sm font-medium">Discover our curated collection
+                    of
                     contemporary essentials, where sophisticated design meets everyday functionality.</p>
                 <div class="flex items-center gap-4">
                     <button
                         class="bg-dark text-light px-8 py-3 rounded-lg font-bold hover:bg-opacity-90 transition-colors flex items-center gap-2 shadow-md">
-                        Shop Collection <span class="material-icons">arrow_forward</span>
+                        Shop Collection <span class="material-icons text-sm">arrow_forward</span>
                     </button>
                 </div>
             </div>
 
-            <div class="absolute right-0 top-0 h-full w-1/2 hidden md:block">
+            <div class="absolute right-0 top-0 h-full w-1/2 hidden sm:block">
                 <img alt="Trending Product"
                     class="w-full h-full object-cover object-center mix-blend-multiply opacity-90"
                     src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=1000" />
@@ -269,6 +270,41 @@
                 <div class="w-2 h-1.5 rounded-full bg-dark/30 hover:bg-dark/50 cursor-pointer transition-colors"></div>
             </div>
         </div>
+
+        <div class="w-full lg:w-1/4 flex flex-col gap-6">
+
+            <div
+                class="bg-dark rounded-xl h-[228px] p-6 relative overflow-hidden flex flex-col justify-center shadow-sm border border-muted/30 group">
+                <div class="relative z-10">
+                    <span class="text-accent text-xs font-bold uppercase tracking-widest mb-1 block">Limited Time</span>
+                    <h3 class="text-light text-2xl font-extrabold mb-2 leading-tight">Flash<br>Sale</h3>
+                    <p class="text-muted text-sm mb-4">Up to 40% off on select items.</p>
+                    <a href="#"
+                        class="text-dark bg-accent text-xs font-bold py-2 px-4 rounded-lg inline-block hover:bg-opacity-90 transition-colors">Grab
+                        Deal</a>
+                </div>
+                <div
+                    class="absolute -right-8 -bottom-8 w-32 h-32 rounded-full bg-light/10 transform group-hover:scale-110 transition-transform duration-500">
+                </div>
+            </div>
+
+            <div
+                class="bg-white rounded-xl h-[228px] p-6 relative overflow-hidden flex flex-col justify-center shadow-sm border border-muted/30 group">
+                <div class="relative z-10">
+                    <span class="text-dark text-xs font-bold uppercase tracking-widest mb-1 block">New Arrivals</span>
+                    <h3 class="text-dark text-2xl font-extrabold mb-2 leading-tight">Summer<br>Collection</h3>
+                    <a href="#"
+                        class="text-light bg-dark text-xs font-bold py-2 px-4 rounded-lg inline-block mt-2 hover:bg-opacity-90 transition-colors">Explore</a>
+                </div>
+                <div class="absolute right-0 top-0 h-full w-1/2">
+                    <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=500"
+                        class="w-full h-full object-cover opacity-30 mix-blend-multiply" alt="Summer Promo">
+                    <div class="absolute inset-0 bg-gradient-to-r from-white to-transparent"></div>
+                </div>
+            </div>
+
+        </div>
+
     </main>
 
     <section class="max-w-7xl mx-auto w-full px-4 mt-6">
