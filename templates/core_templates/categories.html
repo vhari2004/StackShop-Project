@@ -1,0 +1,341 @@
+{% load static %}
+<!DOCTYPE html>
+<html class="light scroll-smooth" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Categories - StackShop</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link type="icon/" rel="icon" href="/static/favicon.ico" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "dark": "#30364F",
+                        "muted": "#ACBAC4",
+                        "accent": "#E1D9BC",
+                        "light": "#F0F0DB",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Scroll Reveal Animation Classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body class="bg-light text-dark font-display flex flex-col min-h-screen overflow-x-hidden">
+    
+    {% include "customer_templates/Navbar.html" %}
+
+    <main class="max-w-7xl mx-auto w-full px-4 mt-8 mb-20 flex-grow">
+        
+        <div class="text-center max-w-2xl mx-auto mb-16">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-dark leading-tight mb-4">Shop by <span class="italic text-muted">Category</span></h1>
+            <p class="text-lg text-dark/80 font-medium">Explore our wide range of collections curated just for you.</p>
+        </div>
+
+        <section id="cat-electronics" class="scroll-mt-28 mb-20 reveal">
+            
+            <div class="relative w-full h-48 md:h-64 rounded-2xl overflow-hidden mb-8 shadow-md group block border border-muted/30">
+                <img src="https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&q=80&w=1200" alt="Electronics Banner" class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
+                <div class="absolute inset-0 bg-dark/60 mix-blend-multiply"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-dark/90 via-dark/20 to-transparent"></div>
+                <div class="absolute inset-0 p-8 flex flex-col justify-end">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="text-accent font-bold tracking-widest uppercase text-xs mb-2 block">Tech Essentials</span>
+                            <h2 class="text-3xl md:text-5xl font-extrabold text-light flex items-center gap-3">
+                                <span class="material-icons text-3xl md:text-5xl text-accent">devices</span> Electronics
+                            </h2>
+                        </div>
+                        <a href="#" class="hidden sm:flex bg-accent text-dark px-6 py-2.5 rounded-lg font-bold text-sm items-center gap-2 hover:bg-white transition-colors shadow-lg">
+                            View All Products <span class="material-icons text-sm">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <a href="#" class="group bg-white rounded-xl overflow-hidden shadow-sm border border-muted/40 hover:border-dark hover:shadow-xl transition-all duration-300 flex flex-col">
+                    <div class="aspect-[4/3] bg-light relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Audio">
+                        <div class="absolute inset-0 bg-dark/0 group-hover:bg-dark/20 transition-colors duration-300"></div>
+                    </div>
+                    <div class="p-5 flex items-center justify-between bg-white z-10 relative">
+                        <div>
+                            <h3 class="font-bold text-dark text-lg">Audio & Sound</h3>
+                            <p class="text-[10px] text-muted font-bold tracking-widest uppercase mt-1">124 Products</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-light flex items-center justify-center group-hover:bg-dark group-hover:text-light transition-colors text-dark">
+                            <span class="material-icons text-sm">arrow_forward</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="#" class="group bg-white rounded-xl overflow-hidden shadow-sm border border-muted/40 hover:border-dark hover:shadow-xl transition-all duration-300 flex flex-col">
+                    <div class="aspect-[4/3] bg-light relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Phones">
+                        <div class="absolute inset-0 bg-dark/0 group-hover:bg-dark/20 transition-colors duration-300"></div>
+                    </div>
+                    <div class="p-5 flex items-center justify-between bg-white z-10 relative">
+                        <div>
+                            <h3 class="font-bold text-dark text-lg">Smartphones</h3>
+                            <p class="text-[10px] text-muted font-bold tracking-widest uppercase mt-1">86 Products</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-light flex items-center justify-center group-hover:bg-dark group-hover:text-light transition-colors text-dark">
+                            <span class="material-icons text-sm">arrow_forward</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="#" class="group bg-white rounded-xl overflow-hidden shadow-sm border border-muted/40 hover:border-dark hover:shadow-xl transition-all duration-300 flex flex-col">
+                    <div class="aspect-[4/3] bg-light relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Laptops">
+                        <div class="absolute inset-0 bg-dark/0 group-hover:bg-dark/20 transition-colors duration-300"></div>
+                    </div>
+                    <div class="p-5 flex items-center justify-between bg-white z-10 relative">
+                        <div>
+                            <h3 class="font-bold text-dark text-lg">Laptops & PCs</h3>
+                            <p class="text-[10px] text-muted font-bold tracking-widest uppercase mt-1">45 Products</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-light flex items-center justify-center group-hover:bg-dark group-hover:text-light transition-colors text-dark">
+                            <span class="material-icons text-sm">arrow_forward</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="#" class="group bg-white rounded-xl overflow-hidden shadow-sm border border-muted/40 hover:border-dark hover:shadow-xl transition-all duration-300 flex flex-col">
+                    <div class="aspect-[4/3] bg-light relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1558089687-f282ffcbc126?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Smart Home">
+                        <div class="absolute inset-0 bg-dark/0 group-hover:bg-dark/20 transition-colors duration-300"></div>
+                    </div>
+                    <div class="p-5 flex items-center justify-between bg-white z-10 relative">
+                        <div>
+                            <h3 class="font-bold text-dark text-lg">Smart Home</h3>
+                            <p class="text-[10px] text-muted font-bold tracking-widest uppercase mt-1">112 Products</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-light flex items-center justify-center group-hover:bg-dark group-hover:text-light transition-colors text-dark">
+                            <span class="material-icons text-sm">arrow_forward</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <section id="cat-fashion" class="scroll-mt-28 mb-20 reveal">
+            
+            <div class="relative w-full h-48 md:h-64 rounded-2xl overflow-hidden mb-8 shadow-md group block border border-muted/30">
+                <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?auto=format&fit=crop&q=80&w=1200" alt="Fashion Banner" class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
+                <div class="absolute inset-0 bg-dark/50 mix-blend-multiply"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-dark/90 via-dark/20 to-transparent"></div>
+                <div class="absolute inset-0 p-8 flex flex-col justify-end">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="text-accent font-bold tracking-widest uppercase text-xs mb-2 block">Trendsetters</span>
+                            <h2 class="text-3xl md:text-5xl font-extrabold text-light flex items-center gap-3">
+                                <span class="material-icons text-3xl md:text-5xl text-accent">checkroom</span> Fashion
+                            </h2>
+                        </div>
+                        <a href="#" class="hidden sm:flex bg-accent text-dark px-6 py-2.5 rounded-lg font-bold text-sm items-center gap-2 hover:bg-white transition-colors shadow-lg">
+                            View All Products <span class="material-icons text-sm">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <a href="#" class="group bg-white rounded-xl overflow-hidden shadow-sm border border-muted/40 hover:border-dark hover:shadow-xl transition-all duration-300 flex flex-col">
+                    <div class="aspect-[4/3] bg-light relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Women">
+                        <div class="absolute inset-0 bg-dark/0 group-hover:bg-dark/20 transition-colors duration-300"></div>
+                    </div>
+                    <div class="p-5 flex items-center justify-between bg-white z-10 relative">
+                        <div>
+                            <h3 class="font-bold text-dark text-lg">Women's Wear</h3>
+                            <p class="text-[10px] text-muted font-bold tracking-widest uppercase mt-1">320 Products</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-light flex items-center justify-center group-hover:bg-dark group-hover:text-light transition-colors text-dark">
+                            <span class="material-icons text-sm">arrow_forward</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="#" class="group bg-white rounded-xl overflow-hidden shadow-sm border border-muted/40 hover:border-dark hover:shadow-xl transition-all duration-300 flex flex-col">
+                    <div class="aspect-[4/3] bg-light relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1490578474895-699bc4e3f44f?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Men">
+                        <div class="absolute inset-0 bg-dark/0 group-hover:bg-dark/20 transition-colors duration-300"></div>
+                    </div>
+                    <div class="p-5 flex items-center justify-between bg-white z-10 relative">
+                        <div>
+                            <h3 class="font-bold text-dark text-lg">Men's Wear</h3>
+                            <p class="text-[10px] text-muted font-bold tracking-widest uppercase mt-1">215 Products</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-light flex items-center justify-center group-hover:bg-dark group-hover:text-light transition-colors text-dark">
+                            <span class="material-icons text-sm">arrow_forward</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="#" class="group bg-white rounded-xl overflow-hidden shadow-sm border border-muted/40 hover:border-dark hover:shadow-xl transition-all duration-300 flex flex-col">
+                    <div class="aspect-[4/3] bg-light relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Footwear">
+                        <div class="absolute inset-0 bg-dark/0 group-hover:bg-dark/20 transition-colors duration-300"></div>
+                    </div>
+                    <div class="p-5 flex items-center justify-between bg-white z-10 relative">
+                        <div>
+                            <h3 class="font-bold text-dark text-lg">Footwear</h3>
+                            <p class="text-[10px] text-muted font-bold tracking-widest uppercase mt-1">150 Products</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-light flex items-center justify-center group-hover:bg-dark group-hover:text-light transition-colors text-dark">
+                            <span class="material-icons text-sm">arrow_forward</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="#" class="group bg-white rounded-xl overflow-hidden shadow-sm border border-muted/40 hover:border-dark hover:shadow-xl transition-all duration-300 flex flex-col">
+                    <div class="aspect-[4/3] bg-light relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1523206489230-c012c64b2b48?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Accessories">
+                        <div class="absolute inset-0 bg-dark/0 group-hover:bg-dark/20 transition-colors duration-300"></div>
+                    </div>
+                    <div class="p-5 flex items-center justify-between bg-white z-10 relative">
+                        <div>
+                            <h3 class="font-bold text-dark text-lg">Accessories</h3>
+                            <p class="text-[10px] text-muted font-bold tracking-widest uppercase mt-1">89 Products</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-light flex items-center justify-center group-hover:bg-dark group-hover:text-light transition-colors text-dark">
+                            <span class="material-icons text-sm">arrow_forward</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <section id="cat-home" class="scroll-mt-28 mb-20 reveal">
+            
+            <div class="relative w-full h-48 md:h-64 rounded-2xl overflow-hidden mb-8 shadow-md group block border border-muted/30">
+                <img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&q=80&w=1200" alt="Home Decor Banner" class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
+                <div class="absolute inset-0 bg-dark/40 mix-blend-multiply"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-dark/90 via-dark/20 to-transparent"></div>
+                <div class="absolute inset-0 p-8 flex flex-col justify-end">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="text-accent font-bold tracking-widest uppercase text-xs mb-2 block">Interior Styling</span>
+                            <h2 class="text-3xl md:text-5xl font-extrabold text-light flex items-center gap-3">
+                                <span class="material-icons text-3xl md:text-5xl text-accent">chair</span> Home Decor
+                            </h2>
+                        </div>
+                        <a href="#" class="hidden sm:flex bg-accent text-dark px-6 py-2.5 rounded-lg font-bold text-sm items-center gap-2 hover:bg-white transition-colors shadow-lg">
+                            View All Products <span class="material-icons text-sm">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <a href="#" class="group bg-white rounded-xl overflow-hidden shadow-sm border border-muted/40 hover:border-dark hover:shadow-xl transition-all duration-300 flex flex-col">
+                    <div class="aspect-[4/3] bg-light relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Furniture">
+                        <div class="absolute inset-0 bg-dark/0 group-hover:bg-dark/20 transition-colors duration-300"></div>
+                    </div>
+                    <div class="p-5 flex items-center justify-between bg-white z-10 relative">
+                        <div>
+                            <h3 class="font-bold text-dark text-lg">Furniture</h3>
+                            <p class="text-[10px] text-muted font-bold tracking-widest uppercase mt-1">75 Products</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-light flex items-center justify-center group-hover:bg-dark group-hover:text-light transition-colors text-dark">
+                            <span class="material-icons text-sm">arrow_forward</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="#" class="group bg-white rounded-xl overflow-hidden shadow-sm border border-muted/40 hover:border-dark hover:shadow-xl transition-all duration-300 flex flex-col">
+                    <div class="aspect-[4/3] bg-light relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Lighting">
+                        <div class="absolute inset-0 bg-dark/0 group-hover:bg-dark/20 transition-colors duration-300"></div>
+                    </div>
+                    <div class="p-5 flex items-center justify-between bg-white z-10 relative">
+                        <div>
+                            <h3 class="font-bold text-dark text-lg">Lighting</h3>
+                            <p class="text-[10px] text-muted font-bold tracking-widest uppercase mt-1">42 Products</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-light flex items-center justify-center group-hover:bg-dark group-hover:text-light transition-colors text-dark">
+                            <span class="material-icons text-sm">arrow_forward</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="#" class="group bg-white rounded-xl overflow-hidden shadow-sm border border-muted/40 hover:border-dark hover:shadow-xl transition-all duration-300 flex flex-col">
+                    <div class="aspect-[4/3] bg-light relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Wall Art">
+                        <div class="absolute inset-0 bg-dark/0 group-hover:bg-dark/20 transition-colors duration-300"></div>
+                    </div>
+                    <div class="p-5 flex items-center justify-between bg-white z-10 relative">
+                        <div>
+                            <h3 class="font-bold text-dark text-lg">Wall Art</h3>
+                            <p class="text-[10px] text-muted font-bold tracking-widest uppercase mt-1">98 Products</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-light flex items-center justify-center group-hover:bg-dark group-hover:text-light transition-colors text-dark">
+                            <span class="material-icons text-sm">arrow_forward</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="#" class="group bg-white rounded-xl overflow-hidden shadow-sm border border-muted/40 hover:border-dark hover:shadow-xl transition-all duration-300 flex flex-col">
+                    <div class="aspect-[4/3] bg-light relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Kitchen">
+                        <div class="absolute inset-0 bg-dark/0 group-hover:bg-dark/20 transition-colors duration-300"></div>
+                    </div>
+                    <div class="p-5 flex items-center justify-between bg-white z-10 relative">
+                        <div>
+                            <h3 class="font-bold text-dark text-lg">Kitchen & Dining</h3>
+                            <p class="text-[10px] text-muted font-bold tracking-widest uppercase mt-1">115 Products</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-light flex items-center justify-center group-hover:bg-dark group-hover:text-light transition-colors text-dark">
+                            <span class="material-icons text-sm">arrow_forward</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+        {% include "customer_templates/Footer.html" %}
+        
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Scroll Reveal Animations
+            const reveals = document.querySelectorAll('.reveal');
+            
+            const revealOptions = {
+                threshold: 0.15,
+                rootMargin: "0px 0px -50px 0px" 
+            };
+
+            const revealOnScroll = new IntersectionObserver(function(entries, observer) {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                });
+            }, revealOptions);
+
+            reveals.forEach(reveal => {
+                revealOnScroll.observe(reveal);
+            });
+        });
+    </script>
+</body>
+</html>

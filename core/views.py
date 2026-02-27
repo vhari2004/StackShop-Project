@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 from .models import CustomUser
 from django.contrib.auth import login,logout,authenticate
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from core.decorators import admin_required,seller_required
 
@@ -17,9 +18,17 @@ def register_view(request):
         password=request.POST.get('password')
         confirm_password=request.POST.get('confirm_password')
         if password != confirm_password:
-            return render(request,'core_templates/registerpage.html',{'error':'Passwords do not match'})
+            messages.error(request,'passwords doesnot match')
+            return render(request,'core_templates/registerpage.html',{'username': username,'email': email})
+        if CustomUser.objects.filter(username=username).exists():
+            messages.error(request,'Invalid username !')
+            return render(request,'core_templates/registerpage.html',{'username': username,'email': email})
+        if CustomUser.objects.filter(email=email).exists():
+            messages.error(request,'Invalid email !')
+            return render(request,'core_templates/registerpage.html',{'username': username,'email': email})
         user=CustomUser.objects.create_user(username=username,email=email,password=password)
         user.save()
+        messages.success(request,'User registration successfull')
         return redirect('login')
     return render(request,'core_templates/registerpage.html')
 
@@ -35,11 +44,17 @@ def login_view(request):
         user=authenticate(username=username,password=password )
         if user is not None:
             login(request,user)
+            messages.success(request,'user successgully logined')
             return redirect('home')
+        else:
+            messages.error(request,'invalid credintials !')
     return render(request,'core_templates/loginpage.html')
 def logout_view(request):
     logout(request)
     return redirect('home')
+@admin_required
+def category_view(request):
+    return render(request,'core_templates/categories.html')
 
 
 

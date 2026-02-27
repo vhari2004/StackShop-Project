@@ -1,12 +1,18 @@
+{% load static %}
 <!DOCTYPE html>
 <html class="light" lang="en">
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Become a Seller - StackShop</title>
+    
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.5.3/build/css/intlTelInput.css" />
+
     <script>
         tailwind.config = {
             theme: {
@@ -24,23 +30,33 @@
             },
         }
     </script>
+    <style>
+        .iti {
+            width: 100%;
+        }
+        /* Tab sliding transition */
+        #tab-highlight {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
 </head>
 
 <body class="bg-light text-dark font-display flex flex-col min-h-screen">
     
-    <header class="max-w-7xl mx-auto w-full pt-6 px-4 z-50">
-        <nav class="bg-dark text-light rounded-xl px-6 py-4 flex items-center justify-between shadow-lg">
-            <div class="flex items-center gap-3 cursor-pointer">
-                <svg class="w-8 h-8 text-accent" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                </svg>
-                <span class="text-xl font-bold tracking-wide">StackShop</span>
-            </div>
-            <a href="{%url 'home'%}" class="text-sm font-bold text-muted hover:text-light transition-colors flex items-center gap-1">
-                <span class="material-icons text-sm">arrow_back</span> Return to Shop
-            </a>
-        </nav>
-    </header>
+    <div class="sticky top-0 z-50 w-full bg-light/70 backdrop-blur-md pb-2">
+        <header class="w-full pt-1 px-4 z-50 sticky top-0">
+            <nav class="bg-dark text-light rounded-xl px-6 py-4 flex items-center justify-between shadow-lg w-full">
+                <a href="{%url 'home'%}" class="flex items-center gap-3 cursor-pointer hover:opacity-90 transition-opacity">
+                    <img alt="Logo" class="w-12 h-12 text-accent" fill="currentColor" src="{% static 'core/homehtml/stackshoplogo.png' %}" />
+                    <span class="text-xl font-bold tracking-wide">StackShop</span>
+                </a>
+                <a href="{%url 'home'%}" class="text-sm font-bold text-muted hover:text-light transition-colors flex items-center gap-1.5">
+                    <span class="material-icons text-sm">arrow_back</span>
+                    Return to Shop
+                </a>
+            </nav>
+        </header>
+    </div>
 
     <main class="flex-grow flex items-center justify-center px-4 py-12">
         <div class="bg-white p-8 md:p-10 rounded-2xl shadow-xl w-full max-w-3xl border border-muted/30">
@@ -57,38 +73,106 @@
                 <span class="material-icons text-dark mt-0.5">admin_panel_settings</span>
                 <div>
                     <h4 class="font-bold text-dark text-sm uppercase tracking-wider mb-1">Admin Verification Required</h4>
-                    <p class="text-sm text-dark/80 font-medium">To maintain a secure marketplace, all new seller accounts require approval from the StackShop admin team. Once you submit this form, please allow 24-48 hours for your account to be verified and activated.</p>
+                    <p class="text-sm text-dark/80 font-medium">To maintain a secure marketplace, all new seller accounts require approval from the StackShop admin team. Please allow 24-48 hours for account activation.</p>
                 </div>
             </div>
 
-            <form action="#" method="POST">
+            <form id="registrationForm" action="#" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
 
-                <div class="mb-8">
-                    <h3 class="text-sm font-bold text-dark uppercase tracking-widest border-b border-muted/30 pb-2 mb-4">Linked User Account</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-muted mb-1 uppercase" for="username">Username</label>
-                            <input class="w-full px-4 py-2.5 border border-muted/30 rounded-lg bg-light/50 text-dark/60 cursor-not-allowed focus:outline-none" type="text" id="username" name="username" value="{{user.username}}" readonly>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-muted mb-1 uppercase" for="email">Email Address</label>
-                            <input class="w-full px-4 py-2.5 border border-muted/30 rounded-lg bg-light/50 text-dark/60 cursor-not-allowed focus:outline-none" type="email" id="email" name="email" value="{{user.email}}" readonly>
+                <div class="mb-10 space-y-6">
+                    <h3 class="text-sm font-bold text-dark uppercase tracking-widest border-b border-muted/30 pb-2 mb-4">1. Linked User Account</h3>
+                    
+                    {% if not request.user.is_authenticated %}
+                    <div class="space-y-3">
+                        <label class="block text-xs font-bold text-dark ml-1 uppercase tracking-wider">Identification Method</label>
+                        <div class="relative bg-muted/20 p-1 rounded-2xl flex w-full max-w-md">
+                            <div id="tab-highlight" class="absolute top-1 left-1 w-[calc(50%-4px)] h-[calc(100%-8px)] bg-white rounded-xl shadow-sm z-0"></div>
+                            <button type="button" onclick="switchIdentityTab('name')" id="btn-name" class="relative z-10 flex-1 py-2.5 text-sm font-bold transition-colors duration-200 text-dark">Full Name</button>
+                            <button type="button" onclick="switchIdentityTab('username')" id="btn-username" class="relative z-10 flex-1 py-2.5 text-sm font-bold transition-colors duration-200 text-muted">Username</button>
                         </div>
                     </div>
+                    {% endif %}
+
+                    <div id="dynamicIdentityContainer" class="space-y-5">
+                        
+                        <div id="nameFields" class="grid grid-cols-1 sm:grid-cols-2 gap-4 transition-all duration-300 {% if request.user.is_authenticated and not request.user.first_name %}hidden{% endif %}">
+                            <div class="space-y-2">
+                                <label class="block text-xs font-bold text-dark uppercase" for="first_name">First Name</label>
+                                <input type="text" name="first_name" id="first_name" placeholder="Enter first name"
+                                    value="{% if request.user.is_authenticated %}{{ request.user.first_name }}{% endif %}"
+                                    class="w-full px-4 py-2.5 border border-muted rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark bg-transparent transition-colors placeholder-muted {% if request.user.is_authenticated %}cursor-not-allowed bg-light/50 opacity-80{% endif %}"
+                                    {% if request.user.is_authenticated %}readonly{% endif %}>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-xs font-bold text-dark uppercase" for="last_name">Last Name</label>
+                                <input type="text" name="last_name" id="last_name" placeholder="Enter last name"
+                                    value="{% if request.user.is_authenticated %}{{ request.user.last_name }}{% endif %}"
+                                    class="w-full px-4 py-2.5 border border-muted rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark bg-transparent transition-colors placeholder-muted {% if request.user.is_authenticated %}cursor-not-allowed bg-light/50 opacity-80{% endif %}"
+                                    {% if request.user.is_authenticated %}readonly{% endif %}>
+                            </div>
+                        </div>
+
+                        <div id="usernameField" class="transition-all duration-300 {% if not request.user.is_authenticated %}hidden{% endif %}">
+                            <div class="space-y-2">
+                                <label class="block text-xs font-bold text-dark uppercase" for="username">Account Username</label>
+                                <input type="text" name="username" id="username" placeholder="Choose a username" 
+                                    {% if not request.user.is_authenticated %}required{% endif %}
+                                    {% if request.user.is_authenticated %} value="{{ request.user.username }}" readonly {% endif %}
+                                    class="w-full px-4 py-2.5 border border-muted rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark bg-transparent transition-colors placeholder-muted {% if request.user.is_authenticated %}cursor-not-allowed bg-light/50 opacity-80{% endif %}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold text-dark uppercase" for="email">Email Address</label>
+                        <input type="email" name="email" id="email" placeholder="you@example.com" 
+                            {% if not request.user.is_authenticated %}required{% endif %}
+                            {% if request.user.is_authenticated %} value="{{ request.user.email }}" readonly {% endif %}
+                            class="w-full px-4 py-2.5 border border-muted rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark bg-transparent transition-colors placeholder-muted {% if request.user.is_authenticated %}cursor-not-allowed bg-light/50 opacity-80{% endif %}">
+                    </div>
+
+                    {% if not request.user.is_authenticated %}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-dark uppercase">Password</label>
+                            <div class="relative">
+                                <input type="password" name="password" id="password" required placeholder="••••••••"
+                                    class="w-full px-4 py-2.5 border border-muted rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark bg-transparent transition-colors placeholder-muted">
+                                <button type="button" onclick="togglePassword('password','icon1')" class="absolute right-3 top-2.5 text-muted hover:text-dark transition-colors">
+                                    <span class="material-icons text-xl" id="icon1">visibility_off</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-dark uppercase">Confirm Password</label>
+                            <div class="relative">
+                                <input type="password" name="confirm_password" id="confirm_password" required placeholder="••••••••"
+                                    class="w-full px-4 py-2.5 border border-muted rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark bg-transparent transition-colors placeholder-muted">
+                                <button type="button" onclick="togglePassword('confirm_password','icon2')" class="absolute right-3 top-2.5 text-muted hover:text-dark transition-colors">
+                                    <span class="material-icons text-xl" id="icon2">visibility_off</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
 
                 <div class="mb-8">
-                    <h3 class="text-sm font-bold text-dark uppercase tracking-widest border-b border-muted/30 pb-2 mb-4">Business Details</h3>
+                    <h3 class="text-sm font-bold text-dark uppercase tracking-widest border-b border-muted/30 pb-2 mb-4">2. Business Details</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-5">
+                        
                         <div class="md:col-span-2">
                             <label class="block text-xs font-bold text-dark mb-1 uppercase" for="store_name">Store Name *</label>
-                            <input class="w-full px-4 py-2.5 border border-muted rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark bg-transparent transition-colors placeholder-muted" type="text" id="store_name" name="store_name" placeholder="E.g. Julian's Tech Haven" required>
+                            <input class="w-full px-4 py-2.5 border border-muted rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark bg-transparent transition-colors placeholder-muted" type="text" id="store_name" name="store_name" placeholder="E.g. StackShop Exclusives" required>
                         </div>
                         
                         <div>
-                            <label class="block text-xs font-bold text-dark mb-1 uppercase" for="business_phone">Business Phone *</label>
-                            <input class="w-full px-4 py-2.5 border border-muted rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark bg-transparent transition-colors placeholder-muted" type="tel" id="business_phone" name="business_phone" placeholder="+1 (555) 000-0000" required>
+                            <label class="block text-xs font-bold text-dark mb-1 uppercase" for="phone">Business Phone *</label>
+                            <input id="phone" type="tel" name="business_phone" placeholder="Enter phone number"
+                                {% if not request.user.is_authenticated %}required{% endif %}
+                                {% if request.user.is_authenticated and request.user.phone_number %} value="{{ request.user.phone_number }}" readonly {% endif %}
+                                class="w-full px-4 py-2.5 border border-muted rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark bg-transparent transition-colors placeholder-muted {% if request.user.is_authenticated and request.user.phone_number %}cursor-not-allowed bg-light/50 opacity-80{% endif %}">
                         </div>
 
                         <div>
@@ -100,23 +184,52 @@
 
                         <div class="md:col-span-2">
                             <label class="block text-xs font-bold text-dark mb-1 uppercase" for="description">What will you sell? *</label>
-                            <textarea class="w-full px-4 py-3 border border-muted rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark bg-transparent transition-colors placeholder-muted resize-none" id="description" name="description" rows="3" placeholder="Briefly describe the types of products you plan to list on StackShop..." required></textarea>
+                            <textarea class="w-full px-4 py-3 border border-muted rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark bg-transparent transition-colors placeholder-muted resize-none" id="description" name="description" rows="3" placeholder="Briefly describe the types of products you plan to list..." required></textarea>
                         </div>
+
+                        <div class="md:col-span-2 space-y-2 mt-2">
+                            <label class="block text-xs font-bold text-dark mb-1 uppercase">Store Logo</label>
+                            <div class="relative group">
+                                <input type="file" name="logo" id="logoInput" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                <div class="w-full bg-light/30 border-2 border-dashed border-muted group-hover:border-dark group-hover:bg-white rounded-xl px-5 py-6 text-center transition-all flex flex-col items-center justify-center gap-2">
+                                    <img id="logoPreview" class="hidden w-24 h-24 object-cover rounded-xl shadow-md border border-muted">
+                                    <span id="uploadIcon" class="material-icons-outlined text-muted text-3xl group-hover:text-dark transition-colors">add_photo_alternate</span>
+                                    <p class="text-xs text-dark/60 font-bold uppercase tracking-wider">Upload Brand Identity</p>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
                 <div class="mt-8 pt-6 border-t border-muted/30">
-                    <label class="flex items-start gap-3 cursor-pointer mb-6">
-                        <input type="checkbox" required class="mt-1 w-4 h-4 rounded border-muted text-dark focus:ring-dark cursor-pointer">
-                        <span class="text-sm font-medium text-dark/80">I agree to the <a href="#" class="text-dark font-bold hover:text-muted transition-colors underline">Seller Terms of Service</a> and acknowledge that my store will only become active upon admin approval.</span>
+                    <label class="flex items-start gap-3 cursor-pointer mb-6 group">
+                        <input type="checkbox" required class="mt-1 w-4 h-4 rounded border-muted text-dark focus:ring-dark cursor-pointer transition-colors">
+                        <span class="text-sm font-medium text-dark/80 group-hover:text-dark transition-colors">I agree to the <a href="#" class="text-dark font-bold hover:text-muted transition-colors underline">Seller Terms of Service</a> and acknowledge that my store will only become active upon admin approval.</span>
                     </label>
 
                     <button type="submit" class="w-full bg-dark hover:bg-opacity-90 text-light text-base font-bold py-3.5 px-6 rounded-lg transition-all shadow-md flex items-center justify-center gap-2">
                         Submit Seller Application <span class="material-icons text-sm">send</span>
                     </button>
+
+                    {% if not request.user.is_authenticated %}
+                    <div class="relative py-6 flex items-center justify-center mt-2">
+                        <span class="absolute inset-x-0 h-px bg-muted/30"></span>
+                        <span class="relative bg-white px-4 text-[10px] font-bold text-muted uppercase tracking-widest">Or register with</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <button type="button" class="flex items-center justify-center gap-2 py-2.5 border border-muted/50 rounded-lg hover:bg-light transition-all text-sm font-semibold text-dark shadow-sm">
+                            <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4" alt="Google"> Google
+                        </button>
+                        <button type="button" class="flex items-center justify-center gap-2 py-2.5 border border-muted/50 rounded-lg hover:bg-light transition-all text-sm font-semibold text-dark shadow-sm">
+                            <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" class="w-4 h-4" alt="Facebook"> Facebook
+                        </button>
+                    </div>
+                    {% endif %}
                 </div>
+
             </form>
-            
         </div>
     </main>
 
@@ -127,5 +240,89 @@
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.5.3/build/js/intlTelInput.min.js"></script>
+    <script>
+        // 1. Tab Switch Logic for Identity
+        function switchIdentityTab(type) {
+            const nameFields = document.getElementById('nameFields');
+            const usernameField = document.getElementById('usernameField');
+            const highlight = document.getElementById('tab-highlight');
+            const btnName = document.getElementById('btn-name');
+            const btnUser = document.getElementById('btn-username');
+
+            if (type === 'name') {
+                nameFields.classList.remove('hidden');
+                usernameField.classList.add('hidden');
+                highlight.style.transform = 'translateX(0)';
+                btnName.classList.add('text-dark');
+                btnName.classList.remove('text-muted');
+                btnUser.classList.add('text-muted');
+                btnUser.classList.remove('text-dark');
+            } else {
+                nameFields.classList.add('hidden');
+                usernameField.classList.remove('hidden');
+                highlight.style.transform = 'translateX(100%)';
+                btnUser.classList.add('text-dark');
+                btnUser.classList.remove('text-muted');
+                btnName.classList.add('text-muted');
+                btnName.classList.remove('text-dark');
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            
+            // 2. Telephone Input Logic
+            const phoneInput = document.querySelector("#phone");
+            const form = document.getElementById("registrationForm");
+            let iti = null;
+
+            if (phoneInput && !phoneInput.readOnly) {
+                iti = window.intlTelInput(phoneInput, {
+                    initialCountry: "in",   // fallback
+                    separateDialCode: true,
+                    utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.5.3/build/js/utils.js",
+                });
+            }
+
+            // Phone Validation on Submit
+            form.addEventListener("submit", function (e) {
+                if (iti && !phoneInput.readOnly) {
+                    if (!iti.isValidNumber()) {
+                        alert("Please enter a valid phone number.");
+                        e.preventDefault();
+                        return;
+                    }
+                }
+            });
+
+            // 3. Toggle Password Visibility
+            window.togglePassword = function (inputId, iconId) {
+                const field = document.getElementById(inputId);
+                const icon = document.getElementById(iconId);
+                field.type = field.type === "password" ? "text" : "password";
+                icon.textContent = field.type === "password" ? "visibility" : "visibility_off";
+            };
+
+            // 4. Logo File Preview Logic
+            const logoInput = document.getElementById("logoInput");
+            const logoPreview = document.getElementById("logoPreview");
+            const uploadIcon = document.getElementById("uploadIcon");
+
+            if (logoInput) {
+                logoInput.addEventListener("change", function () {
+                    const file = this.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            logoPreview.src = e.target.result;
+                            logoPreview.classList.remove("hidden");
+                            uploadIcon.classList.add("hidden");
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
