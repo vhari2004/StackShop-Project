@@ -1,0 +1,288 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order History - StackShop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link type="icon/" rel="icon" href="/static/favicon.ico" />
+    <style>
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Star rating hover effect */
+        .star-rating-input:hover ~ .star-rating-input { color: #ACBAC4; }
+        .star-rating-group:hover .star-rating-input { color: #E1D9BC; }
+    </style>
+</head>
+
+<body class="bg-[#F0F0DB] font-sans flex min-h-screen text-[#30364F]">
+
+    <aside class="w-full md:w-64 bg-[#30364F] flex flex-col flex-shrink-0 shadow-xl z-10 md:min-h-screen">
+        {% include "customer_templates/profile_sidebar.html" %}
+    </aside>
+
+    <main class="flex-grow flex flex-col items-center justify-start p-4 md:p-8 overflow-y-auto">
+
+        <div class="bg-white rounded-xl shadow-sm w-full max-w-6xl p-6 md:p-10 lg:p-14">
+
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10 border-b border-[#ACBAC4]/30 pb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-[#30364F]">
+                        Order History
+                    </h2>
+                    <p class="text-[#ACBAC4] text-sm font-medium mt-1">View your past orders, track deliveries, and leave reviews.</p>
+                </div>
+                
+                <div class="relative">
+                    <input type="text" placeholder="Search orders..." class="w-full sm:w-64 pl-10 pr-4 py-2.5 bg-[#F0F0DB]/30 border border-[#ACBAC4]/50 rounded-lg text-sm focus:outline-none focus:border-[#30364F] focus:ring-1 focus:ring-[#30364F] transition-all text-[#30364F]">
+                    <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-[#ACBAC4] text-[18px]">search</span>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto hide-scrollbar rounded-xl border border-[#ACBAC4]/30">
+                <table class="min-w-full text-left border-collapse">
+                    
+                    <thead class="bg-[#F0F0DB]/50 text-[#30364F]">
+                        <tr>
+                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-widest border-b border-[#ACBAC4]/30">Item Details</th>
+                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-widest border-b border-[#ACBAC4]/30">Date / Order ID</th>
+                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-widest border-b border-[#ACBAC4]/30">Status</th>
+                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-widest border-b border-[#ACBAC4]/30">Total</th>
+                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-widest border-b border-[#ACBAC4]/30 text-center">Action</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody class="divide-y divide-[#ACBAC4]/20">
+                        
+                        <tr class="hover:bg-[#F0F0DB]/10 transition-colors group">
+                            <td class="px-6 py-5">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-16 h-16 rounded-lg bg-[#F0F0DB]/50 border border-[#ACBAC4]/30 flex-shrink-0 overflow-hidden">
+                                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=200" alt="Product" class="w-full h-full object-cover mix-blend-multiply p-1">
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-[#30364F] mb-0.5 truncate max-w-[200px]" title="Swift Run Sneakers">Swift Run Sneakers</h4>
+                                        <p class="text-xs text-[#ACBAC4] font-medium">Qty: 1 • Size: 10</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap">
+                                <p class="text-sm font-bold text-[#30364F]">Oct 12, 2025</p>
+                                <p class="text-xs text-[#ACBAC4] font-medium mt-0.5">#ORD-982374</p>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap">
+                                <span class="inline-flex items-center gap-1.5 bg-green-50 text-green-700 border border-green-200 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Delivered
+                                </span>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap">
+                                <span class="text-sm font-extrabold text-[#30364F]">$120.00</span>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap text-center">
+                                <button onclick="openModal('reviewModal')" class="bg-white border border-[#30364F] text-[#30364F] hover:bg-[#30364F] hover:text-[#F0F0DB] px-4 py-2 rounded-lg text-xs font-bold transition-colors shadow-sm inline-flex items-center gap-1.5">
+                                    <span class="material-icons text-[14px]">star_border</span> Rate Item
+                                </button>
+                            </td>
+                        </tr>
+
+                        <tr class="hover:bg-[#F0F0DB]/10 transition-colors group">
+                            <td class="px-6 py-5">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-16 h-16 rounded-lg bg-[#F0F0DB]/50 border border-[#ACBAC4]/30 flex-shrink-0 overflow-hidden">
+                                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=200" alt="Product" class="w-full h-full object-cover mix-blend-multiply p-1">
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-[#30364F] mb-0.5 truncate max-w-[200px]" title="Studio Bass Headphones">Studio Bass Headphones</h4>
+                                        <p class="text-xs text-[#ACBAC4] font-medium">Qty: 1 • Color: Black</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap">
+                                <p class="text-sm font-bold text-[#30364F]">Nov 02, 2025</p>
+                                <p class="text-xs text-[#ACBAC4] font-medium mt-0.5">#ORD-109283</p>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap">
+                                <span class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span> Processing
+                                </span>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap">
+                                <span class="text-sm font-extrabold text-[#30364F]">$299.00</span>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap text-center">
+                                <a href="#" class="text-[#ACBAC4] hover:text-[#30364F] text-xs font-bold transition-colors underline">Track Order</a>
+                            </td>
+                        </tr>
+
+                        <tr class="hover:bg-[#F0F0DB]/10 transition-colors group">
+                            <td class="px-6 py-5">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-16 h-16 rounded-lg bg-[#F0F0DB]/50 border border-[#ACBAC4]/30 flex-shrink-0 overflow-hidden">
+                                        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=200" alt="Product" class="w-full h-full object-cover mix-blend-multiply p-1">
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-[#30364F] mb-0.5 truncate max-w-[200px]" title="Minimalist Smartwatch">Minimalist Smartwatch</h4>
+                                        <p class="text-xs text-[#ACBAC4] font-medium">Qty: 2 • Silver</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap">
+                                <p class="text-sm font-bold text-[#30364F]">Sep 28, 2025</p>
+                                <p class="text-xs text-[#ACBAC4] font-medium mt-0.5">#ORD-882112</p>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap">
+                                <span class="inline-flex items-center gap-1.5 bg-green-50 text-green-700 border border-green-200 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Delivered
+                                </span>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap">
+                                <span class="text-sm font-extrabold text-[#30364F]">$398.00</span>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap text-center">
+                                <div class="flex flex-col items-center justify-center">
+                                    <div class="flex items-center text-yellow-400">
+                                        <span class="material-icons text-[16px]">star</span>
+                                        <span class="material-icons text-[16px]">star</span>
+                                        <span class="material-icons text-[16px]">star</span>
+                                        <span class="material-icons text-[16px]">star</span>
+                                        <span class="material-icons text-[16px]">star_half</span>
+                                    </div>
+                                    <a href="#" class="text-[10px] text-[#ACBAC4] hover:text-[#30364F] font-bold mt-1 underline">Edit Review</a>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr class="hover:bg-[#F0F0DB]/10 transition-colors group opacity-75">
+                            <td class="px-6 py-5">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-16 h-16 rounded-lg bg-[#F0F0DB]/50 border border-[#ACBAC4]/30 flex-shrink-0 overflow-hidden grayscale">
+                                        <img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&q=80&w=200" alt="Product" class="w-full h-full object-cover mix-blend-multiply p-1">
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-[#30364F] mb-0.5 truncate max-w-[200px] line-through" title="Ceramic Table Lamp">Ceramic Table Lamp</h4>
+                                        <p class="text-xs text-[#ACBAC4] font-medium">Qty: 1</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap">
+                                <p class="text-sm font-bold text-[#30364F]">Aug 15, 2025</p>
+                                <p class="text-xs text-[#ACBAC4] font-medium mt-0.5">#ORD-667234</p>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap">
+                                <span class="inline-flex items-center gap-1.5 bg-red-50 text-red-700 border border-red-200 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> Cancelled
+                                </span>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap">
+                                <span class="text-sm font-extrabold text-[#ACBAC4] line-through">$89.00</span>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap text-center">
+                                <span class="text-[10px] text-[#ACBAC4] font-bold uppercase tracking-widest">Refunded</span>
+                            </td>
+                        </tr>
+                        
+                        </tbody>
+                </table>
+            </div>
+
+            <div class="flex items-center justify-between mt-8 border-t border-[#ACBAC4]/20 pt-6">
+                <span class="text-sm font-medium text-[#ACBAC4]">Showing 1 to 4 of 12 orders</span>
+                <div class="flex gap-2">
+                    <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-[#ACBAC4]/50 text-[#ACBAC4] hover:bg-[#30364F] hover:text-[#F0F0DB] hover:border-[#30364F] transition-all disabled:opacity-50" disabled>
+                        <span class="material-icons text-sm">chevron_left</span>
+                    </button>
+                    <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-[#30364F] bg-[#30364F] text-[#F0F0DB] text-sm font-bold">1</button>
+                    <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-[#ACBAC4]/50 text-[#30364F] hover:bg-[#30364F] hover:text-[#F0F0DB] text-sm font-bold transition-all">2</button>
+                    <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-[#ACBAC4]/50 text-[#ACBAC4] hover:bg-[#30364F] hover:text-[#F0F0DB] hover:border-[#30364F] transition-all">
+                        <span class="material-icons text-sm">chevron_right</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="mt-8 flex gap-8 text-xs font-bold text-[#ACBAC4]">
+            <a href="#" class="hover:text-[#30364F] transition-colors uppercase">Privacy Policy</a>
+            <a href="#" class="hover:text-[#30364F] transition-colors uppercase">Security Settings</a>
+            <a href="#" class="hover:text-[#30364F] transition-colors uppercase">Request Account Data</a>
+        </div>
+
+    </main>
+
+    <div id="reviewModal" class="fixed inset-0 z-[100] flex items-center justify-center hidden">
+        <div class="absolute inset-0 bg-[#30364F]/70 backdrop-blur-sm transition-opacity" onclick="closeModal('reviewModal')"></div>
+        
+        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg p-8 transform scale-95 opacity-0 transition-all duration-300" id="modalBox">
+            <button onclick="closeModal('reviewModal')" class="absolute top-4 right-4 text-[#ACBAC4] hover:text-[#30364F] transition-colors">
+                <span class="material-icons">close</span>
+            </button>
+            
+            <h2 class="text-2xl font-bold text-[#30364F] mb-2">Write a Review</h2>
+            <p class="text-sm text-[#ACBAC4] font-medium mb-6">Share your thoughts and experience with this product.</p>
+            
+            <form action="#" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="order_item_id" value="" id="review_item_id">
+
+                <div class="mb-6 flex flex-col items-center justify-center bg-[#F0F0DB]/30 p-4 rounded-xl border border-[#ACBAC4]/30">
+                    <p class="text-xs font-bold text-[#30364F] uppercase tracking-widest mb-3">Overall Rating</p>
+                    <div class="flex flex-row-reverse justify-center star-rating-group cursor-pointer">
+                        <input type="radio" id="star5" name="rating" value="5" class="hidden peer" />
+                        <label for="star5" class="material-icons text-3xl text-[#ACBAC4] peer-checked:text-[#E1D9BC] hover:text-[#E1D9BC] star-rating-input transition-colors">star</label>
+                        
+                        <input type="radio" id="star4" name="rating" value="4" class="hidden peer" />
+                        <label for="star4" class="material-icons text-3xl text-[#ACBAC4] peer-checked:text-[#E1D9BC] hover:text-[#E1D9BC] star-rating-input transition-colors">star</label>
+                        
+                        <input type="radio" id="star3" name="rating" value="3" class="hidden peer" />
+                        <label for="star3" class="material-icons text-3xl text-[#ACBAC4] peer-checked:text-[#E1D9BC] hover:text-[#E1D9BC] star-rating-input transition-colors">star</label>
+                        
+                        <input type="radio" id="star2" name="rating" value="2" class="hidden peer" />
+                        <label for="star2" class="material-icons text-3xl text-[#ACBAC4] peer-checked:text-[#E1D9BC] hover:text-[#E1D9BC] star-rating-input transition-colors">star</label>
+                        
+                        <input type="radio" id="star1" name="rating" value="1" class="hidden peer" />
+                        <label for="star1" class="material-icons text-3xl text-[#ACBAC4] peer-checked:text-[#E1D9BC] hover:text-[#E1D9BC] star-rating-input transition-colors">star</label>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-xs font-bold text-[#30364F] mb-2 uppercase tracking-wide">Review Comments</label>
+                    <textarea name="review_text" rows="4" placeholder="What did you like or dislike? What should other shoppers know?" required class="w-full px-4 py-3 border border-[#ACBAC4]/50 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#30364F] focus:border-[#30364F] bg-transparent transition text-[#30364F] placeholder-[#ACBAC4]/70 resize-none"></textarea>
+                </div>
+                
+                <div class="flex gap-4 justify-end border-t border-[#ACBAC4]/20 pt-6">
+                    <button type="button" onclick="closeModal('reviewModal')" class="px-6 py-2.5 text-sm font-bold text-[#ACBAC4] hover:text-[#30364F] hover:bg-[#F0F0DB]/50 rounded-lg transition-colors">Cancel</button>
+                    <button type="submit" class="px-8 py-2.5 bg-[#30364F] text-[#F0F0DB] rounded-lg text-sm font-bold hover:bg-opacity-90 shadow-md transition flex items-center gap-2">
+                        Submit Review <span class="material-icons text-[16px]">send</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            const modalBox = document.getElementById('modalBox');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modalBox.classList.remove('scale-95', 'opacity-0');
+                modalBox.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            const modalBox = document.getElementById('modalBox');
+            modalBox.classList.remove('scale-100', 'opacity-100');
+            modalBox.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+    </script>
+</body>
+</html>

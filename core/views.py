@@ -12,6 +12,7 @@ def home_view(request):
     return render(request,'core_templates/homepage.html')
 
 def register_view(request):
+    role=request.GET.get('role')
     if request.method=="POST":
         username=request.POST.get('username')
         email=request.POST.get('email')
@@ -26,9 +27,18 @@ def register_view(request):
         if CustomUser.objects.filter(email=email).exists():
             messages.error(request,'Invalid email !')
             return render(request,'core_templates/registerpage.html',{'username': username,'email': email})
-        user=CustomUser.objects.create_user(username=username,email=email,password=password)
-        user.save()
-        messages.success(request,'User registration successfull')
+        if role == 'seller':
+            store_name = request.POST.get('store_name')
+            store_slug = request.POST.get('store_slug')
+            business_address = request.POST.get('business_address')
+            gst_number = request.POST.get('gst_number')
+            pan_number = request.POST.get('pan_number')
+            bank_account_number = request.POST.get('bank_account_number')
+            ifsc_code = request.POST.get('ifsc_code')
+            user=CustomUser.objects.create_user(username=username,email=email,password=password,role='SELLER')
+        else:
+            user=CustomUser.objects.create_user(username=username,email=email,password=password)
+            user.save()
         return redirect('login')
     return render(request,'core_templates/registerpage.html')
 
@@ -52,9 +62,10 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('home')
-@admin_required
 def category_view(request):
     return render(request,'core_templates/categories.html')
+def deals_view(request):
+    return render(request,'core_templates/dealspage.html')
 
 
 

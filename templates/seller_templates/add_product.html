@@ -1,0 +1,275 @@
+{% load static %}
+<!DOCTYPE html>
+<html class="light scroll-smooth" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Add New Product - StackShop Seller Central</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "dark": "#30364F",
+                        "muted": "#ACBAC4",
+                        "accent": "#E1D9BC",
+                        "light": "#F0F0DB",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* Custom Toggle Switch */
+        .toggle-checkbox:checked { right: 0; border-color: #30364F; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #30364F; }
+    </style>
+</head>
+
+<body class="bg-light text-dark font-display flex flex-col min-h-screen">
+    
+    <header class="max-w-7xl mx-auto w-full pt-6 px-4 z-50">
+        <nav class="bg-dark text-light rounded-xl px-6 py-4 flex items-center justify-between shadow-lg border-b-4 border-accent">
+            <div class="flex items-center gap-3 cursor-pointer">
+                <svg class="w-8 h-8 text-accent" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+                <div class="flex flex-col">
+                    <span class="text-xl font-bold tracking-wide leading-none">StackShop</span>
+                    <span class="text-[10px] text-accent font-bold uppercase tracking-widest mt-1">Seller Central</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-4 border-l border-muted/30 pl-6 text-muted">
+                <a href="#" class="text-sm font-bold text-light flex items-center gap-2 hover:text-accent transition-colors">
+                    <span class="material-icons text-[18px]">arrow_back</span> Back to Inventory
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="max-w-4xl mx-auto w-full px-4 mt-8 mb-20 flex-grow">
+        
+        <div class="mb-8">
+            <h1 class="text-3xl font-extrabold text-dark tracking-tight">Add New Product</h1>
+            <p class="text-muted font-medium mt-1">Fill in the details below to list a new product in your store.</p>
+        </div>
+
+        <form action="#" method="POST" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+
+            <div class="bg-white rounded-xl shadow-sm border border-muted/50 p-6 md:p-8">
+                <h2 class="text-lg font-bold text-dark border-b border-muted/30 pb-3 mb-6 flex items-center gap-2">
+                    <span class="material-icons text-accent">info</span> Basic Information
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Product Name <span class="text-red-500">*</span></label>
+                        <input type="text" name="name" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark placeholder-muted" placeholder="e.g., Sony WH-1000XM4 Wireless Headphones">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Category <span class="text-red-500">*</span></label>
+                        <select name="category" id="category-select" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark">
+                            <option value="">Select Category</option>
+                            <option value="1">Electronics</option>
+                            <option value="2">Fashion</option>
+                            </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Subcategory <span class="text-red-500">*</span></label>
+                        <select name="subcategory" id="subcategory-select" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark">
+                            <option value="">Select Subcategory</option>
+                            <option value="1">Headphones</option>
+                            <option value="2">Smartphones</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Brand <span class="text-red-500">*</span></label>
+                        <input type="text" name="brand" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark" placeholder="e.g., Sony">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Model Number <span class="text-red-500">*</span></label>
+                        <input type="text" name="model_number" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark" placeholder="e.g., WH1000XM4/B">
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Description <span class="text-red-500">*</span></label>
+                        <textarea name="description" rows="5" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark resize-none" placeholder="Provide a detailed description of the product..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-muted/50 p-6 md:p-8">
+                <h2 class="text-lg font-bold text-dark border-b border-muted/30 pb-3 mb-6 flex items-center gap-2">
+                    <span class="material-icons text-accent">payments</span> Pricing & Inventory
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="md:col-span-3">
+                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">SKU Code (Optional)</label>
+                        <input type="text" name="sku_code" class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark" placeholder="e.g., SNY-WH4-BLK">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">MRP (Original Price) <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-bold">$</span>
+                            <input type="number" step="0.01" name="mrp" required class="w-full pl-8 pr-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark" placeholder="0.00">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Selling Price <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-dark font-bold">$</span>
+                            <input type="number" step="0.01" name="selling_price" required class="w-full pl-8 pr-4 py-3 bg-light/30 border border-dark/30 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark font-bold" placeholder="0.00">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Cost Price <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-bold">$</span>
+                            <input type="number" step="0.01" name="cost_price" required class="w-full pl-8 pr-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark" placeholder="0.00">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Stock Quantity <span class="text-red-500">*</span></label>
+                        <input type="number" name="stock_quantity" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark" placeholder="0">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Tax Percentage (%) <span class="text-red-500">*</span></label>
+                        <input type="number" step="0.1" name="tax_percentage" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark" placeholder="e.g., 18.0">
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-muted/50 p-6 md:p-8">
+                <h2 class="text-lg font-bold text-dark border-b border-muted/30 pb-3 mb-6 flex items-center gap-2">
+                    <span class="material-icons text-accent">local_shipping</span> Shipping & Dimensions
+                </h2>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div>
+                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Weight (kg) <span class="text-red-500">*</span></label>
+                        <input type="number" step="0.01" name="weight" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark" placeholder="0.00">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Length (cm) <span class="text-red-500">*</span></label>
+                        <input type="number" step="0.1" name="length" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark" placeholder="0.0">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Width (cm) <span class="text-red-500">*</span></label>
+                        <input type="number" step="0.1" name="width" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark" placeholder="0.0">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Height (cm) <span class="text-red-500">*</span></label>
+                        <input type="number" step="0.1" name="height" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark" placeholder="0.0">
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-muted/50 p-6 md:p-8">
+                <h2 class="text-lg font-bold text-dark border-b border-muted/30 pb-3 mb-6 flex items-center gap-2">
+                    <span class="material-icons text-accent">policy</span> Policies
+                </h2>
+                
+                <div class="flex flex-col md:flex-row gap-8">
+                    <div class="flex items-center justify-between w-full md:w-1/3 p-4 border border-muted/30 rounded-lg bg-light/30">
+                        <div>
+                            <span class="block text-sm font-bold text-dark">Cancellable</span>
+                            <span class="block text-[10px] text-muted uppercase">Before shipping</span>
+                        </div>
+                        <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                            <input type="checkbox" name="is_cancellable" id="toggle-cancel" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-2 border-muted appearance-none cursor-pointer z-10" checked/>
+                            <label for="toggle-cancel" class="toggle-label block overflow-hidden h-5 rounded-full bg-muted cursor-pointer transition-colors duration-200"></label>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between w-full md:w-1/3 p-4 border border-muted/30 rounded-lg bg-light/30">
+                        <div>
+                            <span class="block text-sm font-bold text-dark">Returnable</span>
+                            <span class="block text-[10px] text-muted uppercase">Accept returns</span>
+                        </div>
+                        <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                            <input type="checkbox" name="is_returnable" id="toggle-return" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-2 border-muted appearance-none cursor-pointer z-10" checked onchange="toggleReturnDays()"/>
+                            <label for="toggle-return" class="toggle-label block overflow-hidden h-5 rounded-full bg-muted cursor-pointer transition-colors duration-200"></label>
+                        </div>
+                    </div>
+
+                    <div class="w-full md:w-1/3" id="return-days-container">
+                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Return Window (Days)</label>
+                        <input type="number" name="return_days" id="return_days" value="7" min="1" class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark">
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-muted/50 p-6 md:p-8">
+                <h2 class="text-lg font-bold text-dark border-b border-muted/30 pb-3 mb-6 flex items-center gap-2">
+                    <span class="material-icons text-accent">image</span> Product Images
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="border-2 border-dashed border-dark rounded-xl p-6 flex flex-col items-center justify-center text-center bg-light/20 relative group hover:bg-light/50 transition-colors">
+                        <span class="material-icons text-4xl text-dark mb-2">add_photo_alternate</span>
+                        <h4 class="text-sm font-bold text-dark mb-1">Upload Primary Image</h4>
+                        <p class="text-[10px] text-muted uppercase tracking-widest mb-4">Max 2MB (JPG, PNG)</p>
+                        <input type="file" name="primary_image" accept="image/*" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                        <span class="bg-dark text-light px-4 py-2 rounded text-xs font-bold pointer-events-none">Choose File</span>
+                    </div>
+
+                    <div class="border-2 border-dashed border-muted rounded-xl p-6 flex flex-col items-center justify-center text-center bg-light/20 relative group hover:bg-light/50 transition-colors">
+                        <span class="material-icons text-4xl text-muted mb-2">collections</span>
+                        <h4 class="text-sm font-bold text-muted mb-1">Additional Images</h4>
+                        <p class="text-[10px] text-muted uppercase tracking-widest mb-4">Select multiple files</p>
+                        <input type="file" name="additional_images" accept="image/*" multiple class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                        <span class="border border-muted text-muted px-4 py-2 rounded text-xs font-bold pointer-events-none group-hover:bg-muted group-hover:text-white transition-colors">Choose Files</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-4 pt-4 border-t border-muted/30">
+                <button type="button" class="px-6 py-3 text-sm font-bold text-dark hover:bg-muted/20 rounded-lg transition-colors">
+                    Cancel
+                </button>
+                <button type="submit" class="bg-dark text-light px-8 py-3 rounded-lg text-sm font-bold hover:bg-opacity-90 transition-all shadow-md flex items-center gap-2">
+                    <span class="material-icons text-[18px]">publish</span> Publish Product
+                </button>
+            </div>
+
+        </form>
+    </main>
+
+    <script>
+        // Logic to hide/disable Return Days if "Returnable" is toggled off
+        function toggleReturnDays() {
+            const isReturnable = document.getElementById('toggle-return').checked;
+            const container = document.getElementById('return-days-container');
+            const input = document.getElementById('return_days');
+            
+            if (isReturnable) {
+                container.style.opacity = '1';
+                input.disabled = false;
+            } else {
+                container.style.opacity = '0.5';
+                input.disabled = true;
+                input.value = 0;
+            }
+        }
+    </script>
+</body>
+</html>

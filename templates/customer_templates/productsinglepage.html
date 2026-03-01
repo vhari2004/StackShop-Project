@@ -1,0 +1,377 @@
+{% load static %}
+<!DOCTYPE html>
+<html class="light scroll-smooth" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Product Details - StackShop</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link type="icon/" rel="icon" href="/static/favicon.ico" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "dark": "#30364F",
+                        "muted": "#ACBAC4",
+                        "accent": "#E1D9BC",
+                        "light": "#F0F0DB",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* Hide number input arrows */
+        input[type="number"]::-webkit-inner-spin-button, 
+        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"] { -moz-appearance: textfield; }
+        
+        /* Custom Radio Button styling for variants */
+        .variant-radio:checked + label {
+            border-color: #30364F;
+            background-color: #30364F;
+            color: #F0F0DB;
+        }
+        .color-radio:checked + label {
+            border-color: #30364F;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+
+<body class="bg-[#F0F0DB] text-[#30364F] font-display flex flex-col min-h-screen overflow-x-hidden">
+    
+    {% include "customer_templates/Navbar.html" %}
+
+    <main class="max-w-7xl mx-auto w-full px-4 py-8 flex-grow">
+
+        <nav class="flex items-center gap-2 text-sm font-bold text-[#ACBAC4] mb-8 uppercase tracking-widest">
+            <a href="{% url 'home' %}" class="hover:text-[#30364F] transition-colors">Home</a>
+            <span class="material-icons text-[14px]">chevron_right</span>
+            <a href="#" class="hover:text-[#30364F] transition-colors">Electronics</a>
+            <span class="material-icons text-[14px]">chevron_right</span>
+            <span class="text-[#30364F]">Studio Bass Headphones</span>
+        </nav>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 mb-20">
+            
+            <div class="lg:col-span-6 flex flex-col gap-4 sticky top-24">
+                <div class="aspect-square bg-white rounded-2xl border border-[#ACBAC4]/30 overflow-hidden shadow-sm relative flex items-center justify-center p-8">
+                    <div class="absolute top-4 left-4 bg-red-500 text-white text-xs font-black px-3 py-1.5 rounded uppercase tracking-widest z-10 shadow-sm">
+                        Sale
+                    </div>
+                    <img id="main-product-image" src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=800" alt="Product" class="w-full h-full object-contain mix-blend-multiply transition-opacity duration-300">
+                </div>
+                
+                <div class="flex gap-4 overflow-x-auto hide-scrollbar py-2 px-1 snap-x">
+                    <button onclick="changeImage(this, 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=800')" class="thumb-btn flex-shrink-0 w-24 h-24 sm:w-28 sm:h-28 bg-white border-2 border-[#30364F] rounded-xl overflow-hidden shadow-sm snap-start transition-all">
+                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=200" class="w-full h-full object-cover mix-blend-multiply p-2">
+                    </button>
+                    <button onclick="changeImage(this, 'https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&q=80&w=800')" class="thumb-btn flex-shrink-0 w-24 h-24 sm:w-28 sm:h-28 bg-white border border-[#ACBAC4]/30 rounded-xl overflow-hidden shadow-sm hover:border-[#30364F]/50 snap-start transition-all">
+                        <img src="https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&q=80&w=200" class="w-full h-full object-cover mix-blend-multiply p-2">
+                    </button>
+                    <button onclick="changeImage(this, 'https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&q=80&w=800')" class="thumb-btn flex-shrink-0 w-24 h-24 sm:w-28 sm:h-28 bg-white border border-[#ACBAC4]/30 rounded-xl overflow-hidden shadow-sm hover:border-[#30364F]/50 snap-start transition-all">
+                        <img src="https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&q=80&w=200" class="w-full h-full object-cover mix-blend-multiply p-2">
+                    </button>
+                    <button onclick="changeImage(this, 'https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&q=80&w=800')" class="thumb-btn flex-shrink-0 w-24 h-24 sm:w-28 sm:h-28 bg-white border border-[#ACBAC4]/30 rounded-xl overflow-hidden shadow-sm hover:border-[#30364F]/50 snap-start transition-all flex items-center justify-center relative">
+                        <img src="https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&q=80&w=200" class="w-full h-full object-cover mix-blend-multiply p-2 opacity-50 blur-sm">
+                        <span class="absolute inset-0 flex items-center justify-center bg-black/10 backdrop-blur-[2px] font-bold text-[#30364F]">
+                            +2 More
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="lg:col-span-6 flex flex-col">
+                
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#30364F] leading-tight mb-3">Studio Bass Wireless Headphones</h1>
+                
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="flex items-center text-yellow-500">
+                        <span class="material-icons text-[18px]">star</span>
+                        <span class="material-icons text-[18px]">star</span>
+                        <span class="material-icons text-[18px]">star</span>
+                        <span class="material-icons text-[18px]">star</span>
+                        <span class="material-icons text-[18px]">star_half</span>
+                    </div>
+                    <a href="#reviews" class="text-sm font-bold text-[#ACBAC4] hover:text-[#30364F] underline transition-colors">124 Reviews</a>
+                    <span class="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded uppercase tracking-wider">In Stock</span>
+                </div>
+
+                <div class="flex items-end gap-3 mb-6">
+                    <span class="text-4xl font-black text-[#30364F]">$299.00</span>
+                    <span class="text-lg font-bold text-[#ACBAC4] line-through mb-1">$399.00</span>
+                    <span class="text-sm font-bold text-red-500 mb-1.5">(Save 25%)</span>
+                </div>
+
+                <p class="text-[#30364F]/80 font-medium mb-8 leading-relaxed">
+                    Experience immersive, high-fidelity audio with active noise cancellation. Designed for all-day comfort with memory foam ear cushions and up to 40 hours of battery life on a single charge.
+                </p>
+
+                <form action="#" method="POST" class="space-y-8 border-t border-[#ACBAC4]/30 pt-8">
+                    {% csrf_token %}
+                    
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="font-bold text-[#30364F] uppercase tracking-wide text-sm">Color: <span id="color-name" class="text-[#ACBAC4] ml-1">Matte Black</span></h4>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="relative">
+                                <input type="radio" name="color" id="color-black" value="black" class="color-radio hidden" checked onchange="document.getElementById('color-name').innerText='Matte Black'">
+                                <label for="color-black" class="w-10 h-10 rounded-full bg-[#222222] border-2 border-transparent shadow-sm cursor-pointer block transition-all hover:scale-110 ring-2 ring-transparent hover:ring-[#ACBAC4] ring-offset-2 ring-offset-[#F0F0DB]"></label>
+                            </div>
+                            <div class="relative">
+                                <input type="radio" name="color" id="color-silver" value="silver" class="color-radio hidden" onchange="document.getElementById('color-name').innerText='Glacier Silver'">
+                                <label for="color-silver" class="w-10 h-10 rounded-full bg-[#E5E5E5] border-2 border-transparent shadow-sm cursor-pointer block transition-all hover:scale-110 ring-2 ring-transparent hover:ring-[#ACBAC4] ring-offset-2 ring-offset-[#F0F0DB]"></label>
+                            </div>
+                            <div class="relative">
+                                <input type="radio" name="color" id="color-navy" value="navy" class="color-radio hidden" onchange="document.getElementById('color-name').innerText='Midnight Navy'">
+                                <label for="color-navy" class="w-10 h-10 rounded-full bg-[#1B2A47] border-2 border-transparent shadow-sm cursor-pointer block transition-all hover:scale-110 ring-2 ring-transparent hover:ring-[#ACBAC4] ring-offset-2 ring-offset-[#F0F0DB]"></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="font-bold text-[#30364F] uppercase tracking-wide text-sm">Model Version</h4>
+                            <a href="#" class="text-xs font-bold text-[#ACBAC4] hover:text-[#30364F] underline">Compare Models</a>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <input type="radio" name="variant" id="var-standard" value="standard" class="variant-radio hidden" checked>
+                                <label for="var-standard" class="block text-center px-4 py-3 border border-[#ACBAC4]/50 rounded-xl font-bold text-[#30364F] cursor-pointer hover:border-[#30364F] transition-all bg-white">Standard</label>
+                            </div>
+                            <div>
+                                <input type="radio" name="variant" id="var-pro" value="pro" class="variant-radio hidden">
+                                <label for="var-pro" class="block text-center px-4 py-3 border border-[#ACBAC4]/50 rounded-xl font-bold text-[#30364F] cursor-pointer hover:border-[#30364F] transition-all bg-white">Pro (+$50)</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-[#ACBAC4]/40 rounded-xl p-4 shadow-sm flex items-center justify-between group hover:border-[#30364F] transition-colors">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-[#E1D9BC]/30 text-[#30364F] flex items-center justify-center">
+                                <span class="material-icons text-[20px]">local_shipping</span>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-[#ACBAC4] uppercase tracking-wider mb-0.5">Deliver to</p>
+                                <p class="text-sm font-bold text-[#30364F] truncate max-w-[200px] sm:max-w-xs">123 StackShop Ave, CA 94025</p>
+                            </div>
+                        </div>
+                        <button type="button" class="text-xs font-bold text-[#30364F] uppercase underline hover:text-[#E1D9BC] transition-colors">Change</button>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-4 pt-4">
+                        
+                        <div class="flex items-center bg-white border border-[#ACBAC4]/50 rounded-xl p-1 h-14 sm:w-1/4">
+                            <button type="button" onclick="updateQty(-1)" class="w-10 h-full flex items-center justify-center text-[#30364F] hover:bg-[#F0F0DB] rounded-lg transition-colors">
+                                <span class="material-icons text-[18px]">remove</span>
+                            </button>
+                            <input type="number" id="qty-input" name="quantity" value="1" min="1" max="10" class="w-full text-center font-extrabold text-[#30364F] bg-transparent border-none focus:ring-0 p-0">
+                            <button type="button" onclick="updateQty(1)" class="w-10 h-full flex items-center justify-center text-[#30364F] hover:bg-[#F0F0DB] rounded-lg transition-colors">
+                                <span class="material-icons text-[18px]">add</span>
+                            </button>
+                        </div>
+
+                        <div class="flex gap-4 sm:w-3/4">
+                            <button type="submit" name="action" value="cart" class="flex-1 bg-white border-2 border-[#30364F] text-[#30364F] font-bold rounded-xl h-14 flex items-center justify-center gap-2 hover:bg-[#30364F] hover:text-[#F0F0DB] transition-all shadow-sm">
+                                <span class="material-icons text-[20px]">add_shopping_cart</span> Add to Cart
+                            </button>
+                            
+                            <button type="submit" name="action" value="buy" class="flex-1 bg-[#30364F] text-[#F0F0DB] font-bold rounded-xl h-14 flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-lg shadow-[#30364F]/30">
+                                Buy Now
+                            </button>
+
+                            <button type="button" class="w-14 h-14 flex-shrink-0 bg-white border border-[#ACBAC4]/50 text-[#ACBAC4] rounded-xl flex items-center justify-center hover:text-red-500 hover:border-red-500 hover:bg-red-50 transition-all shadow-sm" title="Add to Wishlist">
+                                <span class="material-icons">favorite_border</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-4 text-[#ACBAC4] justify-center sm:justify-start pt-2">
+                        <div class="flex items-center gap-1.5"><span class="material-icons text-[16px]">verified_user</span><span class="text-xs font-bold uppercase tracking-wider">Secure Payment</span></div>
+                        <div class="flex items-center gap-1.5"><span class="material-icons text-[16px]">assignment_return</span><span class="text-xs font-bold uppercase tracking-wider">30-Day Returns</span></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 border-t border-[#ACBAC4]/30 pt-16 mb-20">
+            
+            <div class="lg:col-span-2">
+                <h2 class="text-2xl font-extrabold text-[#30364F] mb-6 flex items-center gap-2">
+                    <span class="material-icons text-[#E1D9BC]">description</span> Product Overview
+                </h2>
+                <div class="prose prose-sm md:prose-base text-[#30364F]/80 max-w-none space-y-4 font-medium">
+                    <p>Designed for audiophiles and everyday listeners alike, the Studio Bass Wireless Headphones deliver an unparalleled acoustic experience. Featuring custom-tuned 40mm drivers, these headphones reproduce deep, resonant bass and crystal-clear highs.</p>
+                    <p>The advanced Active Noise Cancellation (ANC) seamlessly adapts to your environment, filtering out distractions whether you are on a busy commute or working in a crowded cafe. Need to hear the world around you? Instantly switch to Transparency Mode with a single tap.</p>
+                    <ul class="list-disc pl-5 space-y-2 mt-4 text-[#30364F] font-bold">
+                        <li>Up to 40 hours of listening time (ANC off).</li>
+                        <li>Fast Fuel: 10-minute charge gives 3 hours of playback.</li>
+                        <li>Plush memory foam ear cushions for extended comfort.</li>
+                        <li>Bluetooth 5.2 for seamless, drop-free connectivity.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="lg:col-span-1 bg-white rounded-2xl p-8 border border-[#ACBAC4]/30 shadow-sm self-start">
+                <h2 class="text-xl font-extrabold text-[#30364F] mb-6 border-b border-[#ACBAC4]/20 pb-4">Specifications</h2>
+                <div class="space-y-4 text-sm">
+                    <div class="flex justify-between border-b border-[#ACBAC4]/10 pb-2">
+                        <span class="text-[#ACBAC4] font-bold uppercase tracking-widest">Brand</span>
+                        <span class="text-[#30364F] font-bold">AudioTech</span>
+                    </div>
+                    <div class="flex justify-between border-b border-[#ACBAC4]/10 pb-2">
+                        <span class="text-[#ACBAC4] font-bold uppercase tracking-widest">Weight</span>
+                        <span class="text-[#30364F] font-bold">250g</span>
+                    </div>
+                    <div class="flex justify-between border-b border-[#ACBAC4]/10 pb-2">
+                        <span class="text-[#ACBAC4] font-bold uppercase tracking-widest">Connectivity</span>
+                        <span class="text-[#30364F] font-bold">Bluetooth 5.2</span>
+                    </div>
+                    <div class="flex justify-between border-b border-[#ACBAC4]/10 pb-2">
+                        <span class="text-[#ACBAC4] font-bold uppercase tracking-widest">Battery</span>
+                        <span class="text-[#30364F] font-bold">40 Hours</span>
+                    </div>
+                    <div class="flex justify-between pb-2">
+                        <span class="text-[#ACBAC4] font-bold uppercase tracking-widest">Warranty</span>
+                        <span class="text-[#30364F] font-bold">1 Year Manufacturer</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <section id="reviews" class="border-t border-[#ACBAC4]/30 pt-16 mb-20">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-10">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-[#30364F] mb-2 flex items-center gap-2">
+                        <span class="material-icons text-[#E1D9BC]">reviews</span> Customer Reviews
+                    </h2>
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center text-yellow-500">
+                            <span class="material-icons">star</span>
+                            <span class="material-icons">star</span>
+                            <span class="material-icons">star</span>
+                            <span class="material-icons">star</span>
+                            <span class="material-icons">star_half</span>
+                        </div>
+                        <p class="font-bold text-[#30364F]">4.8 out of 5 <span class="text-[#ACBAC4] font-normal ml-1">(124 Global Ratings)</span></p>
+                    </div>
+                </div>
+                <button class="bg-[#30364F] text-[#F0F0DB] px-6 py-3 rounded-lg font-bold hover:opacity-90 transition shadow-sm">
+                    Write a Review
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-2xl border border-[#ACBAC4]/30 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-[#E1D9BC] text-[#30364F] font-black flex items-center justify-center">M</div>
+                            <div>
+                                <h4 class="font-bold text-[#30364F] text-sm">Michael R.</h4>
+                                <p class="text-[10px] text-[#ACBAC4] font-bold uppercase tracking-widest">Verified Buyer</p>
+                            </div>
+                        </div>
+                        <span class="text-xs text-[#ACBAC4] font-medium">Oct 12, 2025</span>
+                    </div>
+                    <div class="flex items-center text-yellow-500 text-[14px] mb-3">
+                        <span class="material-icons text-[16px]">star</span>
+                        <span class="material-icons text-[16px]">star</span>
+                        <span class="material-icons text-[16px]">star</span>
+                        <span class="material-icons text-[16px]">star</span>
+                        <span class="material-icons text-[16px]">star</span>
+                    </div>
+                    <h5 class="font-bold text-[#30364F] mb-1">Incredible Sound Quality</h5>
+                    <p class="text-sm text-[#30364F]/80 font-medium leading-relaxed">Best headphones I've ever owned. The bass is punchy without being overwhelming, and the noise cancellation completely blocks out my noisy office. Highly recommend!</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-[#ACBAC4]/30 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-[#30364F] text-[#F0F0DB] font-black flex items-center justify-center">S</div>
+                            <div>
+                                <h4 class="font-bold text-[#30364F] text-sm">Sarah J.</h4>
+                                <p class="text-[10px] text-[#ACBAC4] font-bold uppercase tracking-widest">Verified Buyer</p>
+                            </div>
+                        </div>
+                        <span class="text-xs text-[#ACBAC4] font-medium">Sep 28, 2025</span>
+                    </div>
+                    <div class="flex items-center text-yellow-500 text-[14px] mb-3">
+                        <span class="material-icons text-[16px]">star</span>
+                        <span class="material-icons text-[16px]">star</span>
+                        <span class="material-icons text-[16px]">star</span>
+                        <span class="material-icons text-[16px]">star</span>
+                        <span class="material-icons text-[16px] text-[#ACBAC4]">star</span>
+                    </div>
+                    <h5 class="font-bold text-[#30364F] mb-1">Great, but slightly heavy</h5>
+                    <p class="text-sm text-[#30364F]/80 font-medium leading-relaxed">The battery life is amazing, and the connection is seamless. My only complaint is they feel a bit heavy after wearing them for 5+ hours straight. Still a solid 4 stars.</p>
+                </div>
+            </div>
+            
+            <div class="text-center mt-8">
+                <a href="#" class="inline-block text-sm font-bold text-[#30364F] hover:text-[#E1D9BC] transition-colors border-b-2 border-[#30364F] hover:border-[#E1D9BC] pb-1">Read All Reviews</a>
+            </div>
+        </section>
+
+        <section class="bg-[#30364F] rounded-2xl p-8 md:p-12 relative overflow-hidden flex flex-col md:flex-row items-center justify-between shadow-xl">
+            <div class="absolute -right-20 -top-20 w-64 h-64 bg-[#E1D9BC]/10 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="relative z-10 md:w-2/3 mb-6 md:mb-0 text-center md:text-left">
+                <span class="text-[#E1D9BC] font-black uppercase tracking-widest text-xs mb-2 block">Special Offer</span>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-[#F0F0DB] mb-3">Pair with a Smartwatch</h2>
+                <p class="text-[#ACBAC4] font-medium max-w-md mx-auto md:mx-0">Add the Minimalist Smartwatch to your cart and get an extra 15% off your entire order today.</p>
+            </div>
+            
+            <div class="relative z-10 flex-shrink-0">
+                <a href="#" class="bg-[#E1D9BC] text-[#30364F] px-8 py-3.5 rounded-xl font-bold hover:bg-white transition-colors shadow-lg inline-flex items-center gap-2">
+                    Claim Bundle <span class="material-icons text-[18px]">arrow_forward</span>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    {% include "customer_templates/Footer.html" %}
+
+    <script>
+        // Image Gallery Script
+        function changeImage(button, imageSrc) {
+            // Update main image
+            const mainImg = document.getElementById('main-product-image');
+            mainImg.style.opacity = '0.5';
+            setTimeout(() => {
+                mainImg.src = imageSrc;
+                mainImg.style.opacity = '1';
+            }, 150);
+
+            // Update border colors on thumbnails
+            document.querySelectorAll('.thumb-btn').forEach(btn => {
+                btn.classList.remove('border-[#30364F]', 'border-2');
+                btn.classList.add('border-[#ACBAC4]/30', 'border');
+            });
+            button.classList.remove('border-[#ACBAC4]/30', 'border');
+            button.classList.add('border-[#30364F]', 'border-2');
+        }
+
+        // Quantity Increment/Decrement Script
+        function updateQty(change) {
+            const input = document.getElementById('qty-input');
+            let newVal = parseInt(input.value) + change;
+            if (newVal >= parseInt(input.min) && newVal <= parseInt(input.max)) {
+                input.value = newVal;
+            }
+        }
+    </script>
+</body>
+</html>

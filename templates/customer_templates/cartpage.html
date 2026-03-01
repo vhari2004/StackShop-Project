@@ -1,0 +1,175 @@
+{% load static %}
+<!DOCTYPE html>
+<html class="light scroll-smooth" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Shopping Cart - StackShop</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link type="icon/" rel="icon" href="/static/favicon.ico" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "dark": "#30364F",
+                        "muted": "#ACBAC4",
+                        "accent": "#E1D9BC",
+                        "light": "#F0F0DB",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* Hide arrows on number inputs */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; margin: 0; 
+        }
+        input[type=number] { -moz-appearance: textfield; }
+    </style>
+</head>
+
+<body class="bg-light/30 text-dark font-display flex flex-col min-h-screen">
+
+    {% include "customer_templates/Navbar.html" %}
+
+    <main class="max-w-7xl mx-auto w-full px-4 py-8 md:py-12 flex-grow">
+        
+        <div class="mb-8">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-dark tracking-tight">Shopping Cart</h1>
+            <p class="text-muted font-medium mt-2">Review your items and proceed to checkout.</p>
+        </div>
+
+        {% if cart_items %}
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <div class="lg:col-span-8 space-y-4">
+                
+                {% for item in cart_items %}
+                <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-muted/30 flex flex-col sm:flex-row items-center gap-6 relative group transition-all hover:shadow-md">
+                    
+                    <form action="{% url 'remove_from_cart' item.id %}" method="POST" class="absolute top-4 right-4 sm:static sm:order-last">
+                        {% csrf_token %}
+                        <button type="submit" class="w-8 h-8 rounded-full bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors" title="Remove Item">
+                            <span class="material-icons text-[18px]">delete_outline</span>
+                        </button>
+                    </form>
+
+                    <div class="w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 bg-light rounded-xl overflow-hidden border border-muted/20">
+                        {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="w-full h-full object-cover mix-blend-multiply p-2">
+                        {% else %}
+                            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=300" alt="Placeholder" class="w-full h-full object-cover mix-blend-multiply p-2">
+                        {% endif %}
+                    </div>
+
+                    <div class="flex-grow text-center sm:text-left w-full sm:w-auto">
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-muted">{{ item.product.category.name|default:"Category" }}</span>
+                        <h3 class="text-lg font-bold text-dark leading-tight mt-1 mb-1">
+                            <a href="#" class="hover:text-muted transition-colors">{{ item.product.name|default:"Studio Bass Headphones" }}</a>
+                        </h3>
+                        <p class="text-sm font-extrabold text-dark/70 mb-4">${{ item.product.price|default:"299.00" }} <span class="font-medium text-xs text-muted">/ each</span></p>
+
+                        <div class="flex items-center justify-center sm:justify-start gap-4">
+                            
+                            <div class="flex items-center bg-light/50 border border-muted/40 rounded-lg p-1">
+                                <form action="{% url 'update_cart' item.id %}" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="decrease">
+                                    <button type="submit" class="w-8 h-8 flex items-center justify-center rounded-md hover:bg-white hover:shadow-sm text-dark transition-all">
+                                        <span class="material-icons text-[16px]">remove</span>
+                                    </button>
+                                </form>
+
+                                <span class="w-10 text-center font-bold text-sm text-dark">{{ item.quantity|default:"1" }}</span>
+
+                                <form action="{% url 'update_cart' item.id %}" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="increase">
+                                    <button type="submit" class="w-8 h-8 flex items-center justify-center rounded-md hover:bg-white hover:shadow-sm text-dark transition-all">
+                                        <span class="material-icons text-[16px]">add</span>
+                                    </button>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="text-center sm:text-right sm:ml-auto w-full sm:w-auto mt-4 sm:mt-0">
+                        <p class="text-xs text-muted font-bold uppercase tracking-wider mb-1">Total</p>
+                        <p class="text-xl font-extrabold text-dark">${{ item.get_total|default:"299.00" }}</p>
+                    </div>
+
+                </div>
+                {% endfor %}
+                
+            </div>
+
+            <div class="lg:col-span-4">
+                <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-muted/30 sticky top-28">
+                    <h2 class="text-xl font-extrabold text-dark mb-6 border-b border-muted/30 pb-4">Order Summary</h2>
+                    
+                    <div class="space-y-4 mb-6">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-muted font-bold">Subtotal ({{ cart_items|length }} items)</span>
+                            <span class="text-dark font-extrabold">${{ cart_subtotal|default:"299.00" }}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-muted font-bold">Estimated Tax</span>
+                            <span class="text-dark font-extrabold">${{ tax_amount|default:"24.00" }}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-muted font-bold">Shipping</span>
+                            <span class="text-green-600 font-extrabold">Free</span>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-muted/30 pt-4 mb-8">
+                        <div class="flex justify-between items-center">
+                            <span class="text-base font-bold text-dark uppercase tracking-wide">Total</span>
+                            <span class="text-2xl font-black text-dark">${{ cart_total|default:"323.00" }}</span>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'checkout' %}" class="w-full bg-dark hover:bg-opacity-90 text-light text-center py-4 rounded-xl font-bold text-sm uppercase tracking-widest transition-all shadow-lg shadow-dark/20 block flex items-center justify-center gap-2">
+                        Proceed to Checkout <span class="material-icons text-[18px]">lock</span>
+                    </a>
+                    
+                    <div class="mt-4 flex items-center justify-center gap-2 text-muted text-xs font-bold">
+                        <span class="material-icons text-[14px]">verified_user</span> Secure SSL Checkout
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        {% else %}
+        <div class="text-center py-20 bg-white rounded-3xl border border-muted/30 shadow-sm max-w-3xl mx-auto mt-10">
+            <div class="w-24 h-24 bg-light rounded-full flex items-center justify-center mx-auto mb-6">
+                <span class="material-icons text-5xl text-muted">shopping_cart</span>
+            </div>
+            <h2 class="text-3xl font-extrabold text-dark mb-3">Your cart is empty</h2>
+            <p class="text-muted font-medium mb-8 max-w-md mx-auto">Looks like you haven't added anything to your cart yet. Discover our top trending products and start shopping!</p>
+            <a href="{% url 'home' %}" class="bg-accent text-dark px-8 py-3.5 rounded-xl font-bold hover:bg-dark hover:text-light transition-colors shadow-md inline-flex items-center gap-2">
+                Continue Shopping <span class="material-icons text-sm">arrow_forward</span>
+            </a>
+        </div>
+        {% endif %}
+
+    </main>
+
+    {% include "customer_templates/Footer.html" %}
+
+</body>
+</html>

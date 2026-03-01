@@ -1,6 +1,6 @@
-{% load static%}
+{% load static %}
 <!DOCTYPE html>
-<html class="light" lang="en">
+<html class="light scroll-smooth" lang="en">
 
 <head>
     <meta charset="utf-8" />
@@ -42,6 +42,7 @@
 <body class="bg-light text-dark font-display flex flex-col min-h-screen">
     {% include "customer_templates/Navbar.html" %}
     <main class="max-w-7xl mx-auto w-full px-4 mt-8 mb-20 flex-grow flex flex-col md:flex-row gap-8">
+    {% include "core_templates/messages.html" %}
 
         <aside class="w-full md:w-64 flex-shrink-0">
             <div class="bg-white rounded-xl shadow-sm border border-muted/30 p-6 sticky top-6">
@@ -125,14 +126,24 @@
                 {% for x in product_var %}
                 <div
                     class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl border border-muted/40 transition-all duration-300 flex flex-col relative">
-
-                    <button
-                        class="absolute top-3 right-3 z-10 w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-muted hover:text-red-500 hover:bg-red-50 border border-muted/30 shadow-sm transition-all">
-                        <span class="material-icons text-sm">favorite_border</span>
-                    </button>
-
-                    <div
-                        class="aspect-square bg-light relative overflow-hidden border-b border-muted/20 flex items-center justify-center p-6">
+                    
+                    <form action="{% url 'addwishlist' x.id %}" method="POST" class="absolute top-3 right-3 z-10">
+                        {% csrf_token %}
+                        <button type="submit"
+                            class="w-8 h-8 backdrop-blur rounded-full flex items-center justify-center border shadow-sm transition-all 
+                            {% if x.id in wishlist_variant_ids %}
+                                bg-red-50 text-red-500 border-red-200 hover:bg-white/90 hover:text-muted hover:border-muted/30
+                            {% else %}
+                                bg-white/90 text-muted border-muted/30 hover:text-red-500 hover:bg-red-50 hover:border-red-200
+                            {% endif %}"
+                            title="{% if x.id in wishlist_variant_ids %}Remove from Wishlist{% else %}Add to Wishlist{% endif %}">
+                            
+                            <span class="material-icons text-sm">
+                                {% if x.id in wishlist_variant_ids %}favorite{% else %}favorite_border{% endif %}
+                            </span>
+                        </button>
+                    </form>
+                    <div class="aspect-square bg-light relative overflow-hidden border-b border-muted/20 flex items-center justify-center p-6">
                         {% if x.product.image %}
                         <img alt="{{ x.product.name }}"
                             class="w-full h-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-110"
@@ -229,5 +240,4 @@
     </footer>
 
 </body>
-
 </html>

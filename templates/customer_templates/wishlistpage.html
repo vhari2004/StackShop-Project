@@ -1,0 +1,383 @@
+{% load static %}
+<!DOCTYPE html>
+<html class="light scroll-smooth" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wishlists - StackShop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link type="icon/" rel="icon" href="/static/favicon.ico" />
+    <style>
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Custom Toggle Switch */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #30364F;
+        }
+
+        .toggle-checkbox:checked+.toggle-label {
+            background-color: #30364F;
+        }
+    </style>
+</head>
+
+<body class="bg-[#F0F0DB] font-sans flex min-h-screen text-[#30364F]">
+
+    <aside class="w-64 bg-[#30364F] flex flex-col flex-shrink-0 shadow-xl z-10">
+        {% include "customer_templates/profile_sidebar.html" %}
+    </aside>
+
+    <main class="flex-grow flex flex-col items-center justify-start p-8 overflow-y-auto">
+        {% include "core_templates/messages.html" %}
+        <div class="bg-white rounded-xl shadow-sm w-full max-w-5xl p-10 lg:p-14">
+
+            <div
+                class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10 border-b border-[#ACBAC4]/30 pb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-[#30364F]">
+                        My Wishlists
+                    </h2>
+                    <p class="text-[#ACBAC4] text-sm font-medium mt-1">Organize your favorite items into custom
+                        collections.</p>
+                </div>
+
+                <button onclick="openModal('newListModal')"
+                    class="bg-[#30364F] text-[#F0F0DB] px-6 py-2.5 rounded-lg text-sm font-bold hover:opacity-90 shadow-md transition flex items-center justify-center gap-2">
+                    <span class="material-icons text-sm">add</span> Create Collection
+                </button>
+            </div>
+
+            {% for wishlist in wishlists %}
+            <section class="mb-4">
+
+                <div class="flex items-center justify-between bg-white border border-[#ACBAC4]/30 p-4 rounded-xl cursor-pointer shadow-sm hover:shadow-md hover:border-[#30364F]/30 transition-all select-none"
+                    onclick="toggleWishlist('wishlist-{{ forloop.counter }}', 'icon-{{ forloop.counter }}')">
+
+                    <div class="flex items-center gap-3">
+                        <span id="icon-{{ forloop.counter }}"
+                            class="material-icons text-[#ACBAC4] transition-transform duration-300">expand_more</span>
+                        <h3 class="text-lg font-bold text-[#30364F]">
+                            {{ wishlist.wishlist_name }}
+                            {% if wishlist.is_default %}
+                            <span
+                                class="ml-2 bg-[#30364F] text-[#F0F0DB] text-[10px] uppercase tracking-widest px-2 py-0.5 rounded font-bold">Default</span>
+                            {% endif %}
+                        </h3>
+                        <span
+                            class="bg-[#E1D9BC]/30 text-[#30364F] text-xs font-bold px-2.5 py-1 rounded-full border border-[#E1D9BC]">
+                            {{ wishlist.items.count }} Items
+                        </span>
+                    </div>
+
+                    <div class="relative group" onclick="event.stopPropagation()">
+                        <button
+                            class="w-8 h-8 rounded-full hover:bg-[#F0F0DB] flex items-center justify-center text-[#ACBAC4] hover:text-[#30364F] transition-colors focus:outline-none">
+                            <span class="material-icons">more_horiz</span>
+                        </button>
+                        <div
+                            class="absolute right-0 top-full mt-1 w-48 bg-white rounded-xl shadow-lg border border-[#ACBAC4]/30 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20">
+                            <div class="p-1">
+                                <button type="button"
+                                    onclick="openUpdateModal( '{{ wishlist.id }}', '{{ wishlist.wishlist_name|escapejs }}', '{{ wishlist.is_default }}')"
+                                    class="block w-full text-left px-4 py-2 text-sm font-semibold text-[#30364F] hover:bg-[#F0F0DB]/50 rounded-lg">
+                                    Update List
+                                </button>
+
+                                <a href="{% url 'deletecollection' wishlist.id %}"
+                                    class="block w-full text-left px-4 py-2 text-sm font-semibold text-red-500 hover:bg-red-50 rounded-lg">Delete
+                                    List</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="wishlist-{{ forloop.counter }}"
+                    class="hidden mt-3 overflow-hidden bg-white rounded-xl shadow-sm border border-[#ACBAC4]/30 transition-all">
+                    <div class="overflow-x-auto hide-scrollbar">
+                        <table class="min-w-full text-left border-collapse">
+                            <thead class="bg-[#F0F0DB]/30 border-b border-[#ACBAC4]/30">
+                                <tr>
+                                    <th
+                                        class="px-6 py-4 text-xs font-bold text-[#30364F] uppercase tracking-widest whitespace-nowrap">
+                                        Product Details</th>
+                                    <th
+                                        class="px-6 py-4 text-xs font-bold text-[#30364F] uppercase tracking-widest whitespace-nowrap">
+                                        Price</th>
+                                    <th
+                                        class="px-6 py-4 text-xs font-bold text-[#30364F] uppercase tracking-widest whitespace-nowrap text-right">
+                                        Actions</th>
+                                </tr>
+                            </thead>
+
+                            <tbody class="divide-y divide-[#ACBAC4]/20">
+                                {% for item in wishlist.items.all %}
+                                <tr class="hover:bg-[#F0F0DB]/10 transition-colors group">
+
+                                    <td class="px-6 py-4 min-w-[250px]">
+                                        <div class="flex items-center gap-4">
+                                            <div
+                                                class="w-16 h-16 rounded-lg bg-light border border-[#ACBAC4]/30 flex-shrink-0 overflow-hidden bg-[#F0F0DB]/20">
+                                                {% if item.variant.images.first %}
+                                                <img alt="{{ item.variant.product.name }}"
+                                                    class="w-full h-full object-cover mix-blend-multiply p-1"
+                                                    src="{{ item.variant.images.first.image_url.url }}" />
+                                                {% else %}
+                                                <img alt="Placeholder"
+                                                    class="w-full h-full object-cover mix-blend-multiply p-1"
+                                                    src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=200" />
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <h4 class="text-sm font-bold text-[#30364F] mb-0.5 truncate max-w-[250px]"
+                                                    title="{{ item.variant.product.name }}">
+                                                    {{ item.variant.product.name }}
+                                                </h4>
+                                                <p
+                                                    class="text-[10px] text-[#ACBAC4] font-bold uppercase tracking-widest">
+                                                    {{ item.variant.product.subcategory.category.name|default:"Category"
+                                                    }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-extrabold text-[#30364F]">
+                                        ${{ item.variant.selling_price }}
+                                    </td>
+
+                                    <td class="px-6 py-4 whitespace-nowrap text-right">
+                                        <div class="flex items-center justify-end gap-2">
+
+                                            <div class="relative group/move">
+                                                <button type="button"
+                                                    class="w-8 h-8 rounded-lg hover:bg-[#F0F0DB] text-[#ACBAC4] hover:text-[#30364F] transition-colors flex items-center justify-center border border-transparent hover:border-[#ACBAC4]/50"
+                                                    title="Move to another list">
+                                                    <span class="material-icons text-[18px]">swap_horiz</span>
+                                                </button>
+                                                <div
+                                                    class="absolute right-0 top-full mt-1 w-40 bg-white rounded-lg shadow-xl border border-[#ACBAC4]/30 opacity-0 invisible group-hover/move:opacity-100 group-hover/move:visible transition-all z-20 text-left">
+                                                    <div
+                                                        class="px-3 py-2 border-b border-[#ACBAC4]/30 text-[10px] uppercase font-bold text-[#ACBAC4] tracking-wider">
+                                                        Move to:</div>
+                                                    {% for other_collection in wishlist_collections %}
+                                                    {% if other_collection.id != wishlist.id %}
+                                                    <form action="#" method="POST">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="variant_id"
+                                                            value="{{ item.variant.id }}">
+                                                        <input type="hidden" name="target_collection_id"
+                                                            value="{{ other_collection.id }}">
+                                                        <button type="submit"
+                                                            class="w-full text-left px-4 py-2 text-xs font-bold text-[#30364F] hover:bg-[#F0F0DB]/50">
+                                                            {{ other_collection.wishlist_name }}
+                                                        </button>
+                                                    </form>
+                                                    {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+
+                                            <form action="#" method="POST" class="inline">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="variant_id" value="{{ item.variant.id }}">
+                                                <button type="submit"
+                                                    class="w-8 h-8 rounded-lg bg-[#30364F] text-[#F0F0DB] hover:bg-[#E1D9BC] hover:text-[#30364F] transition-colors flex items-center justify-center shadow-sm"
+                                                    title="Add to Cart">
+                                                    <span class="material-icons text-[16px]">add_shopping_cart</span>
+                                                </button>
+                                            </form>
+
+                                            <form action="{% url 'removewishlist' item.variant.id %}" method="POST"
+                                                class="inline">
+                                                {% csrf_token %}
+                                                <button type="submit"
+                                                    class="w-8 h-8 rounded-lg hover:bg-red-50 text-[#ACBAC4] hover:text-red-500 transition-colors flex items-center justify-center border border-transparent hover:border-red-200 ml-1"
+                                                    title="Remove from wishlist">
+                                                    <span class="material-icons text-[18px]">delete</span>
+                                                </button>
+                                            </form>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3" class="px-6 py-10 text-center text-[#ACBAC4] bg-[#F0F0DB]/10">
+                                        <span class="material-icons text-3xl mb-2">favorite_border</span>
+                                        <p class="font-bold text-[#30364F]">This list is empty.</p>
+                                        <p class="text-xs mt-1">Start adding items to see them here.</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+            {% empty %}
+            <div
+                class="text-center py-20 bg-[#F0F0DB]/30 rounded-2xl border border-dashed border-[#ACBAC4]/50 shadow-sm">
+                <span class="material-icons text-6xl text-[#ACBAC4] mb-4">collections_bookmark</span>
+                <h3 class="text-xl font-bold text-[#30364F] mb-2">No Wishlists Yet</h3>
+                <p class="text-[#ACBAC4] mb-6">Create your first collection to start saving products you love.</p>
+                <button onclick="openModal('newListModal')"
+                    class="bg-[#30364F] text-[#F0F0DB] px-6 py-3 rounded-lg font-bold hover:opacity-90 transition shadow-md inline-flex items-center gap-2">
+                    <span class="material-icons text-sm">add</span> Create a Collection
+                </button>
+            </div>
+            {% endfor %}
+
+        </div>
+    </main>
+
+    <div id="newListModal" class="fixed inset-0 z-[100] flex items-center justify-center hidden">
+        <div class="absolute inset-0 bg-[#30364F]/70 backdrop-blur-sm transition-opacity"
+            onclick="closeModal('newListModal')"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 transform scale-95 opacity-0 transition-all duration-300"
+            id="modalBox">
+            <button onclick="closeModal('newListModal')"
+                class="absolute top-4 right-4 text-[#ACBAC4] hover:text-[#30364F] transition-colors">
+                <span class="material-icons">close</span>
+            </button>
+
+            <h2 class="text-2xl font-bold text-[#30364F] mb-2">New Collection</h2>
+            <p class="text-sm text-[#ACBAC4] font-medium mb-6">Create a new wishlist to organize your favorite items.
+            </p>
+
+            <form action="{% url 'createcollection' %}" method="POST">
+                {% csrf_token %}
+                <div class="mb-6">
+                    <label class="block text-xs font-bold text-[#30364F] mb-2 uppercase tracking-wide">Collection
+                        Name</label>
+                    <input type="text" name="collection_name" placeholder="e.g., Birthday Gifts, Home Upgrade" required
+                        class="w-full px-4 py-3 border border-[#ACBAC4]/50 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#30364F] focus:border-[#30364F] bg-transparent transition text-[#30364F] placeholder-[#ACBAC4]/70">
+                </div>
+
+                <div class="flex gap-4 justify-end border-t border-[#ACBAC4]/20 pt-6">
+                    <button type="button" onclick="closeModal('newListModal')"
+                        class="px-6 py-2 text-sm font-bold text-[#ACBAC4] hover:text-[#30364F] transition-colors">Cancel</button>
+                    <button type="submit"
+                        class="px-8 py-3 bg-[#30364F] text-[#F0F0DB] rounded-lg text-sm font-bold hover:opacity-90 shadow-md transition">Create
+                        List</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="updateListModal" class="fixed inset-0 z-[100] flex items-center justify-center hidden">
+        <div class="absolute inset-0 bg-[#30364F]/70 backdrop-blur-sm transition-opacity"
+            onclick="closeModal('updateListModal')"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 transform scale-95 opacity-0 transition-all duration-300"
+            id="updateModalBox">
+            <button onclick="closeModal('updateListModal')"
+                class="absolute top-4 right-4 text-[#ACBAC4] hover:text-[#30364F] transition-colors">
+                <span class="material-icons">close</span>
+            </button>
+
+            <h2 class="text-2xl font-bold text-[#30364F] mb-2">Update Collection</h2>
+            <p class="text-sm text-[#ACBAC4] font-medium mb-6">Rename your list or set it as your default wishlist.</p>
+
+            <form action="{% url 'updatecollection' %}" method="POST">
+                {% csrf_token %}
+
+                <input type="hidden" name="wishlist_id" id="update_wishlist_id" value="{{wishlist.id}}">
+
+                <div class="mb-6">
+                    <label class="block text-xs font-bold text-[#30364F] mb-2 uppercase tracking-wide">Collection
+                        Name</label>
+                    <input type="text" name="collection_name" id="update_collection_name" required
+                        class="w-full px-4 py-3 border border-[#ACBAC4]/50 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#30364F] focus:border-[#30364F] bg-transparent transition text-[#30364F]">
+                </div>
+
+                <div
+                    class="mb-6 flex items-center justify-between p-4 border border-[#ACBAC4]/30 rounded-lg bg-[#F0F0DB]/20">
+                    <div>
+                        <span class="block text-sm font-bold text-[#30364F]">Set as Default</span>
+                        <span class="block text-[10px] text-[#ACBAC4] uppercase">New saves will go here</span>
+                    </div>
+                    <div
+                        class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                        <input type="checkbox" name="is_default" id="update_is_default"
+                            class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-2 border-[#ACBAC4] appearance-none cursor-pointer z-10" />
+                        <label for="update_is_default"
+                            class="toggle-label block overflow-hidden h-5 rounded-full bg-[#ACBAC4] cursor-pointer transition-colors duration-200"></label>
+                    </div>
+                </div>
+
+                <div class="flex gap-4 justify-end border-t border-[#ACBAC4]/20 pt-6">
+                    <button type="button" onclick="closeModal('updateListModal')"
+                        class="px-6 py-2 text-sm font-bold text-[#ACBAC4] hover:text-[#30364F] transition-colors">Cancel</button>
+                    <button type="submit"
+                        class="px-8 py-3 bg-[#30364F] text-[#F0F0DB] rounded-lg text-sm font-bold hover:opacity-90 shadow-md transition">Update
+                        List</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Open Modal Script (Dynamic for both modals)
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            // Select the inner box dynamically based on the modal ID
+            const modalBox = modalId === 'newListModal' ? document.getElementById('modalBox') : document.getElementById('updateModalBox');
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modalBox.classList.remove('scale-95', 'opacity-0');
+                modalBox.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        // Dedicated function to open and pre-fill the Update Modal
+        function openUpdateModal(id, name, isDefault) {
+            // Set the hidden input value
+            document.getElementById('update_wishlist_id').value = id;
+            // Set the text input value
+            document.getElementById('update_collection_name').value = name;
+            // Set the checkbox status
+            document.getElementById('update_is_default').checked = (isDefault === 'true');
+
+            // Call the standard open modal function
+            openModal('updateListModal');
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            const modalBox = modalId === 'newListModal' ? document.getElementById('modalBox') : document.getElementById('updateModalBox');
+
+            modalBox.classList.remove('scale-100', 'opacity-100');
+            modalBox.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function toggleWishlist(contentId, iconId) {
+            const content = document.getElementById(contentId);
+            const icon = document.getElementById(iconId);
+
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.classList.add('rotate-180');
+            } else {
+                content.classList.add('hidden');
+                icon.classList.remove('rotate-180');
+            }
+        }
+    </script>
+</body>
+
+</html>

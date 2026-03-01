@@ -146,8 +146,9 @@
                             class="material-icons text-muted group-hover:text-light group-hover:translate-x-1 transition-all">arrow_forward</span>
                     </a>
                     {%endif%}
-                    <a href="{% url 'seller-bridge' %}"
-                        class="w-full group flex items-center justify-between bg-accent text-dark p-4 rounded-xl hover:bg-opacity-80 transition-all shadow-sm border border-dark/10">
+                    <a href="{% url 'seller-bridge' %}?role=seller" class="w-full group flex items-center
+                        justify-between bg-accent text-dark p-4 rounded-xl hover:bg-opacity-80 transition-all shadow-sm
+                        border border-dark/10">
                         <div class="flex items-center gap-3">
                             <div class="bg-dark/10 p-2 rounded-lg text-dark">
                                 <span class="material-icons text-sm">app_registration</span>

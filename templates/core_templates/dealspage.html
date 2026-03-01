@@ -1,0 +1,297 @@
+{% load static %}
+<!DOCTYPE html>
+<html class="light scroll-smooth" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Deals & Offers - StackShop</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link type="icon/" rel="icon" href="/static/favicon.ico" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "dark": "#30364F",
+                        "muted": "#ACBAC4",
+                        "accent": "#E1D9BC",
+                        "light": "#F0F0DB",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Pulse animation for live deals */
+        @keyframes soft-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .animate-soft-pulse { animation: soft-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    </style>
+</head>
+
+<body class="bg-light text-dark font-display flex flex-col min-h-screen overflow-x-hidden">
+    
+    {% include "customer_templates/Navbar.html" %}
+
+    <main class="max-w-7xl mx-auto w-full px-4 mt-6 mb-20 flex-grow">
+        
+        <div class="relative bg-dark rounded-2xl overflow-hidden shadow-lg mb-8 flex flex-col md:flex-row border border-muted/30">
+            <div class="p-8 md:p-12 lg:p-16 md:w-1/2 flex flex-col justify-center relative z-10">
+                <div class="inline-flex items-center gap-2 bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full mb-4 w-max uppercase tracking-widest animate-soft-pulse">
+                    <span class="w-2 h-2 rounded-full bg-white"></span> Live Now
+                </div>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-light leading-tight mb-4">
+                    The Great <br/><span class="text-accent italic">Holiday Sale</span>
+                </h1>
+                <p class="text-muted font-medium mb-8 max-w-md">Score massive discounts on top-rated electronics, fashion, and home decor. Limited stock available.</p>
+                <div class="flex items-center gap-4">
+                    <a href="#flash-deals" class="bg-accent text-dark px-8 py-3.5 rounded-xl font-bold hover:bg-white hover:shadow-lg transition-all flex items-center gap-2">
+                        Shop Deals <span class="material-icons text-[18px]">local_offer</span>
+                    </a>
+                </div>
+            </div>
+            <div class="md:w-1/2 h-64 md:h-auto relative">
+                <div class="absolute inset-0 bg-gradient-to-r from-dark to-transparent z-10 hidden md:block"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-dark to-transparent z-10 md:hidden"></div>
+                <img src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&q=80&w=1200" alt="Sale Event" class="w-full h-full object-cover opacity-80 mix-blend-overlay">
+            </div>
+        </div>
+
+        <section class="mb-12 sticky top-24 z-30 bg-light py-2 border-y border-muted/20">
+            <div class="flex items-center gap-3 overflow-x-auto hide-scrollbar">
+                <a href="#flash-deals" class="flex-shrink-0 flex items-center gap-2 bg-dark text-light border border-dark rounded-full px-5 py-2.5 hover:bg-opacity-90 transition-all text-sm font-bold shadow-sm">
+                    <span class="material-icons text-[18px] text-accent">bolt</span> Deal of the Day
+                </a>
+                <a href="#seasonal-deals" class="flex-shrink-0 flex items-center gap-2 bg-white border border-muted/50 text-dark rounded-full px-5 py-2.5 hover:bg-accent hover:border-dark transition-all text-sm font-bold shadow-sm">
+                    <span class="material-icons text-[18px]">wb_sunny</span> Seasonal Picks
+                </a>
+                <a href="#holiday-deals" class="flex-shrink-0 flex items-center gap-2 bg-white border border-muted/50 text-dark rounded-full px-5 py-2.5 hover:bg-accent hover:border-dark transition-all text-sm font-bold shadow-sm">
+                    <span class="material-icons text-[18px]">card_giftcard</span> Holiday Specials
+                </a>
+                <a href="#clearance" class="flex-shrink-0 flex items-center gap-2 bg-white border border-muted/50 text-dark rounded-full px-5 py-2.5 hover:bg-accent hover:border-dark transition-all text-sm font-bold shadow-sm">
+                    <span class="material-icons text-[18px]">inventory_2</span> Clearance
+                </a>
+            </div>
+        </section>
+
+        <section id="flash-deals" class="scroll-mt-40 mb-20">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 border-b border-muted/30 pb-4 gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-red-100 text-red-500 rounded-full flex items-center justify-center">
+                        <span class="material-icons">bolt</span>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-dark uppercase tracking-wide">Deal of the Day</h2>
+                        <p class="text-muted text-sm font-medium">Hurry! Offers end in:</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 text-dark font-bold text-lg">
+                    <div class="bg-white px-3 py-1.5 rounded-lg border border-muted/30 shadow-sm">08<span class="text-xs text-muted block text-center font-normal">HRS</span></div><span class="animate-soft-pulse">:</span>
+                    <div class="bg-white px-3 py-1.5 rounded-lg border border-muted/30 shadow-sm">45<span class="text-xs text-muted block text-center font-normal">MIN</span></div><span class="animate-soft-pulse">:</span>
+                    <div class="bg-white px-3 py-1.5 rounded-lg border border-muted/30 shadow-sm">12<span class="text-xs text-muted block text-center font-normal">SEC</span></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl border border-red-500/30 transition-all duration-300 flex flex-col relative">
+                    <div class="absolute top-3 left-3 bg-red-500 text-white text-xs font-black px-2.5 py-1 rounded z-10 shadow-md">
+                        40% OFF
+                    </div>
+                    <button class="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center text-muted hover:text-red-500 shadow-md transition-all z-10">
+                        <span class="material-icons text-sm">favorite_border</span>
+                    </button>
+                    
+                    <div class="aspect-square bg-light relative overflow-hidden border-b border-muted/30">
+                        <img alt="Product" class="w-full h-full object-cover mix-blend-multiply p-4 transition-transform duration-500 group-hover:scale-105" src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&q=80&w=500" />
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow">
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-muted mb-1">Smart Watches</span>
+                        <h3 class="font-bold text-dark text-lg mb-2">Apple Watch Series 9</h3>
+                        <div class="mt-auto flex items-center justify-between pt-4">
+                            <div>
+                                <span class="text-xs font-bold text-muted line-through block leading-none mb-1">$399.00</span>
+                                <span class="text-xl font-extrabold text-red-500 block leading-none">$239.00</span>
+                            </div>
+                            <button class="bg-dark text-light p-2.5 rounded-lg hover:bg-accent hover:text-dark transition-colors font-bold shadow-sm">
+                                <span class="material-icons text-[18px]">add_shopping_cart</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl border border-red-500/30 transition-all duration-300 flex flex-col relative">
+                    <div class="absolute top-3 left-3 bg-red-500 text-white text-xs font-black px-2.5 py-1 rounded z-10 shadow-md">
+                        25% OFF
+                    </div>
+                    <button class="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center text-muted hover:text-red-500 shadow-md transition-all z-10">
+                        <span class="material-icons text-sm">favorite_border</span>
+                    </button>
+                    
+                    <div class="aspect-square bg-light relative overflow-hidden border-b border-muted/30">
+                        <img alt="Product" class="w-full h-full object-cover mix-blend-multiply p-4 transition-transform duration-500 group-hover:scale-105" src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=500" />
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow">
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-muted mb-1">Audio</span>
+                        <h3 class="font-bold text-dark text-lg mb-2">Studio Wireless Headphones</h3>
+                        <div class="mt-auto flex items-center justify-between pt-4">
+                            <div>
+                                <span class="text-xs font-bold text-muted line-through block leading-none mb-1">$299.00</span>
+                                <span class="text-xl font-extrabold text-red-500 block leading-none">$224.25</span>
+                            </div>
+                            <button class="bg-dark text-light p-2.5 rounded-lg hover:bg-accent hover:text-dark transition-colors font-bold shadow-sm">
+                                <span class="material-icons text-[18px]">add_shopping_cart</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="seasonal-deals" class="scroll-mt-40 mb-20">
+            <div class="flex items-center justify-between mb-8 border-b border-muted/30 pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center">
+                        <span class="material-icons">wb_sunny</span>
+                    </div>
+                    <h2 class="text-2xl font-extrabold text-dark uppercase tracking-wide">Summer Essentials</h2>
+                </div>
+                <a class="text-dark text-sm font-bold flex items-center gap-1 hover:text-muted transition-colors" href="#">
+                    View All <span class="material-icons text-sm">arrow_forward</span>
+                </a>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg border border-muted/50 transition-all duration-300 flex flex-col relative">
+                    <div class="absolute top-3 left-3 bg-dark text-accent text-xs font-black px-2.5 py-1 rounded z-10 shadow-sm">
+                        Summer Price
+                    </div>
+                    <div class="aspect-square bg-light relative overflow-hidden border-b border-muted/30">
+                        <img alt="Product" class="w-full h-full object-cover mix-blend-multiply p-4 transition-transform duration-500 group-hover:scale-105" src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=500" />
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow">
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-muted mb-1">Accessories</span>
+                        <h3 class="font-bold text-dark text-lg mb-2">Classic Aviator Sunglasses</h3>
+                        <div class="mt-auto flex items-center justify-between pt-4">
+                            <div>
+                                <span class="text-xs font-bold text-muted line-through block leading-none mb-1">$150.00</span>
+                                <span class="text-xl font-extrabold text-dark block leading-none">$110.00</span>
+                            </div>
+                            <button class="bg-dark text-light p-2 rounded-lg hover:bg-accent hover:text-dark transition-colors">
+                                <span class="material-icons text-[16px]">add_shopping_cart</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="clearance" class="scroll-mt-40 mb-10">
+            <div class="bg-accent/40 rounded-2xl p-6 md:p-8 border border-accent">
+                <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 pb-4 border-b border-dark/10 gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-dark text-light rounded-xl flex items-center justify-center shadow-lg">
+                            <span class="material-icons">inventory_2</span>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-dark uppercase tracking-wide">Warehouse Clearance</h2>
+                            <p class="text-dark/70 font-medium text-sm">Last chance! Up to 70% off selected items.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg border border-muted/30 transition-all duration-300 flex flex-col relative">
+                        <div class="absolute top-3 left-3 bg-dark text-white text-xs font-black px-2.5 py-1 rounded z-10">
+                            65% OFF
+                        </div>
+                        <div class="aspect-square bg-light relative overflow-hidden border-b border-muted/30">
+                            <img alt="Product" class="w-full h-full object-cover mix-blend-multiply p-4 transition-transform duration-500 group-hover:scale-105 grayscale hover:grayscale-0" src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=500" />
+                        </div>
+                        <div class="p-5 flex flex-col flex-grow">
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-muted mb-1">Footwear</span>
+                            <h3 class="font-bold text-dark text-lg mb-2">Original Swift Sneakers</h3>
+                            <div class="mt-auto flex items-center justify-between pt-4">
+                                <div>
+                                    <span class="text-xs font-bold text-muted line-through block leading-none mb-1">$120.00</span>
+                                    <span class="text-xl font-extrabold text-dark block leading-none">$42.00</span>
+                                </div>
+                                <button class="bg-dark text-light p-2 rounded-lg hover:bg-accent hover:text-dark transition-colors">
+                                    <span class="material-icons text-[16px]">add_shopping_cart</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const navLinks = document.querySelectorAll('a[href^="#"]');
+        const sections = document.querySelectorAll('section[id]');
+
+        // 1. Smooth Scrolling with Offset for Sticky Nav
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    e.preventDefault();
+                    // 120px offset to prevent the sticky nav from covering the section title
+                    const headerOffset = 120; 
+                    const elementPosition = targetElement.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.scrollY - headerOffset;
+                    
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: "smooth"
+                    });
+                }
+            });
+        });
+
+        // 2. Scrollspy: Highlight the active pill button on scroll
+        window.addEventListener('scroll', () => {
+            let current = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                // Check if scroll position is past the section top (with a 150px buffer)
+                if (window.scrollY >= (sectionTop - 150)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                // Reset all links to default (inactive) state
+                link.classList.remove('bg-dark', 'text-light', 'border-dark');
+                link.classList.add('bg-white', 'text-dark', 'border-muted/50');
+                
+                // If the link matches the current section, apply active styling
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.remove('bg-white', 'text-dark', 'border-muted/50');
+                    link.classList.add('bg-dark', 'text-light', 'border-dark'); 
+                }
+            });
+        });
+    });
+    
+</script>
+</html>
