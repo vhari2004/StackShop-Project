@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile - StackShop</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 </head>
 
 <body class="bg-[#F0F0DB] font-sans flex min-h-screen text-[#30364F]">
@@ -16,103 +16,100 @@
 
     </aside>
 
-    <main class="flex-grow flex flex-col items-center justify-center p-8 overflow-y-auto">
+<main class="flex-grow flex flex-col items-center justify-center p-8 overflow-y-auto">
+        <div class="bg-white rounded-2xl shadow-sm border border-muted/30 w-full max-w-4xl p-10 lg:p-14">
 
-        <div class="bg-white rounded-xl shadow-sm w-full max-w-4xl p-10 lg:p-14">
-
-            <h2 class="text-2xl font-bold text-[#30364F] mb-8">
-                My Profile -- <span class="text-end">hii <b> {{user.first_name}}</b></span>
-            </h2>
+            <div class="flex items-center justify-between mb-10 border-b border-muted/20 pb-4">
+                <h2 class="text-2xl font-black text-dark tracking-wide">
+                    My Profile
+                </h2>
+                <span class="text-sm font-medium text-muted">
+                    Welcome back, <b class="text-dark">{{ user.first_name|default:user.username }}</b>
+                </span>
+            </div>
 
             <form method="POST" enctype="multipart/form-data" class="space-y-8">
                 {% csrf_token %}
 
-                <!-- Profile Image Section -->
-                <div class="flex items-center gap-6">
+                <div class="flex items-center gap-6 bg-light/30 p-6 rounded-xl border border-muted/20">
 
                     {% if user.profile_image %}
                     <img src="{{ user.profile_image.url }}"
-                        class="w-24 h-24 rounded-full object-cover border-2 border-[#ACBAC4]">
+                        class="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md">
                     {% else %}
-                    <div class="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center text-gray-400">
-                        No Image
+                    <div
+                        class="w-24 h-24 rounded-full bg-white border-2 border-dashed border-muted flex items-center justify-center text-muted shadow-sm">
+                        <span class="material-icons text-3xl">person</span>
                     </div>
                     {% endif %}
 
                     <div>
-                        <label class="block text-xs font-bold text-[#30364F] uppercase mb-2">
+                        <label class="block text-xs font-black text-dark uppercase tracking-widest mb-2">
                             Update Profile Picture
                         </label>
-
-                        <input type="file" name="profile_photo" accept="image/*" class="block w-full text-sm text-[#ACBAC4]
-                       file:mr-4 file:py-2 file:px-4
-                       file:rounded-lg file:border file:border-[#ACBAC4]
-                       file:text-xs file:font-bold
-                       file:bg-transparent file:text-[#ACBAC4]
-                       hover:file:bg-[#F0F0DB] hover:file:text-[#30364F]
-                       cursor-pointer transition-colors">
+                        <input type="file" name="profile_photo" accept="image/*" class="block w-full text-sm text-muted
+                       file:mr-4 file:py-2.5 file:px-5
+                       file:rounded-lg file:border-0
+                       file:text-xs file:font-bold file:uppercase file:tracking-wider
+                       file:bg-dark file:text-light
+                       hover:file:bg-accent hover:file:text-dark
+                       cursor-pointer transition-all shadow-sm">
                     </div>
                 </div>
 
-                <!-- Form Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                     <div>
-                        <label class="block text-xs font-bold text-[#30364F] uppercase mb-2">
+                        <label class="block text-[10px] font-black text-dark uppercase tracking-widest mb-2">
                             First Name
                         </label>
-                        <input type="text" name="first_name" value="{{ user.first_name }}" class="w-full px-4 py-3 border border-[#ACBAC4] rounded-lg 
-                    focus:outline-none focus:border-[#30364F] focus:ring-1 focus:ring-[#30364F] transition">
+                        <input type="text" name="first_name" value="{{ user.first_name }}"
+                            class="w-full px-4 py-3 border border-muted/50 rounded-xl text-sm font-medium focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all bg-white">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-[#30364F] uppercase mb-2">
+                        <label class="block text-[10px] font-black text-dark uppercase tracking-widest mb-2">
                             Last Name
                         </label>
-                        <input type="text" name="last_name" value="{{ user.last_name }}" class="w-full px-4 py-3 border border-[#ACBAC4] rounded-lg 
-                    focus:outline-none focus:border-[#30364F] focus:ring-1 focus:ring-[#30364F] transition">
+                        <input type="text" name="last_name" value="{{ user.last_name }}"
+                            class="w-full px-4 py-3 border border-muted/50 rounded-xl text-sm font-medium focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all bg-white">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-[#30364F] uppercase mb-2">
+                        <label class="block text-[10px] font-black text-dark uppercase tracking-widest mb-2">
                             Phone Number
                         </label>
-                        <input type="tel" name="phone" value="{{ user.phone_number }}" class="w-full px-4 py-3 border border-[#ACBAC4] rounded-lg 
-                    focus:outline-none focus:border-[#30364F] focus:ring-1 focus:ring-[#30364F] transition">
+                        <input type="tel" name="phone" value="{{ user.phone_number }}"
+                            class="w-full px-4 py-3 border border-muted/50 rounded-xl text-sm font-medium focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all bg-white">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-[#30364F] uppercase mb-2">
-                            Email Address
+                        <label class="block text-[10px] font-black text-dark uppercase tracking-widest mb-2">
+                            Email Address <span class="text-red-500">*</span>
                         </label>
-                        <input type="email" name="email" value="{{ user.email }}" readonly class="w-full px-4 py-3 border border-[#ACBAC4]/50 rounded-lg 
-                    bg-gray-100 text-gray-500 cursor-not-allowed">
+                        <input type="email" name="email" value="{{ user.email }}" readonly
+                            class="w-full px-4 py-3 border border-muted/30 rounded-xl text-sm font-medium bg-light/50 text-muted cursor-not-allowed">
                     </div>
 
                     <div class="md:col-span-2">
-                        <label class="block text-xs font-bold text-[#30364F] uppercase mb-2">
-                            Username
+                        <label class="block text-[10px] font-black text-dark uppercase tracking-widest mb-2">
+                            Username <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="username" value="{{ user.username }}" disabled class="w-full px-4 py-3 border border-[#ACBAC4]/50 rounded-lg 
-                    bg-gray-100 text-gray-500 cursor-not-allowed">
+                        <input type="text" name="username" value="{{ user.username }}" disabled
+                            class="w-full px-4 py-3 border border-muted/30 rounded-xl text-sm font-medium bg-light/50 text-muted cursor-not-allowed">
                     </div>
 
                 </div>
 
-                <!-- Buttons -->
-                <div class="flex justify-end gap-4 pt-6 border-t">
-
-                    <button type="button" class="px-6 py-2 text-sm font-bold text-[#ACBAC4] 
-                hover:text-[#30364F] transition">
+                <div class="flex justify-end gap-4 pt-6 border-t border-muted/20">
+                    <button type="button"
+                        class="px-6 py-2.5 text-sm font-bold text-muted hover:text-dark transition-colors focus:outline-none">
                         Cancel
                     </button>
-
-                    <button type="submit" class="px-8 py-3 bg-[#30364F] text-[#F0F0DB] 
-                rounded-lg text-sm font-bold 
-                hover:opacity-90 shadow-md transition">
+                    <button type="submit"
+                        class="px-8 py-2.5 bg-dark text-light rounded-xl text-sm font-bold hover:bg-accent hover:text-dark shadow-md transition-all active:scale-95">
                         Save Changes
                     </button>
-
                 </div>
 
             </form>

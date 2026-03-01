@@ -12,6 +12,8 @@ class CustomUser(AbstractUser):
     is_verified = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.username
 
 class Address(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="addresses")
@@ -43,6 +45,8 @@ class Notification(models.Model):
     redirect_url = models.URLField(blank=True, null=True)
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f"Notification for {self.user.username}: {self.title}"
 class Category(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
@@ -51,6 +55,8 @@ class Category(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.name
     def save(self, *args, **kwargs):
         if not self.slug:
             base_slug = slugify(self.name)
@@ -71,6 +77,8 @@ class SubCategory(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.name
     def save(self, *args, **kwargs):
         if not self.slug:
             category_slug=slugify()
@@ -92,6 +100,8 @@ class Banner(models.Model):
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     is_active = models.BooleanField(default=True)
+    def __str__(self):
+        return self.title
 
 
 # Create your models here.

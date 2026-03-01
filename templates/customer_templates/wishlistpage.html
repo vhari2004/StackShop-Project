@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Wishlists - StackShop</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap"
         rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
@@ -188,7 +188,8 @@
                                                 </div>
                                             </div>
 
-                                            <form action="{% url 'add_to_cart' item.variant.id %}" method="POST" class="inline">
+                                            <form action="{% url 'add_to_cart' item.variant.id %}" method="POST"
+                                                class="inline">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="variant_id" value="{{ item.variant.id }}">
                                                 <button type="submit"
@@ -239,6 +240,7 @@
             {% endfor %}
 
         </div>
+        
     </main>
 
     <div id="newListModal" class="fixed inset-0 z-[100] flex items-center justify-center hidden">

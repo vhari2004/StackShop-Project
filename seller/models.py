@@ -16,6 +16,8 @@ class SellerProfile(models.Model):
     is_verified = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     store_image=models.ImageField(upload_to='sellerprofile_image')
+    def __str__(self):
+        return self.store_name
 class Product(models.Model):
     seller = models.ForeignKey(SellerProfile, on_delete=models.CASCADE, related_name="products")
     subcategory = models.ForeignKey(SubCategory, on_delete=models.CASCADE, related_name="products")
