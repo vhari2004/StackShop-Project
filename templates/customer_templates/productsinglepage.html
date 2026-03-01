@@ -7,7 +7,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Product Details - StackShop</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <link type="icon/" rel="icon" href="/static/favicon.ico" />
     
@@ -41,7 +41,7 @@
         .star-rating label { color: #ACBAC4; cursor: pointer; transition: color 0.2s; }
         .star-rating label:hover,
         .star-rating label:hover ~ label,
-        .star-rating input:checked ~ label { color: #F59E0B; } /* Yellow-500 */
+        .star-rating input:checked ~ label { color: #F59E0B; }
         .star-rating { display: flex; flex-direction: row-reverse; justify-content: flex-end; }
     </style>
 </head>
@@ -53,230 +53,267 @@
     <main class="max-w-7xl mx-auto w-full px-4 py-8 flex-grow">
         {% include "core_templates/messages.html" %}
 
-        {% for variant in product_var %}
 
-        <nav class="flex items-center gap-2 text-sm font-bold text-muted mb-8 uppercase tracking-widest">
+        <nav class="flex items-center gap-2 text-xs font-bold text-muted mb-8 uppercase tracking-widest border-b border-muted/20 pb-4">
             <a href="{% url 'home' %}" class="hover:text-dark transition-colors">Home</a>
             <span class="material-icons text-[14px]">chevron_right</span>
-            <a href="#" class="hover:text-dark transition-colors">{{ variant.product.subcategory.category.name }}</a>
+            <a href="{% url 'category' %}#cat-{{variant.product.subcategory.category}}" class="hover:text-dark transition-colors">{{ variant.product.subcategory.category.name }}</a>
             <span class="material-icons text-[14px]">chevron_right</span>
-            <span class="text-dark">{{ variant.product.name }}</span>
+            <span class="text-dark truncate max-w-[200px]">{{ variant.product.name }}</span>
         </nav>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 mb-20">
             
-            <div class="lg:col-span-6 flex flex-col gap-4 sticky top-32">
-                <div class="aspect-square bg-white rounded-2xl border border-muted/30 overflow-hidden shadow-sm relative flex items-center justify-center p-8">
+            <div class="lg:col-span-7 flex flex-col-reverse lg:flex-row gap-4 lg:gap-6 sticky top-24 h-max">
+                
+                <div class="flex lg:flex-col gap-3 overflow-auto hide-scrollbar w-full lg:w-20 xl:w-24 flex-shrink-0 snap-x">
+                    {% for image in variant.images.all %}
+                    <button type="button" onclick="changeImage(this, '{{ image.image_url.url }}')" class="thumb-btn flex-shrink-0 w-20 h-20 xl:w-24 xl:h-24 bg-white {% if forloop.first %}border-2 border-dark{% else %}border border-muted/40 hover:border-dark/50{% endif %} rounded-xl overflow-hidden shadow-sm snap-start transition-all">
+                        <img src="{{ image.image_url.url }}" class="w-full h-full object-cover mix-blend-multiply p-2">
+                    </button>
+                    {% endfor %}
+                </div>
+
+                <div class="flex-1 aspect-square lg:aspect-auto lg:h-[600px] bg-white rounded-2xl border border-muted/30 overflow-hidden shadow-sm relative flex items-center justify-center p-8 lg:p-12 group">
                     {% if variant.mrp > variant.selling_price %}
-                    <div class="absolute top-4 left-4 bg-red-500 text-white text-xs font-black px-3 py-1.5 rounded uppercase tracking-widest z-10 shadow-sm">
+                    <div class="absolute top-4 left-4 bg-dark text-accent text-xs font-black px-4 py-1.5 rounded-lg uppercase tracking-widest z-10 shadow-md">
                         Sale
                     </div>
                     {% endif %}
                     
                     {% if variant.images.first %}
-                        <img id="main-product-image" src="{{ variant.images.first.image_url.url }}" alt="{{ variant.product.name }}" class="w-full h-full object-contain mix-blend-multiply transition-opacity duration-300">
+                        <img id="main-product-image" src="{{ variant.images.first.image_url.url }}" alt="{{ variant.product.name }}" class="w-full h-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-105">
                     {% else %}
                         <img id="main-product-image" src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=800" alt="Placeholder" class="w-full h-full object-contain mix-blend-multiply transition-opacity duration-300">
                     {% endif %}
                 </div>
-                
-                <div class="flex gap-4 overflow-x-auto hide-scrollbar py-2 px-1 snap-x">
-                    {% for image in variant.images.all %}
-                    <button type="button" onclick="changeImage(this, '{{ image.image_url.url }}')" class="thumb-btn flex-shrink-0 w-24 h-24 sm:w-28 sm:h-28 bg-white {% if forloop.first %}border-2 border-dark{% else %}border border-muted/30 hover:border-dark/50{% endif %} rounded-xl overflow-hidden shadow-sm snap-start transition-all">
-                        <img src="{{ image.image_url.url }}" class="w-full h-full object-cover mix-blend-multiply p-2">
-                    </button>
-                    {% endfor %}
-                </div>
             </div>
 
-            <div class="lg:col-span-6 flex flex-col">
+            <div class="lg:col-span-5 flex flex-col">
                 
-                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-dark leading-tight mb-3">
-                    {{ variant.product.name }}
-                </h1>
-                
-                <div class="flex items-center gap-4 mb-6">
-                    <div class="flex items-center text-yellow-500">
-                        <span class="font-bold text-dark mr-1">{{ average_rating|default:"0.0" }}</span>
-                        <span class="material-icons text-[18px]">star</span>
-                    </div>
-                    <a href="#reviews" class="text-sm font-bold text-muted hover:text-dark underline transition-colors">{{ total_reviews }} Reviews</a>
+                <div class="mb-6">
+                    <p class="text-dark font-black tracking-widest uppercase text-xs mb-2">{{ variant.product.brand|default:"StackShop" }}</p>
+                    <h1 class="text-3xl lg:text-4xl font-extrabold text-dark leading-tight mb-4">
+                        {{ variant.product.name }}
+                    </h1>
                     
-                    {% if variant.stock_quantity > 0 %}
-                        <span class="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded uppercase tracking-wider">In Stock ({{ variant.stock_quantity }})</span>
-                    {% else %}
-                        <span class="bg-red-100 text-red-700 text-xs font-bold px-2 py-0.5 rounded uppercase tracking-wider">Out of Stock</span>
-                    {% endif %}
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center text-yellow-500 bg-yellow-50 px-2 py-1 rounded">
+                            <span class="font-extrabold text-dark text-sm mr-1">{{ average_rating|default:"0.0" }}</span>
+                            <span class="material-icons text-[16px]">star</span>
+                        </div>
+                        <a href="#reviews" class="text-sm font-bold text-muted hover:text-dark underline transition-colors">{{ total_reviews }} Customer Reviews</a>
+                    </div>
                 </div>
 
-                <div class="flex items-end gap-3 mb-6">
-                    <span class="text-4xl font-black text-dark">${{ variant.selling_price }}</span>
-                    {% if variant.mrp > variant.selling_price %}
-                        <span class="text-lg font-bold text-muted line-through mb-1">${{ variant.mrp }}</span>
-                        <span class="text-sm font-bold text-red-500 mb-1.5">(Sale)</span>
-                    {% endif %}
-                </div>
-
-                <p class="text-dark/80 font-medium mb-8 leading-relaxed">
-                    {{ variant.product.description|linebreaksbr }}
+                <p class="text-dark/70 font-medium mb-8 leading-relaxed text-base">
+                    {{ variant.product.description|truncatewords:40 }}
                 </p>
 
-                <form action="{% url 'add_to_cart' variant.id %}" method="POST" class="space-y-8 border-t border-muted/30 pt-8">
-                    {% csrf_token %}
+                <div class="bg-white rounded-2xl border border-muted/30 shadow-sm p-6 lg:p-8 mb-8">
                     
-                    <div class="flex flex-col sm:flex-row gap-4 pt-4">
-                        
-                        <div class="flex items-center bg-white border border-muted/50 rounded-xl p-1 h-14 sm:w-1/4">
-                            <button type="button" onclick="updateQty(-1)" class="w-10 h-full flex items-center justify-center text-dark hover:bg-light rounded-lg transition-colors focus:outline-none">
-                                <span class="material-icons text-[18px]">remove</span>
-                            </button>
-                            <input type="number" id="qty-input" name="quantity" value="1" min="1" max="{{ variant.stock_quantity }}" class="w-full text-center font-extrabold text-dark bg-transparent border-none focus:ring-0 p-0">
-                            <button type="button" onclick="updateQty(1)" class="w-10 h-full flex items-center justify-center text-dark hover:bg-light rounded-lg transition-colors focus:outline-none">
-                                <span class="material-icons text-[18px]">add</span>
-                            </button>
-                        </div>
-
-                        <div class="flex gap-4 sm:w-3/4">
-                            <button type="submit" {% if variant.stock_quantity <= 0 %}disabled{% endif %} class="flex-1 bg-white border-2 border-dark text-dark font-bold rounded-xl h-14 flex items-center justify-center gap-2 hover:bg-dark hover:text-light transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                                <span class="material-icons text-[20px]">add_shopping_cart</span> Add to Cart
-                            </button>
-                            
-                            <a href="{% url 'wishlist' %}" class="w-14 h-14 flex-shrink-0 bg-white border border-muted/50 text-muted rounded-xl flex items-center justify-center hover:text-red-500 hover:border-red-500 hover:bg-red-50 transition-all shadow-sm" title="Add to Wishlist">
-                                <span class="material-icons">favorite_border</span>
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center gap-4 text-muted justify-center sm:justify-start pt-2">
-                        <div class="flex items-center gap-1.5"><span class="material-icons text-[16px]">verified_user</span><span class="text-xs font-bold uppercase tracking-wider">Secure Payment</span></div>
-                        {% if variant.product.is_returnable %}
-                            <div class="flex items-center gap-1.5"><span class="material-icons text-[16px]">assignment_return</span><span class="text-xs font-bold uppercase tracking-wider">{{ variant.product.return_days }}-Day Returns</span></div>
+                    <div class="flex items-end gap-3 mb-6 pb-6 border-b border-muted/20">
+                        <span class="text-4xl font-black text-dark">${{ variant.selling_price }}</span>
+                        {% if variant.mrp > variant.selling_price %}
+                            <span class="text-lg font-bold text-muted line-through mb-1">${{ variant.mrp }}</span>
                         {% endif %}
                     </div>
-                </form>
-            </div>
-        </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 border-t border-muted/30 pt-16 mb-20">
-            <div class="lg:col-span-2">
-                <h2 class="text-2xl font-extrabold text-dark mb-6 flex items-center gap-2">
-                    <span class="material-icons text-accent">description</span> Product Details
-                </h2>
-                <div class="prose prose-sm md:prose-base text-dark/80 max-w-none space-y-4 font-medium">
-                    {{ variant.product.description|linebreaksbr }}
+                    <div class="flex flex-col gap-4">
+                        <form action="{% url 'add_to_cart' variant.id %}" method="POST" class="flex gap-3">
+                            {% csrf_token %}
+                            
+                            <div class="flex items-center bg-light/50 border border-muted/50 rounded-xl p-1 h-14 w-1/3">
+                                <button type="button" onclick="updateQty(-1)" class="w-10 h-full flex items-center justify-center text-dark hover:bg-white rounded-lg transition-colors focus:outline-none shadow-sm">
+                                    <span class="material-icons text-[18px]">remove</span>
+                                </button>
+                                <input type="number" id="qty-input" name="quantity" value="1" min="1" max="{{ variant.stock_quantity }}" class="w-full text-center font-extrabold text-dark bg-transparent border-none focus:ring-0 p-0 text-base">
+                                <button type="button" onclick="updateQty(1)" class="w-10 h-full flex items-center justify-center text-dark hover:bg-white rounded-lg transition-colors focus:outline-none shadow-sm">
+                                    <span class="material-icons text-[18px]">add</span>
+                                </button>
+                            </div>
+
+                            <button type="submit" {% if variant.stock_quantity <= 0 %}disabled{% endif %} class="flex-1 bg-dark text-light text-sm font-bold rounded-xl h-14 flex items-center justify-center gap-2 hover:bg-accent hover:text-dark transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed group">
+                                <span class="material-icons text-[20px] transition-transform group-hover:rotate-12">add_shopping_cart</span> 
+                                {% if variant.stock_quantity <= 0 %}Out of Stock{% else %}Add to Cart{% endif %}
+                            </button>
+                        </form>
+
+                        <form action="{% url 'addwishlist' variant.id %}" method="POST" class="w-full">
+                            {% csrf_token %}
+                            <button type="submit" 
+                                class="w-full h-12 rounded-xl flex items-center justify-center gap-2 text-sm font-bold transition-all border shadow-sm
+                                {% if variant.id in wishlist_variant_ids %}
+                                    bg-red-500 text-white border-red-500 hover:bg-red-600 hover:border-red-600
+                                {% else %}
+                                    bg-white text-dark border-muted/50 hover:border-dark
+                                {% endif %}">
+                                <span class="material-icons text-[18px]">
+                                    {% if variant.id in wishlist_variant_ids %}favorite{% else %}favorite_border{% endif %}
+                                </span>
+                                {% if variant.id in wishlist_variant_ids %}Saved to Wishlist{% else %}Add to Wishlist{% endif %}
+                            </button>
+                        </form>
+                    </div>
                 </div>
-            </div>
 
-            <div class="lg:col-span-1 bg-white rounded-2xl p-8 border border-muted/30 shadow-sm self-start">
-                <h2 class="text-xl font-extrabold text-dark mb-6 border-b border-muted/20 pb-4">Specifications</h2>
-                <div class="space-y-4 text-sm">
-                    <div class="flex justify-between border-b border-muted/10 pb-2">
-                        <span class="text-muted font-bold uppercase tracking-widest">Brand</span>
-                        <span class="text-dark font-bold">{{ variant.product.brand }}</span>
-                    </div>
-                    <div class="flex justify-between border-b border-muted/10 pb-2">
-                        <span class="text-muted font-bold uppercase tracking-widest">Model</span>
-                        <span class="text-dark font-bold">{{ variant.product.model_number }}</span>
-                    </div>
-                    <div class="flex justify-between border-b border-muted/10 pb-2">
-                        <span class="text-muted font-bold uppercase tracking-widest">SKU</span>
-                        <span class="text-dark font-bold">{{ variant.sku_code }}</span>
-                    </div>
-                    <div class="flex justify-between border-b border-muted/10 pb-2">
-                        <span class="text-muted font-bold uppercase tracking-widest">Weight</span>
-                        <span class="text-dark font-bold">{{ variant.weight }} kg</span>
-                    </div>
-                    <div class="flex justify-between pb-2">
-                        <span class="text-muted font-bold uppercase tracking-widest">Dimensions</span>
-                        <span class="text-dark font-bold">{{ variant.length }} x {{ variant.width }} x {{ variant.height }} cm</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <section id="reviews" class="border-t border-muted/30 pt-16 mb-20">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-10">
-                <div>
-                    <h2 class="text-2xl font-extrabold text-dark mb-2 flex items-center gap-2">
-                        <span class="material-icons text-accent">reviews</span> Customer Reviews
-                    </h2>
-                    <div class="flex items-center gap-4">
-                        <div class="flex items-center text-yellow-500">
-                            <span class="font-bold text-dark mr-1">{{ average_rating|default:"0.0" }}</span>
-                            <span class="material-icons text-[20px]">star</span>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="flex items-center gap-3 text-dark bg-accent/20 p-3 rounded-xl border border-accent/50">
+                        <span class="material-icons text-dark">local_shipping</span>
+                        <div>
+                            <p class="text-xs font-extrabold uppercase tracking-wide">Fast Delivery</p>
+                            <p class="text-[10px] font-bold text-dark/70">Usually 2-3 days</p>
                         </div>
-                        <p class="font-bold text-dark">out of 5 <span class="text-muted font-normal ml-1">({{ total_reviews }} Ratings)</span></p>
+                    </div>
+                    <div class="flex items-center gap-3 text-dark bg-accent/20 p-3 rounded-xl border border-accent/50">
+                        <span class="material-icons text-dark">verified_user</span>
+                        <div>
+                            <p class="text-xs font-extrabold uppercase tracking-wide">Secure Pay</p>
+                            <p class="text-[10px] font-bold text-dark/70">100% Protected</p>
+                        </div>
+                    </div>
+                    {% if variant.product.is_returnable %}
+                    <div class="col-span-2 flex items-center gap-3 text-dark bg-accent/20 p-3 rounded-xl border border-accent/50">
+                        <span class="material-icons text-dark">assignment_return</span>
+                        <div>
+                            <p class="text-xs font-extrabold uppercase tracking-wide">{{ variant.product.return_days }}-Day Returns</p>
+                            <p class="text-[10px] font-bold text-dark/70">Hassle-free return policy</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+
+        <div class="bg-white rounded-3xl p-8 lg:p-12 shadow-sm border border-muted/30 mb-20">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+                
+                <div>
+                    <h2 class="text-2xl font-black text-dark mb-6 border-b border-muted/20 pb-4">Product Overview</h2>
+                    <div class="prose prose-sm sm:prose-base text-dark/80 max-w-none font-medium leading-relaxed">
+                        {{ variant.product.description|linebreaksbr }}
+                    </div>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-black text-dark mb-6 border-b border-muted/20 pb-4">Technical Specifications</h2>
+                    <div class="bg-light/30 rounded-2xl border border-muted/20 p-2">
+                        <dl class="divide-y divide-muted/20 text-sm">
+                            <div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 hover:bg-white transition-colors rounded-xl">
+                                <dt class="text-xs font-extrabold uppercase tracking-widest text-muted">Brand</dt>
+                                <dd class="mt-1 font-bold text-dark sm:col-span-2 sm:mt-0">{{ variant.product.brand }}</dd>
+                            </div>
+                            <div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 hover:bg-white transition-colors rounded-xl">
+                                <dt class="text-xs font-extrabold uppercase tracking-widest text-muted">Model</dt>
+                                <dd class="mt-1 font-bold text-dark sm:col-span-2 sm:mt-0">{{ variant.product.model_number }}</dd>
+                            </div>
+                            <div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 hover:bg-white transition-colors rounded-xl">
+                                <dt class="text-xs font-extrabold uppercase tracking-widest text-muted">SKU Code</dt>
+                                <dd class="mt-1 font-bold text-dark sm:col-span-2 sm:mt-0">{{ variant.sku_code }}</dd>
+                            </div>
+                            <div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 hover:bg-white transition-colors rounded-xl">
+                                <dt class="text-xs font-extrabold uppercase tracking-widest text-muted">Weight</dt>
+                                <dd class="mt-1 font-bold text-dark sm:col-span-2 sm:mt-0">{{ variant.weight }} kg</dd>
+                            </div>
+                            <div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 hover:bg-white transition-colors rounded-xl">
+                                <dt class="text-xs font-extrabold uppercase tracking-widest text-muted">Dimensions</dt>
+                                <dd class="mt-1 font-bold text-dark sm:col-span-2 sm:mt-0">{{ variant.length }} x {{ variant.width }} x {{ variant.height }} cm</dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <section id="reviews" class="mb-20">
+            <div class="bg-dark rounded-3xl p-8 lg:p-10 mb-8 flex flex-col md:flex-row items-center justify-between shadow-lg relative overflow-hidden">
+                <div class="absolute -right-20 -top-20 w-64 h-64 bg-accent/10 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="relative z-10 text-center md:text-left mb-6 md:mb-0">
+                    <h2 class="text-3xl font-black text-light mb-2">Customer Reviews</h2>
+                    <div class="flex items-center justify-center md:justify-start gap-4">
+                        <div class="flex items-center text-accent text-xl">
+                            <span class="font-bold mr-2">{{ average_rating|default:"0.0" }}</span>
+                            <span class="material-icons">star</span>
+                        </div>
+                        <p class="text-sm font-bold text-muted border-l border-muted/30 pl-4">Based on {{ total_reviews }} reviews</p>
                     </div>
                 </div>
                 
-                {% if not request.user.is_authenticated %}
-                    <a href="{% url 'login' %}" class="bg-dark text-light px-6 py-3 rounded-lg font-bold hover:opacity-90 transition shadow-sm inline-block">
-                        Login to Review
-                    </a>
-                {% elif has_purchased %}
-                    <button onclick="openModal('reviewModal')" class="bg-dark text-light px-6 py-3 rounded-lg font-bold hover:opacity-90 transition shadow-sm">
-                        {% if user_review %}Update Your Review{% else %}Write a Review{% endif %}
-                    </button>
-                {% else %}
-                    <p class="text-sm font-bold text-muted bg-white border border-muted/30 px-4 py-2 rounded-lg">
-                        Only verified buyers can leave a review.
-                    </p>
-                {% endif %}
+                <div class="relative z-10">
+                    {% if not request.user.is_authenticated %}
+                        <a href="{% url 'login' %}" class="bg-light text-dark px-8 py-3.5 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-accent transition shadow-md inline-block">
+                            Login to Review
+                        </a>
+                    {% elif has_purchased %}
+                        <button onclick="openModal('reviewModal')" class="bg-accent text-dark px-8 py-3.5 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-white transition shadow-md">
+                            {% if user_review %}Update Your Review{% else %}Write a Review{% endif %}
+                        </button>
+                    {% else %}
+                        <p class="text-xs font-bold text-light bg-white/10 px-4 py-2.5 rounded-lg border border-white/20">
+                            <span class="material-icons text-[14px] align-middle mr-1">info</span> Only verified buyers can review.
+                        </p>
+                    {% endif %}
+                </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {% for review in reviews %}
-                <div class="bg-white p-6 rounded-2xl border border-muted/30 shadow-sm">
+                <div class="bg-white p-6 rounded-2xl border border-muted/30 shadow-sm hover:shadow-md transition-shadow">
                     <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-dark text-light font-black flex items-center justify-center uppercase">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-accent text-dark text-lg font-black flex items-center justify-center uppercase shadow-inner">
                                 {{ review.user.username|make_list|first }}
                             </div>
                             <div>
-                                <h4 class="font-bold text-dark text-sm">{{ review.user.username }}</h4>
-                                <p class="text-[10px] text-muted font-bold uppercase tracking-widest">Verified Buyer</p>
+                                <h4 class="font-bold text-dark text-base">{{ review.user.username }}</h4>
+                                <p class="text-[10px] text-green-600 font-bold uppercase tracking-widest flex items-center gap-1">
+                                    <span class="material-icons text-[12px]">verified</span> Verified Buyer
+                                </p>
                             </div>
                         </div>
-                        <span class="text-xs text-muted font-medium">{{ review.created_at|date:"M d, Y" }}</span>
+                        <span class="text-xs text-muted font-bold bg-light px-3 py-1 rounded-lg">{{ review.created_at|date:"M d, Y" }}</span>
                     </div>
-                    <div class="flex items-center text-yellow-500 text-[14px] mb-3">
-                        <span class="font-bold text-dark mr-1">{{ review.rating }}</span>
+                    <div class="flex items-center text-yellow-500 text-sm mb-3 bg-yellow-50 w-max px-2 py-1 rounded">
+                        <span class="font-black text-dark mr-1.5">{{ review.rating }}.0</span>
                         <span class="material-icons text-[16px]">star</span>
                     </div>
-                    <p class="text-sm text-dark/80 font-medium leading-relaxed">{{ review.comment }}</p>
+                    <p class="text-dark/80 font-medium leading-relaxed">{{ review.comment }}</p>
                 </div>
                 {% empty %}
-                <div class="col-span-full text-center py-10 text-muted">
-                    <span class="material-icons text-4xl mb-2">speaker_notes_off</span>
-                    <p class="font-bold text-dark">No reviews yet.</p>
-                    <p class="text-sm">Be the first to review this product!</p>
+                <div class="col-span-full flex flex-col items-center justify-center py-12 text-muted">
+                    <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-sm mb-4 border border-muted/20">
+                        <span class="material-icons text-4xl">rate_review</span>
+                    </div>
+                    <p class="font-extrabold text-dark text-lg">No reviews yet</p>
+                    <p class="text-sm font-medium">Be the first to share your experience with this product!</p>
                 </div>
                 {% endfor %}
             </div>
         </section>
 
-        {% endfor %} 
     </main>
 
     {% if request.user.is_authenticated and has_purchased %}
     <div id="reviewModal" class="fixed inset-0 z-[100] flex items-center justify-center hidden">
         <div class="absolute inset-0 bg-dark/70 backdrop-blur-sm transition-opacity" onclick="closeModal('reviewModal')"></div>
         
-        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 transform scale-95 opacity-0 transition-all duration-300" id="modalBox_reviewModal">
+        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-8 transform scale-95 opacity-0 transition-all duration-300" id="modalBox_reviewModal">
             <button onclick="closeModal('reviewModal')" class="absolute top-4 right-4 text-muted hover:text-dark transition-colors focus:outline-none">
                 <span class="material-icons">close</span>
             </button>
             
-            <h2 class="text-2xl font-bold text-dark mb-1">{% if user_review %}Update Review{% else %}Write a Review{% endif %}</h2>
-            <p class="text-sm text-muted font-medium mb-6">Share your experience with this product.</p>
+            <h2 class="text-2xl font-black text-dark mb-1">{% if user_review %}Update Review{% else %}Write a Review{% endif %}</h2>
+            <p class="text-xs text-muted font-bold tracking-wide uppercase mb-6 border-b border-muted/20 pb-4">Share your experience.</p>
             
             <form action="{% url 'submit_review' product_var.first.id %}" method="POST">
                 {% csrf_token %}
                 
-                <div class="mb-6 text-center">
-                    <label class="block text-xs font-bold text-dark mb-2 uppercase tracking-wide">Your Rating</label>
-                    
-                    <div class="star-rating inline-flex text-4xl justify-center">
+                <div class="mb-6 text-center bg-light/50 py-4 rounded-xl border border-muted/30">
+                    <label class="block text-[10px] font-black text-dark mb-2 uppercase tracking-widest">Tap to Rate</label>
+                    <div class="star-rating inline-flex text-3xl justify-center">
                         <input type="radio" id="star5" name="rating" value="5" {% if user_review.rating == 5 %}checked{% endif %} required /><label for="star5" class="material-icons">star</label>
                         <input type="radio" id="star4" name="rating" value="4" {% if user_review.rating == 4 %}checked{% endif %} /><label for="star4" class="material-icons">star</label>
                         <input type="radio" id="star3" name="rating" value="3" {% if user_review.rating == 3 %}checked{% endif %} /><label for="star3" class="material-icons">star</label>
@@ -286,13 +323,13 @@
                 </div>
 
                 <div class="mb-6">
-                    <label class="block text-xs font-bold text-dark mb-2 uppercase tracking-wide">Your Review</label>
-                    <textarea name="comment" rows="4" required class="w-full px-4 py-3 border border-muted/50 rounded-lg focus:outline-none focus:ring-1 focus:ring-dark focus:border-dark bg-transparent transition text-dark placeholder-muted/70 resize-none" placeholder="What did you like or dislike?">{{ user_review.comment }}</textarea>
+                    <label class="block text-[10px] font-black text-dark mb-2 uppercase tracking-widest">Your Review</label>
+                    <textarea name="comment" rows="4" required class="w-full px-4 py-3 border border-muted/50 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-dark focus:border-transparent bg-white transition text-dark placeholder-muted/50 resize-none shadow-inner" placeholder="What did you like or dislike?">{{ user_review.comment }}</textarea>
                 </div>
 
-                <div class="flex gap-4 justify-end border-t border-muted/20 pt-6">
-                    <button type="button" onclick="closeModal('reviewModal')" class="px-6 py-2 text-sm font-bold text-muted hover:text-dark transition-colors focus:outline-none">Cancel</button>
-                    <button type="submit" class="px-8 py-3 bg-dark text-light rounded-lg text-sm font-bold hover:opacity-90 shadow-md transition">Submit</button>
+                <div class="flex gap-3 justify-end pt-2">
+                    <button type="button" onclick="closeModal('reviewModal')" class="px-5 py-2.5 text-xs font-bold text-dark bg-light hover:bg-muted/30 rounded-lg transition-colors focus:outline-none">Cancel</button>
+                    <button type="submit" class="px-6 py-2.5 bg-dark text-light rounded-lg text-xs font-bold hover:bg-accent hover:text-dark shadow-md transition-colors">Submit Review</button>
                 </div>
             </form>
         </div>
@@ -302,7 +339,6 @@
     {% include "customer_templates/Footer.html" %}
 
     <script>
-        // Modal Handlers
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
             const modalBox = document.getElementById('modalBox_' + modalId);
@@ -322,24 +358,24 @@
             }, 300);
         }
 
-        // Image Gallery Script
         function changeImage(button, imageSrc) {
             const mainImg = document.getElementById('main-product-image');
+            mainImg.style.transform = 'scale(0.95)';
             mainImg.style.opacity = '0.5';
             setTimeout(() => {
                 mainImg.src = imageSrc;
+                mainImg.style.transform = 'scale(1)';
                 mainImg.style.opacity = '1';
             }, 150);
 
             document.querySelectorAll('.thumb-btn').forEach(btn => {
                 btn.classList.remove('border-dark', 'border-2');
-                btn.classList.add('border-muted/30', 'border');
+                btn.classList.add('border-muted/40', 'border');
             });
-            button.classList.remove('border-muted/30', 'border');
+            button.classList.remove('border-muted/40', 'border');
             button.classList.add('border-dark', 'border-2');
         }
 
-        // Quantity Increment/Decrement Script
         function updateQty(change) {
             const input = document.getElementById('qty-input');
             let newVal = parseInt(input.value) + change;

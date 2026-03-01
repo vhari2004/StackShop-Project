@@ -263,20 +263,36 @@ def set_default_address_view(request):
     return redirect('address')
 #------------------------------------------------------------------------------
 
+#product_view_user-------------------------------------------------------------------
+@login_required
+def product_list_view(request):
+    product_var = ProductVariant.objects.select_related('product').prefetch_related('images').all()
+    cart = Cart.objects.filter(user=request.user).first()
+    if cart:
+        cart_items = CartItem.objects.filter(cart=cart).prefetch_related('variant__product', 'variant__images')  
+    else:
+        cart_items=CartItem.objects.none()
+    wishlist = Wishlist.objects.filter(user=request.user, is_default=True).first()
+    if wishlist:
+        wishlist_items = WishlistItem.objects.filter(wishlist=wishlist).prefetch_related('variant__product', 'variant__images') 
+    else:
+        wishlist_items=WishlistItem.objects.none()
+    return render(request, 'customer_templates/product_page.html', {"product_var": product_var,"cart_items": cart_items,"wishlist": wishlist_items})
+def product_single_view(request,id):
+    product_var=ProductVariant.objects.get(id=id)
+    cart=Cart.objects.filter(user=request.user).first()
+    cart_items=CartItem.objects.filter(cart=cart).prefetch_related('variant__product','variant__images')
+    return render(request,'customer_templates/productsinglepage.html',{"variant":product_var,"cart_items":cart_items})
+#----------------------------------------------------------------------------------------------------
+
+#order---------------------------------------------------------------------------
+def orderhistory_view(request):
+    return render(request,'customer_templates/order_history_customer.html')
+#--------------------------------------------------------------------------------
+
 # customer dashboard-------------------------------------------------------------
 def customer_dashboard_view(request):
     return render(request,'customer_templates/customer_dashboard.html')
-def orderhistory_view(request):
-    return render(request,'customer_templates/order_history_customer.html')
+#----------------------------------------------------------------------------------
 
-def product_list_view(request):
-    product_var=ProductVariant.objects.all()
-    cart=Cart.objects.filter(user=request.user).first()
-    cart_items=CartItem.objects.filter(cart=cart).prefetch_related('variant__product','variant__images')
-    return render(request,'customer_templates/product_page.html',{"product_var":product_var,"cart_items":cart_items})
-def product_single_view(request):
-    product_var=ProductVariant.objects.all()
-    cart=Cart.objects.filter(user=request.user).first()
-    cart_items=CartItem.objects.filter(cart=cart).prefetch_related('variant__product','variant__images')
-    return render(request,'customer_templates/productsinglepage.html',{"product_var":product_var,"cart_items":cart_items})
 # Create your views here.
