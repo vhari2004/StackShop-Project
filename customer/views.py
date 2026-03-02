@@ -51,14 +51,9 @@ def remove_wishlist_view(request, id):
     return redirect('wishlist')
 @login_required
 def wishlist_view(request):
-    wishlists = Wishlist.objects.filter(user=request.user).prefetch_related(
-        'items__variant__product', 
-        'items__variant__images'
-    ).order_by('-is_default', '-created_at')
-    
+    wishlists = Wishlist.objects.filter(user=request.user).prefetch_related('items__variant__product', 'items__variant__images').order_by('-is_default', '-created_at')
     context = {
-        'wishlists': wishlists,
-        'wishlist_collections': wishlists, 
+        'wishlists': wishlists,'wishlist_collections': wishlists, 
     }
     return render(request,'customer_templates/wishlistpage.html',context)
 def create_collection_view(request):
@@ -103,7 +98,7 @@ def delete_collection_view(request,wishlist_id):
 def add_to_cart_view(request,id):
     user=request.user
     product_variant=get_object_or_404(ProductVariant,id=id)
-    cart, cart_created = Cart.objects.get_or_create(user=request.user)
+    cart, _ = Cart.objects.get_or_create(user=request.user)
     cart_item,created=CartItem.objects.get_or_create(cart=cart,variant=product_variant,defaults={'quantity': 1, 'price_at_time': product_variant.selling_price})
     if not created:
         cart_item.quantity += 1
@@ -115,19 +110,11 @@ def add_to_cart_view(request,id):
 def cart_view(request):
     cart=get_object_or_404(Cart, user=request.user)
     cart_items=CartItem.objects.filter(cart=cart).prefetch_related('variant__product','variant__images')
-    
-    # Calculate cart totals
-    cart_total = sum(item.get_total() for item in cart_items)
+    for item in cart_items:
+        cart_total = sum(item.get_total())
     tax_amount = cart_total * 0.18
     total_amount = cart_total + tax_amount
-    
-    context={
-        'cart_items': cart_items,
-        'cart_total': cart_total,
-        'tax_amount': tax_amount,
-        'total_amount': total_amount
-    }
-    return render(request,'customer_templates/cartpage.html',context)
+    return render(request,'customer_templates/cartpage.html',{'cart_items': cart_items,'cart_total': cart_total,'tax_amount': tax_amount,'total_amount': total_amount})
 
 @login_required
 def update_cart_view(request,id):
@@ -264,20 +251,24 @@ def set_default_address_view(request):
 #------------------------------------------------------------------------------
 
 #product_view_user-------------------------------------------------------------------
-@login_required
 def product_list_view(request):
     product_var = ProductVariant.objects.select_related('product').prefetch_related('images').all()
-    cart = Cart.objects.filter(user=request.user).first()
-    if cart:
-        cart_items = CartItem.objects.filter(cart=cart).prefetch_related('variant__product', 'variant__images')  
-    else:
-        cart_items=CartItem.objects.none()
-    wishlist = Wishlist.objects.filter(user=request.user, is_default=True).first()
-    if wishlist:
-        wishlist_items = WishlistItem.objects.filter(wishlist=wishlist).prefetch_related('variant__product', 'variant__images') 
-    else:
-        wishlist_items=WishlistItem.objects.none()
-    return render(request, 'customer_templates/product_page.html', {"product_var": product_var,"cart_items": cart_items,"wishlist": wishlist_items})
+    try:
+        if request.user.is_authenticated:
+            cart = Cart.objects.filter(user=request.user).first()
+            if cart:
+                cart_items = CartItem.objects.filter(cart=cart).prefetch_related('variant__product', 'variant__images')  
+            else:
+                cart_items=CartItem.objects.none()
+            wishlist = Wishlist.objects.filter(user=request.user, is_default=True).first()
+            if wishlist:
+                wishlist_items = WishlistItem.objects.filter(wishlist=wishlist).prefetch_related('variant__product', 'variant__images') 
+            else:
+                wishlist_items=WishlistItem.objects.none()
+            return render(request, 'customer_templates/product_page.html', {"product_var": product_var,"cart_items": cart_items,"wishlist": wishlist_items})
+    except:
+        return redirect('login')
+    return render(request, 'customer_templates/product_page.html', {"product_var": product_var})
 def product_single_view(request,id):
     product_var=ProductVariant.objects.get(id=id)
     cart=Cart.objects.filter(user=request.user).first()
