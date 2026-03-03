@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-
-<html class="light" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>StackShop Seller Dashboard</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>StackShop Seller Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
@@ -22,20 +21,12 @@
                         "card-cream": "#E1D9BC",
                         "slate-grey": "#ACBAC4",
                     },
-                    fontFamily: {
-                        "display": ["Manrope"]
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
+                    fontFamily: { "display": ["Manrope"] }
                 },
             },
         }
     </script>
-<style>
+    <style>
         body { font-family: 'Manrope', sans-serif; }
         .sidebar-item-active { background-color: rgba(25, 93, 230, 0.15); border-left: 4px solid #195de6; }
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
@@ -43,278 +34,102 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #ACBAC4; border-radius: 10px; }
     </style>
 </head>
-<body class="bg-workspace-nude dark:bg-background-dark text-slate-900 dark:text-gray-100 min-h-screen flex overflow-hidden">
-<!-- Sidebar -->
+<body class="bg-workspace-nude dark:bg-background-dark text-slate-900 dark:text-gray-100 min-h-screen flex ">
+
 <aside class="w-64 bg-sidebar-navy text-white flex flex-col flex-shrink-0">
-<div class="p-8 flex items-center space-x-3">
-<div class="w-8 h-8 bg-primary rounded flex items-center justify-center">
-<span class="material-icons text-white text-lg">layers</span>
-</div>
-<span class="text-xl font-bold tracking-tight">StackShop</span>
-</div>
-<nav class="flex-1 px-4 mt-4 space-y-1 overflow-y-auto custom-scrollbar">
-<a class="sidebar-item-active flex items-center px-4 py-3 text-sm font-medium transition-colors" href="#">
-<span class="material-icons mr-3 opacity-90">dashboard</span>
-                Dashboard
-            </a>
-<a class="flex items-center px-4 py-3 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-colors" href="#">
-<span class="material-icons mr-3 opacity-70">inventory_2</span>
-                My Products
-            </a>
-<a class="flex items-center px-4 py-3 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-colors" href="#">
-<span class="material-icons mr-3 opacity-70">shopping_cart</span>
-                Orders
-                <span class="ml-auto bg-primary text-[10px] px-2 py-0.5 rounded-full">12</span>
-</a>
-<a class="flex items-center px-4 py-3 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-colors" href="#">
-<span class="material-icons mr-3 opacity-70">bar_chart</span>
-                Analytics
-            </a>
-<a class="flex items-center px-4 py-3 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-colors" href="#">
-<span class="material-icons mr-3 opacity-70">payments</span>
-                Payments
-            </a>
-<a class="flex items-center px-4 py-3 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-colors" href="#">
-<span class="material-icons mr-3 opacity-70">settings</span>
-                Store Settings
-            </a>
-</nav>
-<div class="p-6 border-t border-white/10">
-<div class="flex items-center space-x-3">
-<div class="w-10 h-10 rounded-full bg-slate-grey/30 overflow-hidden">
-<img alt="Avatar" data-alt="Portrait of a male professional user" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD22V041e_nkRKsdfN5cI8lZVud8VrfvExAS2_MgBWGqyEymICzAENv0SgUKAdujMAjN0SUOsIDmvxJ9WgTtiW8FxKKCMGe6HTvVVS-jqsSrh4u1jAqRxwqVKfTRlW_BGcvgq593eKrvpocCJIhG3HzhCLX9tJaIiO8-ahy_7XeZXUjeH4ypw_PB6tXIspSUEa_vV0f5qpD0bQ47IqEyxkwLbwDn1seo74TeFex6ibmN3LbZV5FZ3bIU3hAGgKXDGyFHWSYDKEtuNUH"/>
-</div>
-<div class="flex-1 overflow-hidden">
-<p class="text-sm font-semibold truncate">Alex Miller</p>
-<p class="text-xs text-gray-400 truncate">Store Manager</p>
-</div>
-<button class="text-gray-400 hover:text-white">
-<span class="material-icons text-sm">logout</span>
-</button>
-</div>
-</div>
+    <div class="p-8 flex items-center space-x-3">
+        <div class="w-8 h-8 bg-primary rounded flex items-center justify-center">
+            <span class="material-icons text-white text-lg">layers</span>
+        </div>
+        <span class="text-xl font-bold tracking-tight">StackShop</span>
+    </div>
+    <nav class="flex-1 px-4 mt-4 space-y-1 overflow-y-auto custom-scrollbar">
+        <a class="sidebar-item-active flex items-center px-4 py-3 text-sm font-medium transition-colors" href="#">
+            <span class="material-icons mr-3 opacity-90">dashboard</span> Dashboard
+        </a>
+        <a class="flex items-center px-4 py-3 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-colors" href="#">
+            <span class="material-icons mr-3 opacity-70">inventory_2</span> My Products
+        </a>
+    </nav>
 </aside>
-<!-- Main Content Area -->
+
 <main class="flex-1 overflow-y-auto bg-workspace-nude dark:bg-background-dark p-8 font-display">
-<!-- Header -->
-<header class="flex justify-between items-end mb-8">
-<div>
-<h1 class="text-3xl font-extrabold text-sidebar-navy dark:text-white">Seller Overview</h1>
-<p class="text-slate-grey font-medium mt-1">Welcome back, Alex. Here's what's happening with your store today.</p>
+    <header class="flex justify-between items-end mb-8">
+        <div>
+            <h1 class="text-3xl font-extrabold text-sidebar-navy dark:text-white">Seller Overview</h1>
+            <p class="text-slate-grey font-medium mt-1">Total overview of your products and store performance.</p>
+        </div>
+    </header>
+
+    <div class="bg-white dark:bg-gray-800 rounded-xl border border-slate-grey/20 shadow-sm overflow-hidden">
+    <div class="px-8 py-6 border-b border-slate-grey/10 flex justify-between items-center">
+    <h3 class="text-lg font-bold text-sidebar-navy dark:text-white">Recent Products</h3>
+    <a href="{% url 'add-product' %}" class="bg-primary/10 text-primary text-sm font-bold px-4 py-2 rounded-lg hover:bg-primary/20 transition-colors">
+        + Add Product
+    </a>
 </div>
-<div class="flex items-center space-x-3">
-<div class="flex items-center bg-white dark:bg-gray-800 border border-slate-grey/20 rounded-lg px-4 py-2 text-sm text-slate-700 dark:text-gray-300 shadow-sm cursor-pointer">
-<span class="material-icons text-sm mr-2">calendar_today</span>
-<span>Oct 1, 2023 - Oct 31, 2023</span>
-<span class="material-icons text-sm ml-2">expand_more</span>
-</div>
-<button class="bg-primary text-white p-2 rounded-lg hover:bg-blue-700 transition-colors shadow-lg shadow-primary/20">
-<span class="material-icons">notifications</span>
-</button>
-</div>
-</header>
-<!-- KPI Cards -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-<div class="bg-card-cream dark:bg-gray-800 p-6 rounded-xl border border-slate-grey/20 shadow-sm">
-<div class="flex justify-between items-start mb-4">
-<div class="p-2 bg-white/50 dark:bg-white/10 rounded-lg">
-<span class="material-icons text-primary">account_balance_wallet</span>
-</div>
-<span class="text-xs font-bold text-green-600 bg-green-100 px-2 py-1 rounded-full">+12.5%</span>
-</div>
-<p class="text-slate-grey text-sm font-semibold uppercase tracking-wider">Total Revenue</p>
-<p class="text-3xl font-extrabold text-sidebar-navy dark:text-white mt-1">$42,500.00</p>
-</div>
-<div class="bg-card-cream dark:bg-gray-800 p-6 rounded-xl border border-slate-grey/20 shadow-sm">
-<div class="flex justify-between items-start mb-4">
-<div class="p-2 bg-white/50 dark:bg-white/10 rounded-lg">
-<span class="material-icons text-primary">shopping_bag</span>
-</div>
-<span class="text-xs font-bold text-green-600 bg-green-100 px-2 py-1 rounded-full">+8.2%</span>
-</div>
-<p class="text-slate-grey text-sm font-semibold uppercase tracking-wider">Items Sold</p>
-<p class="text-3xl font-extrabold text-sidebar-navy dark:text-white mt-1">1,240 <span class="text-base font-normal opacity-60">units</span></p>
-</div>
-<div class="bg-card-cream dark:bg-gray-800 p-6 rounded-xl border border-slate-grey/20 shadow-sm">
-<div class="flex justify-between items-start mb-4">
-<div class="p-2 bg-white/50 dark:bg-white/10 rounded-lg">
-<span class="material-icons text-primary">list_alt</span>
-</div>
-<span class="text-xs font-bold text-slate-grey bg-white/50 px-2 py-1 rounded-full">Stable</span>
-</div>
-<p class="text-slate-grey text-sm font-semibold uppercase tracking-wider">Active Listings</p>
-<p class="text-3xl font-extrabold text-sidebar-navy dark:text-white mt-1">84 <span class="text-base font-normal opacity-60">products</span></p>
-</div>
-</div>
-<!-- Sales Chart Section -->
-<div class="bg-white dark:bg-gray-800 p-8 rounded-xl border border-slate-grey/20 shadow-sm mb-8">
-<div class="flex justify-between items-center mb-10">
-<h3 class="text-xl font-bold text-sidebar-navy dark:text-white">Monthly Sales Performance</h3>
-<div class="flex space-x-4">
-<div class="flex items-center text-xs font-medium">
-<span class="w-3 h-3 bg-primary rounded-full mr-2"></span>
-                        Current Period
-                    </div>
-<div class="flex items-center text-xs font-medium opacity-40">
-<span class="w-3 h-3 bg-slate-grey rounded-full mr-2"></span>
-                        Previous Period
-                    </div>
-</div>
-</div>
-<div class="h-64 relative flex items-end space-x-4">
-<!-- Simple Bar Representation to simulate a chart visual -->
-<div class="flex-1 flex flex-col items-center group">
-<div class="w-full bg-primary/20 rounded-t-lg transition-all duration-300 h-32 group-hover:bg-primary/40 relative">
-<div class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-sidebar-navy text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">$4,200</div>
-</div>
-<span class="mt-4 text-xs font-bold text-slate-grey uppercase tracking-widest">May</span>
-</div>
-<div class="flex-1 flex flex-col items-center group">
-<div class="w-full bg-primary/20 rounded-t-lg transition-all duration-300 h-48 group-hover:bg-primary/40 relative">
-<div class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-sidebar-navy text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">$5,800</div>
-</div>
-<span class="mt-4 text-xs font-bold text-slate-grey uppercase tracking-widest">Jun</span>
-</div>
-<div class="flex-1 flex flex-col items-center group">
-<div class="w-full bg-primary/20 rounded-t-lg transition-all duration-300 h-40 group-hover:bg-primary/40 relative">
-<div class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-sidebar-navy text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">$5,100</div>
-</div>
-<span class="mt-4 text-xs font-bold text-slate-grey uppercase tracking-widest">Jul</span>
-</div>
-<div class="flex-1 flex flex-col items-center group">
-<div class="w-full bg-primary rounded-t-lg transition-all duration-300 h-56 group-hover:bg-blue-700 relative">
-<div class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-sidebar-navy text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">$7,500</div>
-</div>
-<span class="mt-4 text-xs font-bold text-slate-grey uppercase tracking-widest">Aug</span>
-</div>
-<div class="flex-1 flex flex-col items-center group">
-<div class="w-full bg-primary/20 rounded-t-lg transition-all duration-300 h-44 group-hover:bg-primary/40 relative">
-<div class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-sidebar-navy text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">$5,400</div>
-</div>
-<span class="mt-4 text-xs font-bold text-slate-grey uppercase tracking-widest">Sep</span>
-</div>
-<div class="flex-1 flex flex-col items-center group">
-<div class="w-full bg-primary/40 rounded-t-lg transition-all duration-300 h-60 group-hover:bg-primary/60 relative">
-<div class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-sidebar-navy text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">$8,100</div>
-</div>
-<span class="mt-4 text-xs font-bold text-slate-grey uppercase tracking-widest">Oct</span>
-</div>
-</div>
-</div>
-<!-- Recent Orders Table -->
-<div class="bg-white dark:bg-gray-800 rounded-xl border border-slate-grey/20 shadow-sm overflow-hidden">
-<div class="px-8 py-6 border-b border-slate-grey/10 flex justify-between items-center">
-<h3 class="text-lg font-bold text-sidebar-navy dark:text-white">Recent Orders</h3>
-<button class="text-primary text-sm font-bold hover:underline">View All Orders</button>
-</div>
-<div class="overflow-x-auto">
-<table class="w-full text-left">
-<thead>
-<tr class="bg-workspace-nude/30 dark:bg-white/5">
-<th class="px-8 py-4 text-xs font-bold text-slate-grey uppercase tracking-widest">Order ID</th>
-<th class="px-8 py-4 text-xs font-bold text-slate-grey uppercase tracking-widest">Customer</th>
-<th class="px-8 py-4 text-xs font-bold text-slate-grey uppercase tracking-widest">Date</th>
-<th class="px-8 py-4 text-xs font-bold text-slate-grey uppercase tracking-widest">Amount</th>
-<th class="px-8 py-4 text-xs font-bold text-slate-grey uppercase tracking-widest">Status</th>
-</tr>
-</thead>
-<tbody class="divide-y divide-slate-grey/10">
-<tr class="hover:bg-workspace-nude/20 dark:hover:bg-white/5 transition-colors cursor-pointer">
-<td class="px-8 py-4 text-sm font-semibold text-sidebar-navy dark:text-white">#STK-9842</td>
-<td class="px-8 py-4">
-<div class="flex items-center space-x-3">
-<div class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">JD</div>
-<span class="text-sm font-medium">Jordan Davis</span>
-</div>
-</td>
-<td class="px-8 py-4 text-sm text-slate-grey">Oct 28, 2023</td>
-<td class="px-8 py-4 text-sm font-bold">$249.99</td>
-<td class="px-8 py-4">
-<span class="px-3 py-1 text-[10px] font-extrabold uppercase bg-green-100 text-green-700 rounded-full tracking-wider">Shipped</span>
-</td>
-</tr>
-<tr class="hover:bg-workspace-nude/20 dark:hover:bg-white/5 transition-colors cursor-pointer">
-<td class="px-8 py-4 text-sm font-semibold text-sidebar-navy dark:text-white">#STK-9841</td>
-<td class="px-8 py-4">
-<div class="flex items-center space-x-3">
-<div class="w-8 h-8 rounded-full bg-slate-grey/10 text-slate-grey flex items-center justify-center text-[10px] font-bold">SL</div>
-<span class="text-sm font-medium">Sarah Lynch</span>
-</div>
-</td>
-<td class="px-8 py-4 text-sm text-slate-grey">Oct 27, 2023</td>
-<td class="px-8 py-4 text-sm font-bold">$120.00</td>
-<td class="px-8 py-4">
-<span class="px-3 py-1 text-[10px] font-extrabold uppercase bg-blue-100 text-blue-700 rounded-full tracking-wider">Processing</span>
-</td>
-</tr>
-<tr class="hover:bg-workspace-nude/20 dark:hover:bg-white/5 transition-colors cursor-pointer">
-<td class="px-8 py-4 text-sm font-semibold text-sidebar-navy dark:text-white">#STK-9840</td>
-<td class="px-8 py-4">
-<div class="flex items-center space-x-3">
-<div class="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-[10px] font-bold">MB</div>
-<span class="text-sm font-medium">Marcus Brown</span>
-</div>
-</td>
-<td class="px-8 py-4 text-sm text-slate-grey">Oct 27, 2023</td>
-<td class="px-8 py-4 text-sm font-bold">$1,450.00</td>
-<td class="px-8 py-4">
-<span class="px-3 py-1 text-[10px] font-extrabold uppercase bg-yellow-100 text-yellow-700 rounded-full tracking-wider">Pending</span>
-</td>
-</tr>
-<tr class="hover:bg-workspace-nude/20 dark:hover:bg-white/5 transition-colors cursor-pointer">
-<td class="px-8 py-4 text-sm font-semibold text-sidebar-navy dark:text-white">#STK-9839</td>
-<td class="px-8 py-4">
-<div class="flex items-center space-x-3">
-<div class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">EK</div>
-<span class="text-sm font-medium">Emma Knight</span>
-</div>
-</td>
-<td class="px-8 py-4 text-sm text-slate-grey">Oct 26, 2023</td>
-<td class="px-8 py-4 text-sm font-bold">$315.50</td>
-<td class="px-8 py-4">
-<span class="px-3 py-1 text-[10px] font-extrabold uppercase bg-green-100 text-green-700 rounded-full tracking-wider">Shipped</span>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<!-- Additional Quick Links or Bottom Widgets -->
-<div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8 pb-8">
-<div class="bg-sidebar-navy text-white p-8 rounded-xl flex items-center justify-between overflow-hidden relative group">
-<div class="relative z-10">
-<h4 class="text-xl font-bold mb-2">Want to boost sales?</h4>
-<p class="text-gray-400 text-sm max-w-xs mb-6">Create a promotion or a flash sale to attract more customers to your store.</p>
-<button class="bg-primary hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-all">Create Campaign</button>
-</div>
-<div class="absolute -right-4 -bottom-4 opacity-10 group-hover:scale-110 transition-transform">
-<span class="material-icons text-[180px]">campaign</span>
-</div>
-</div>
-<div class="bg-white dark:bg-gray-800 p-8 rounded-xl border border-slate-grey/20 flex flex-col justify-between">
-<div>
-<h4 class="text-lg font-bold text-sidebar-navy dark:text-white mb-4">Store Performance Tips</h4>
-<ul class="space-y-4">
-<li class="flex items-start space-x-3">
-<span class="material-icons text-primary text-sm mt-1">auto_awesome</span>
-<p class="text-sm text-slate-grey">Optimize your product images for better visibility in search results.</p>
-</li>
-<li class="flex items-start space-x-3">
-<span class="material-icons text-primary text-sm mt-1">auto_awesome</span>
-<p class="text-sm text-slate-grey">Response time for messages is currently 2 hours. Try aiming for under 1 hour.</p>
-</li>
-</ul>
-</div>
-<div class="mt-6">
-<div class="w-full bg-workspace-nude dark:bg-gray-700 h-2 rounded-full overflow-hidden">
-<div class="bg-primary h-full w-[65%]"></div>
-</div>
-<div class="flex justify-between mt-2">
-<span class="text-[10px] font-bold text-slate-grey uppercase tracking-widest">Store Rating Progress</span>
-<span class="text-[10px] font-bold text-primary">65% to Top Rated</span>
-</div>
-</div>
-</div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="bg-workspace-nude/30 dark:bg-white/5">
+                    <th class="px-8 py-4 text-xs font-bold text-slate-grey uppercase tracking-widest">Product ID</th>
+                    <th class="px-8 py-4 text-xs font-bold text-slate-grey uppercase tracking-widest">Product Name</th>
+                    <th class="px-8 py-4 text-xs font-bold text-slate-grey uppercase tracking-widest">Price</th>
+                    <th class="px-8 py-4 text-xs font-bold text-slate-grey uppercase tracking-widest">Status</th>
+                    <th class="px-8 py-4 text-xs font-bold text-slate-grey uppercase tracking-widest text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-grey/10">
+                
+                {% for product in products %}
+                <tr class="hover:bg-workspace-nude/20 dark:hover:bg-white/5 transition-colors group">
+                    <td class="px-8 py-4 text-sm font-semibold text-sidebar-navy dark:text-white">
+                        #{{ product.id }}
+                    </td>
+                    <td class="px-8 py-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">
+                                {{ product.name|slice:":2"|upper }}
+                            </div>
+                            <span class="text-sm font-medium">{{ product.name }}</span>
+                        </div>
+                    </td>
+                    <td class="px-8 py-4 text-sm font-bold">
+                        ${{ product.price }}
+                    </td>
+                    <td class="px-8 py-4">
+                        {% if product.in_stock %}
+                            <span class="px-3 py-1 text-[10px] font-extrabold uppercase bg-green-100 text-green-700 rounded-full tracking-wider">In Stock</span>
+                        {% else %}
+                            <span class="px-3 py-1 text-[10px] font-extrabold uppercase bg-red-100 text-red-700 rounded-full tracking-wider">Out of Stock</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-8 py-4 text-right">
+                        <div class="flex items-center justify-end space-x-2 opacity-50 group-hover:opacity-100 transition-opacity">
+                            <a href="{% url 'update_product' product.id %}" class="p-2 text-sidebar-navy dark:text-gray-300 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Edit Product">
+                                <span class="material-icons text-[18px]">edit</span>
+                            </a>
+                            <form action="{% url 'delete_product' product.id %}" method="POST" class="inline-block m-0" onsubmit="return confirm('Are you sure you want to delete this product?');">
+                                {% csrf_token %}
+                                <button type="submit" class="p-2 text-sidebar-navy dark:text-gray-300 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors" title="Delete Product">
+                                    <span class="material-icons text-[18px]">delete</span>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="px-8 py-12 text-center">
+                        <span class="material-icons text-slate-grey text-4xl mb-3 opacity-50">inventory_2</span>
+                        <p class="text-sm font-medium text-slate-grey">No products found. Start by adding your first product.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+        </table>
+    </div>
 </div>
 </main>
-</body></html>
+</body>
+</html>

@@ -77,22 +77,40 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Category <span class="text-red-500">*</span></label>
-                        <select name="category" id="category-select" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark">
-                            <option value="">Select Category</option>
-                            <option value="1">Electronics</option>
-                            <option value="2">Fashion</option>
-                            </select>
-                    </div>
+    <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">
+        Category <span class="text-red-500">*</span>
+    </label>
 
-                    <div>
-                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Subcategory <span class="text-red-500">*</span></label>
-                        <select name="subcategory" id="subcategory-select" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark">
-                            <option value="">Select Subcategory</option>
-                            <option value="1">Headphones</option>
-                            <option value="2">Smartphones</option>
-                        </select>
-                    </div>
+    <select name="category" id="category-select" required
+        class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark">
+
+        <option value="">Select Category</option>
+
+        {% for category in categories %}
+            <option value="{{ category.id }}">
+                {{ category.name }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
+
+                  <div>
+    <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">
+        Subcategory <span class="text-red-500">*</span>
+    </label>
+
+    <select name="subcategory" id="subcategory-select" required
+        class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark">
+
+        <option value="">Select Subcategory</option>
+
+        {% for subcategory in subcategories %}
+            <option value="{{ subcategory.id }}">
+                {{ subcategory.name }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
 
                     <div>
                         <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Brand <span class="text-red-500">*</span></label>
@@ -103,6 +121,31 @@
                         <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Model Number <span class="text-red-500">*</span></label>
                         <input type="text" name="model_number" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark" placeholder="e.g., WH1000XM4/B">
                     </div>
+
+                    <!-- ADD ATTRIBUTES SECTION HERE -->
+<div class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark" >
+    <h2 class="text-lg font-bold mb-6">Product Attributes</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for attribute in attributes %}
+            <div>
+                <label class="block text-xs font-bold mb-2">
+                    {{ attribute.name }}
+                </label>
+
+                <select name="attribute_{{ attribute.id }}" class="w-full border rounded-lg p-3">
+                    <option value="">Select {{ attribute.name }}</option>
+
+                    {% for option in attribute.options.all %}
+                        <option value="{{ option.id }}">
+                            {{ option.value }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 
                     <div class="md:col-span-2">
                         <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Description <span class="text-red-500">*</span></label>

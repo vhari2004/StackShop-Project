@@ -91,6 +91,9 @@ class ProductImage(models.Model):
 
 class Attribute(models.Model):
     name = models.CharField(max_length=100)
+    subcategory = models.ForeignKey(SubCategory,on_delete=models.CASCADE,related_name="attributes",null=True,blank=True)
+    
+    
 
 class AttributeOption(models.Model):
     attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE, related_name="options")
