@@ -42,15 +42,15 @@
             <div class="absolute -right-20 -top-20 w-64 h-64 bg-[#E1D9BC]/20 rounded-full blur-3xl pointer-events-none"></div>
             
             <div class="relative w-28 h-28 flex-shrink-0">
-                {% if seller_profile.store_image %}
-                <img src="{{ seller_profile.store_image.url }}" alt="Store Logo" class="w-full h-full object-cover rounded-full border-4 border-white shadow-md">
+                {% if profile.store_image %}
+                <img src="{{ profile.store_image.url }}" alt="Store Logo" class="w-full h-full object-cover rounded-full border-4 border-white shadow-md">
                 {% else %}
                 <div class="w-full h-full bg-light rounded-full border-4 border-white shadow-md flex items-center justify-center text-muted">
                     <span class="material-icons text-4xl">storefront</span>
                 </div>
                 {% endif %}
                 
-                {% if seller_profile.is_verified %}
+                {% if profile.is_verified %}
                 <div class="absolute bottom-0 right-0 bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center border-2 border-white shadow-sm" title="Verified Seller">
                     <span class="material-icons text-[16px]">verified</span>
                 </div>
@@ -59,8 +59,8 @@
 
             <div class="text-center md:text-left z-10 flex-grow">
                 <div class="flex flex-col md:flex-row md:items-center gap-3 mb-1">
-                    <h1 class="text-3xl font-extrabold text-dark tracking-tight">{{ seller_profile.store_name|default:"Your Store Name" }}</h1>
-                    {% if not seller_profile.is_verified %}
+                    <h1 class="text-3xl font-extrabold text-dark tracking-tight">{{ profile.store_name|default:"Your Store Name" }}</h1>
+                    {% if not profile.is_verified %}
                         <span class="inline-flex items-center gap-1 bg-yellow-100 text-yellow-700 border border-yellow-300 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-widest mx-auto md:mx-0">
                             <span class="material-icons text-[12px]">pending_actions</span> Pending Verification
                         </span>
@@ -72,10 +72,10 @@
                 <div class="flex items-center justify-center md:justify-start gap-6">
                     <div class="flex items-center gap-1.5 bg-light px-3 py-1 rounded-lg">
                         <span class="material-icons text-yellow-500 text-[18px]">star</span>
-                        <span class="font-bold text-dark text-sm">{{ seller_profile.rating|default:"0.0" }} <span class="text-muted font-normal">/ 5.0</span></span>
+                        <span class="font-bold text-dark text-sm">{{ profile.rating|default:"0.0" }} <span class="text-muted font-normal">/ 5.0</span></span>
                     </div>
                     <div class="text-sm font-medium text-muted">
-                        Member since: <span class="text-dark font-bold">{{ seller_profile.created_at|date:"M Y"|default:"Today" }}</span>
+                        Member since: <span class="text-dark font-bold">{{ profile.created_at|date:"M Y"|default:"Today" }}</span>
                     </div>
                 </div>
             </div>
@@ -98,14 +98,14 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Store Name <span class="text-red-500">*</span></label>
-                        <input type="text" name="store_name" value="{{ seller_profile.store_name }}" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark placeholder-muted" placeholder="e.g., Tech Haven">
+                        <input type="text" name="store_name" value="{{ profile.store_name }}" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark placeholder-muted" placeholder="e.g., Tech Haven">
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Store URL Slug <span class="text-red-500">*</span></label>
                         <div class="relative flex items-center">
                             <span class="absolute left-4 text-muted text-sm font-medium">stackshop.com/</span>
-                            <input type="text" name="store_slug" value="{{ seller_profile.store_slug }}" required class="w-full pl-[115px] pr-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark" placeholder="tech-haven">
+                            <input type="text" name="store_slug" value="{{ profile.store_slug }}" required class="w-full pl-[115px] pr-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark" placeholder="tech-haven">
                         </div>
                     </div>
 
@@ -122,7 +122,7 @@
 
                     <div class="md:col-span-2">
                         <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Business Address <span class="text-red-500">*</span></label>
-                        <textarea name="business_address" rows="3" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark resize-none" placeholder="Full registered business address...">{{ seller_profile.business_address }}</textarea>
+                        <textarea name="business_address" rows="3" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark resize-none" placeholder="Full registered business address...">{{ profile.business_address }}</textarea>
                     </div>
                 </div>
             </div>
@@ -139,12 +139,12 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">GST Number <span class="text-red-500">*</span></label>
-                        <input type="text" name="gst_number" value="{{ seller_profile.gst_number }}" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark font-mono uppercase" placeholder="22AAAAA0000A1Z5">
+                        <input type="text" name="gst_number" value="{{ profile.gst_number }}" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark font-mono uppercase" placeholder="22AAAAA0000A1Z5">
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">PAN Number <span class="text-red-500">*</span></label>
-                        <input type="text" name="pan_number" value="{{ seller_profile.pan_number }}" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark font-mono uppercase" placeholder="ABCDE1234F">
+                        <input type="text" name="pan_number" value="{{ profile.pan_number }}" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark font-mono uppercase" placeholder="ABCDE1234F">
                     </div>
                 </div>
             </div>
@@ -157,12 +157,12 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Bank Account Number <span class="text-red-500">*</span></label>
-                        <input type="text" name="bank_account_number" value="{{ seller_profile.bank_account_number }}" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark font-mono" placeholder="XXXXXXXXXXXXXX">
+                        <input type="text" name="bank_account_number" value="{{ profile.bank_account_number }}" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark font-mono" placeholder="XXXXXXXXXXXXXX">
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">IFSC Code <span class="text-red-500">*</span></label>
-                        <input type="text" name="ifsc_code" value="{{ seller_profile.ifsc_code }}" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark font-mono uppercase" placeholder="SBIN0001234">
+                        <input type="text" name="ifsc_code" value="{{ profile.ifsc_code }}" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark font-mono uppercase" placeholder="SBIN0001234">
                     </div>
                 </div>
             </div>
