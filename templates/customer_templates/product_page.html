@@ -51,59 +51,85 @@
             <div class="bg-white rounded-2xl shadow-sm border border-muted/30 p-6 sticky top-24">
                 <h2 class="font-extrabold text-xl text-dark uppercase tracking-wide mb-6">Filters</h2>
 
-                <div class="mb-8">
-                    <h3
-                        class="font-bold text-sm text-dark uppercase tracking-widest mb-3 border-b border-muted/30 pb-2">
-                        Categories
-                    </h3>
-                    <ul class="space-y-3">
+                <form method="GET" action="{% url 'search' %}" id="filter-form" class="space-y-8">
+                    <!-- Preserve search query -->
+                    {% if search_query %}
+                    <input type="hidden" name="q" value="{{ search_query }}">
+                    {% endif %}
+                    
+                    <!-- Hidden sort input -->
+                    <input type="hidden" name="sort" id="sort-input" value="{{ sort_by }}">
 
-                        <li>
-                            <label class="flex items-center gap-3 cursor-pointer group">
-                                <input type="checkbox" name="category" value="all"
-                                    class="w-4 h-4 rounded border-muted text-dark focus:ring-dark" checked>
-                                <span
-                                    class="text-sm font-semibold text-dark/80 group-hover:text-dark transition-colors">
-                                    All Products
-                                </span>
-                            </label>
-                        </li>
+                    <div class="mb-8">
+                        <h3
+                            class="font-bold text-sm text-dark uppercase tracking-widest mb-3 border-b border-muted/30 pb-2">
+                            Categories
+                        </h3>
+                        <ul class="space-y-3">
 
-                        {% for category in categories %}
-                        <li>
-                            <label class="flex items-center gap-3 cursor-pointer group">
-                                <input type="checkbox" name="category" value="{{ category.slug }}"
-                                    class="w-4 h-4 rounded border-muted text-dark focus:ring-dark">
-                                <span
-                                    class="text-sm font-semibold text-dark/80 group-hover:text-dark transition-colors">
-                                    {{ category.name }}
-                                </span>
-                            </label>
-                        </li>
-                        {% empty %}
-                        <li>
-                            <span class="text-sm font-semibold text-muted italic">No other categories available</span>
-                        </li>
-                        {% endfor %}
+                            <li>
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <input type="checkbox" name="category" value="all"
+                                        class="w-4 h-4 rounded border-muted text-dark focus:ring-dark category-checkbox"
+                                        {% if not selected_categories or "all" in selected_categories %}checked{% endif %}>
+                                    <span
+                                        class="text-sm font-semibold text-dark/80 group-hover:text-dark transition-colors">
+                                        All Products
+                                    </span>
+                                </label>
+                            </li>
 
-                    </ul>
-                </div>
+                            {% for category in categories %}
+                            <li>
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <input type="checkbox" name="category" value="{{ category.slug }}"
+                                        class="w-4 h-4 rounded border-muted text-dark focus:ring-dark category-checkbox"
+                                        {% if category.slug in selected_categories %}checked{% endif %}>
+                                    <span
+                                        class="text-sm font-semibold text-dark/80 group-hover:text-dark transition-colors">
+                                        {{ category.name }}
+                                    </span>
+                                </label>
+                            </li>
+                            {% empty %}
+                            <li>
+                                <span class="text-sm font-semibold text-muted italic">No other categories available</span>
+                            </li>
+                            {% endfor %}
 
-                <div>
-                    <h3
-                        class="font-bold text-sm text-dark uppercase tracking-widest mb-3 border-b border-muted/30 pb-2">
-                        Price Range</h3>
-                    <div class="flex items-center gap-2">
-                        <input type="number" placeholder="Min"
-                            class="w-full px-3 py-2 text-sm font-semibold border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark bg-light/50">
-                        <span class="text-muted font-bold">-</span>
-                        <input type="number" placeholder="Max"
-                            class="w-full px-3 py-2 text-sm font-semibold border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark bg-light/50">
+                        </ul>
                     </div>
-                    <button
-                        class="w-full mt-4 bg-dark text-light py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest hover:opacity-90 shadow-md transition-all active:scale-95">Apply
-                        Filter</button>
-                </div>
+
+                    <div>
+                        <h3
+                            class="font-bold text-sm text-dark uppercase tracking-widest mb-3 border-b border-muted/30 pb-2">
+                            Price Range</h3>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-xs font-bold text-muted uppercase tracking-widest mb-1 block">Minimum Price</label>
+                                <input type="number" 
+                                    name="min_price" 
+                                    placeholder="Min" 
+                                    value="{{ min_price }}"
+                                    min="0"
+                                    class="w-full px-3 py-2 text-sm font-semibold border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark bg-light/50">
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-muted uppercase tracking-widest mb-1 block">Maximum Price</label>
+                                <input type="number" 
+                                    name="max_price" 
+                                    placeholder="Max" 
+                                    value="{{ max_price }}"
+                                    min="0"
+                                    class="w-full px-3 py-2 text-sm font-semibold border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark bg-light/50">
+                            </div>
+                        </div>
+                        <button type="submit"
+                            class="w-full mt-4 bg-dark text-light py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-dark/90 shadow-md transition-all active:scale-95">Apply
+                            Filter</button>
+                    </div>
+                </form>
             </div>
         </aside>
 
@@ -111,16 +137,16 @@
 
             <div
                 class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 bg-white p-4 rounded-2xl shadow-sm border border-muted/30">
-                <p class="text-sm font-bold text-muted mb-4 sm:mb-0">Showing <span class="text-dark">All</span> Products
+                <p class="text-sm font-bold text-muted mb-4 sm:mb-0">Showing <span class="text-dark">{{ product_var.count }}</span> Products
                 </p>
                 <div class="flex items-center gap-3">
                     <span class="text-xs font-extrabold text-dark uppercase tracking-widest">Sort By:</span>
-                    <select
+                    <select name="sort" id="sort-select" onchange="document.getElementById('sort-input').value = this.value; document.getElementById('filter-form').submit();"
                         class="text-sm font-bold border border-muted/50 rounded-xl py-2 px-4 bg-light/50 text-dark focus:outline-none focus:border-dark cursor-pointer">
-                        <option>Featured</option>
-                        <option>Price: Low to High</option>
-                        <option>Price: High to Low</option>
-                        <option>Newest Arrivals</option>
+                        <option value="featured" {% if sort_by == "featured" %}selected{% endif %}>Featured</option>
+                        <option value="price-low-high" {% if sort_by == "price-low-high" %}selected{% endif %}>Price: Low to High</option>
+                        <option value="price-high-low" {% if sort_by == "price-high-low" %}selected{% endif %}>Price: High to Low</option>
+                        <option value="newest" {% if sort_by == "newest" %}selected{% endif %}>Newest Arrivals</option>
                     </select>
                 </div>
             </div>
@@ -274,6 +300,26 @@
     </main>
 
     {% include "customer_templates/Footer.html" %}
+
+    <script>
+        // Auto-submit form when category checkbox is changed
+        document.querySelectorAll('.category-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                // Handle "all" checkbox logic
+                if (this.value === 'all' && this.checked) {
+                    // If "all" is checked, uncheck other categories
+                    document.querySelectorAll('.category-checkbox').forEach(cb => {
+                        if (cb.value !== 'all') cb.checked = false;
+                    });
+                } else if (this.value !== 'all' && this.checked) {
+                    // If any category is checked, uncheck "all"
+                    document.querySelector('.category-checkbox[value="all"]').checked = false;
+                }
+                // Submit the form
+                document.getElementById('filter-form').submit();
+            });
+        });
+    </script>
 
 </body>
 

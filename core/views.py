@@ -40,23 +40,86 @@ def home_view(request):
         {"categories": category_items, "product_var": product_var},
     )
 
-
-def search_view(request):
+#search-------------------------------------------------------------------------
+def search_and_filter_view(request):
     query = request.GET.get("q", "")
+    min_price = request.GET.get("min_price", "")
+    max_price = request.GET.get("max_price", "")
+    selected_categories = request.GET.getlist("category")
+    sort_by = request.GET.get("sort", "featured")
+    user = request.user    
     if query:
         product_var = ProductVariant.objects.filter(
             Q(product__name__icontains=query)
             | Q(product__description__icontains=query)
             | Q(product__subcategory__category__name__icontains=query)
         ).distinct()
+    elif selected_categories:
+        product_var = ProductVariant.objects.all()
+    elif min_price or max_price:
+        product_var = ProductVariant.objects.all()
     else:
-        product_var = ProductVariant.objects.none()
+        product_var = ProductVariant.objects.none()    
+    if selected_categories and "all" not in selected_categories:
+        product_var = product_var.filter(
+            product__subcategory__category__slug__in=selected_categories
+        ).distinct()    
+
+    if min_price:
+        try:
+            min_price_val = float(min_price)
+            product_var = product_var.filter(selling_price__gte=min_price_val)
+        except (ValueError, TypeError):
+            pass
+    
+    if max_price:
+        try:
+            max_price_val = float(max_price)
+            product_var = product_var.filter(selling_price__lte=max_price_val)
+        except (ValueError, TypeError):
+            pass    
+    
+    if sort_by == "price-low-high":
+        product_var = product_var.order_by("selling_price")
+    elif sort_by == "price-high-low":
+        product_var = product_var.order_by("-selling_price")
+    elif sort_by == "newest":
+        product_var = product_var.order_by("-created_at")
+    
+    categories = Category.objects.filter(is_active=True)    
+    wishlist_variant_ids = []
+    cart_variant_ids = []
+    cart_items = []
+    
+    if user.is_authenticated:
+        from customer.models import WishlistItem, Cart, CartItem
+        wishlist_variant_ids = list(
+            WishlistItem.objects.filter(wishlist__user=user).values_list("variant_id", flat=True)
+        )
+        cart = Cart.objects.filter(user=user).first()
+        if cart:
+            cart_items = CartItem.objects.filter(cart=cart).prefetch_related(
+                "variant__product__subcategory", "variant__images"
+            )
+            cart_variant_ids = list(
+                CartItem.objects.filter(cart=cart).values_list("variant_id", flat=True)
+            )
+
+    
     context = {
         "product_var": product_var,
         "search_query": query,
+        "cart_items": cart_items,
+        "min_price": min_price,
+        "max_price": max_price,
+        "selected_categories": selected_categories,
+        "sort_by": sort_by,
+        "categories": categories,
+        "wishlist_variant_ids": wishlist_variant_ids,
+        "cart_variant_ids": cart_variant_ids,
     }
     return render(request, "customer_templates/product_page.html", context)
-
+#------------------------------------------------------------------------------------
 
 def category_list_view(request):
     categories = Category.objects.filter(is_active=True).prefetch_related(

@@ -12,19 +12,24 @@
 
             <div class="flex-1 max-w-xl mx-12 hidden md:block">
                 <div class="relative group">
-<form action="{% url 'search' %}" method="GET" class="relative hidden md:block w-full max-w-md mx-4 lg:mx-8">
+<form action="{% url 'search' %}" method="GET" class="hidden md:block w-full mx-4 lg:mx-8">
     
-    <input
-        name="q"
-        value="{{ request.GET.q }}"
-        class="w-full bg-light/10 border border-muted/30 rounded-lg py-2 pl-10 pr-4 text-sm text-light focus:outline-none focus:border-muted focus:ring-1 focus:ring-muted transition-all placeholder-muted/70"
-        placeholder="Search products, brands..." 
-        type="text" 
-    />
-    
-    <button type="submit" class="absolute left-3 top-1/2 -translate-y-1/2 flex items-center justify-center focus:outline-none group">
-        <span class="material-icons text-muted/70 group-hover:text-light transition-colors text-sm">search</span>
-    </button>
+    <div class="flex gap-2 items-end">
+        <div class="flex-1">
+            <input
+                name="q"
+                value="{{ request.GET.q }}"
+                class="w-full bg-light/10 border border-muted/30 rounded-lg py-2 pl-4 pr-4 text-sm text-light focus:outline-none focus:border-muted focus:ring-1 focus:ring-muted transition-all placeholder-muted/70"
+                placeholder="Search products, brands..." 
+                type="text" 
+            />
+        </div>
+        
+        <button type="submit" class="flex items-center gap-2 px-4 py-2 bg-accent hover:bg-accent/90 text-dark font-semibold rounded-lg transition-colors group">
+            <span class="material-icons text-sm">search</span>
+            <span class="hidden sm:inline text-sm">Search</span>
+        </button>
+    </div>
 
 </form>
                 </div>
