@@ -56,7 +56,7 @@ def add_wishlist_view(request, id):
         WishlistItem.objects.create(wishlist=wishlist, variant=product_variant)
         messages.success(request, f"Product added to ( {wishlist.wishlist_name} ).")
 
-    return redirect("product_list")
+    return redirect(request.META.get("HTTP_REFERER", "home"))
 
 
 @login_required
@@ -406,10 +406,29 @@ def product_single_view(request, id):
     cart_items = CartItem.objects.filter(cart=cart).prefetch_related(
         "variant__product__subcategory", "variant__images"
     )
+    
+    wishlist_variant_ids = []
+    cart_variant_ids = []
+    
+    if request.user.is_authenticated:
+        wishlist_variant_ids = list(
+            WishlistItem.objects.filter(wishlist__user=request.user).values_list("variant_id", flat=True)
+        )
+        
+        if cart:
+            cart_variant_ids = list(
+                CartItem.objects.filter(cart=cart).values_list("variant_id", flat=True)
+            )
+    
     return render(
         request,
         "customer_templates/productsinglepage.html",
-        {"variant": product_var, "cart_items": cart_items},
+        {
+            "variant": product_var,
+            "cart_items": cart_items,
+            "wishlist_variant_ids": wishlist_variant_ids,
+            "cart_variant_ids": cart_variant_ids,
+        },
     )
 
 
