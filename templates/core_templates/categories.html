@@ -28,6 +28,7 @@
         }
     </script>
     <style>
+        /* Hide Scrollbar but keep functionality */
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
@@ -40,6 +41,18 @@
         .reveal.active {
             opacity: 1;
             transform: translateY(0);
+        }
+
+        /* Active State for Category Pills */
+        .pill-active {
+            background-color: #30364F !important; /* dark */
+            color: #F0F0DB !important; /* light */
+            border-color: #30364F !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .pill-active .material-icons {
+            color: #F0F0DB !important; /* light */
         }
     </style>
 </head>
@@ -55,286 +68,164 @@
             <p class="text-lg text-dark/80 font-medium">Explore our wide range of collections curated just for you.</p>
         </div>
 
-        <section id="cat-electronics" class="scroll-mt-28 mb-20 reveal">
-            
-            <div class="relative w-full h-48 md:h-64 rounded-2xl overflow-hidden mb-8 shadow-md group block border border-muted/30">
-                <img src="https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&q=80&w=1200" alt="Electronics Banner" class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
-                <div class="absolute inset-0 bg-dark/60 mix-blend-multiply"></div>
-                <div class="absolute inset-0 bg-gradient-to-t from-dark/90 via-dark/20 to-transparent"></div>
-                <div class="absolute inset-0 p-8 flex flex-col justify-end">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <span class="text-accent font-bold tracking-widest uppercase text-xs mb-2 block">Tech Essentials</span>
-                            <h2 class="text-3xl md:text-5xl font-extrabold text-light flex items-center gap-3">
-                                <span class="material-icons text-3xl md:text-5xl text-accent">devices</span> Electronics
-                            </h2>
+        <div class="sticky top-20 z-40 bg-light/95 backdrop-blur-sm py-4 -mx-4 px-4 sm:mx-0 sm:px-0 mb-8 shadow-sm sm:shadow-none border-b sm:border-none border-muted/20">
+            <div class="flex items-center gap-3 overflow-x-auto hide-scrollbar pb-2 pt-1" id="category-pills-container">
+                
+                {% for category in categories %}
+                    {% if category.is_active %}
+                    <a href="#cat-{{ category.slug }}" data-target="cat-{{ category.slug }}" class="category-pill group flex-shrink-0 flex items-center gap-2 bg-white border border-muted/50 text-dark rounded-full px-5 py-2.5 hover:bg-accent hover:border-dark hover:-translate-y-1 hover:shadow-md active:scale-95 transition-all duration-300 text-sm font-bold">
+                        <span class="material-icons text-dark text-lg group-hover:rotate-12 transition-transform">
+                            {{ category.icon|default:"category" }}
+                        </span> 
+                        {{ category.name }}
+                    </a>
+                    {% endif %}
+                {% empty %}
+                    <p class="group flex-shrink-0 flex items-center gap-2 bg-white border border-muted/50 text-dark rounded-full px-5 py-2.5 text-sm font-bold">No categories found.</p>
+                {% endfor %}
+
+            </div>
+        </div>
+
+        {% for category in categories %}
+            {% if category.is_active %}
+            <section id="cat-{{ category.slug }}" class="category-section scroll-mt-40 mb-24 reveal">
+
+                <div class="relative w-full h-48 md:h-64 rounded-2xl overflow-hidden mb-8 shadow-md group block border border-muted/30">
+                    
+                    {% if category.image_url %}
+                        <img src="{{ category.image_url.url }}" alt="{{ category.name }} Banner" class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
+                    {% else %}
+                        <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?auto=format&fit=crop&q=80&w=1200" alt="Placeholder Banner" class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
+                    {% endif %}
+
+                    <div class="absolute inset-0 bg-dark/50 mix-blend-multiply"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-dark/90 via-dark/20 to-transparent"></div>
+
+                    <div class="absolute inset-0 p-8 flex flex-col justify-end">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-accent font-bold tracking-widest uppercase text-xs mb-2 block truncate max-w-sm">
+                                    {{ category.description|default:"Discover our curated collection" }}
+                                </span>
+                                <h2 class="text-3xl md:text-5xl font-extrabold text-light flex items-center gap-3">
+                                    <span class="material-icons text-3xl md:text-5xl text-accent">{{ category.icon|default:"category" }}</span> {{ category.name }}
+                                </h2>
+                            </div>
+                            <a href="{% url 'product_list' %}?category={{ category.slug }}" class="hidden sm:flex bg-accent text-dark px-6 py-2.5 rounded-lg font-bold text-sm items-center gap-2 hover:bg-white transition-colors shadow-lg">
+                                View All Products <span class="material-icons text-sm">arrow_forward</span>
+                            </a>
                         </div>
-                        <a href="#" class="hidden sm:flex bg-accent text-dark px-6 py-2.5 rounded-lg font-bold text-sm items-center gap-2 hover:bg-white transition-colors shadow-lg">
-                            View All Products <span class="material-icons text-sm">arrow_forward</span>
-                        </a>
                     </div>
                 </div>
-            </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <a href="#" class="group bg-white rounded-xl overflow-hidden shadow-sm border border-muted/40 hover:border-dark hover:shadow-xl transition-all duration-300 flex flex-col">
-                    <div class="aspect-[4/3] bg-light relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Audio">
-                        <div class="absolute inset-0 bg-dark/0 group-hover:bg-dark/20 transition-colors duration-300"></div>
-                    </div>
-                    <div class="p-5 flex items-center justify-between bg-white z-10 relative">
-                        <div>
-                            <h3 class="font-bold text-dark text-lg">Audio & Sound</h3>
-                            <p class="text-[10px] text-muted font-bold tracking-widest uppercase mt-1">124 Products</p>
-                        </div>
-                        <div class="w-8 h-8 rounded-full bg-light flex items-center justify-center group-hover:bg-dark group-hover:text-light transition-colors text-dark">
-                            <span class="material-icons text-sm">arrow_forward</span>
-                        </div>
-                    </div>
-                </a>
-                <a href="#" class="group bg-white rounded-xl overflow-hidden shadow-sm border border-muted/40 hover:border-dark hover:shadow-xl transition-all duration-300 flex flex-col">
-                    <div class="aspect-[4/3] bg-light relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Phones">
-                        <div class="absolute inset-0 bg-dark/0 group-hover:bg-dark/20 transition-colors duration-300"></div>
-                    </div>
-                    <div class="p-5 flex items-center justify-between bg-white z-10 relative">
-                        <div>
-                            <h3 class="font-bold text-dark text-lg">Smartphones</h3>
-                            <p class="text-[10px] text-muted font-bold tracking-widest uppercase mt-1">86 Products</p>
-                        </div>
-                        <div class="w-8 h-8 rounded-full bg-light flex items-center justify-center group-hover:bg-dark group-hover:text-light transition-colors text-dark">
-                            <span class="material-icons text-sm">arrow_forward</span>
-                        </div>
-                    </div>
-                </a>
-                <a href="#" class="group bg-white rounded-xl overflow-hidden shadow-sm border border-muted/40 hover:border-dark hover:shadow-xl transition-all duration-300 flex flex-col">
-                    <div class="aspect-[4/3] bg-light relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Laptops">
-                        <div class="absolute inset-0 bg-dark/0 group-hover:bg-dark/20 transition-colors duration-300"></div>
-                    </div>
-                    <div class="p-5 flex items-center justify-between bg-white z-10 relative">
-                        <div>
-                            <h3 class="font-bold text-dark text-lg">Laptops & PCs</h3>
-                            <p class="text-[10px] text-muted font-bold tracking-widest uppercase mt-1">45 Products</p>
-                        </div>
-                        <div class="w-8 h-8 rounded-full bg-light flex items-center justify-center group-hover:bg-dark group-hover:text-light transition-colors text-dark">
-                            <span class="material-icons text-sm">arrow_forward</span>
-                        </div>
-                    </div>
-                </a>
-                <a href="#" class="group bg-white rounded-xl overflow-hidden shadow-sm border border-muted/40 hover:border-dark hover:shadow-xl transition-all duration-300 flex flex-col">
-                    <div class="aspect-[4/3] bg-light relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1558089687-f282ffcbc126?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Smart Home">
-                        <div class="absolute inset-0 bg-dark/0 group-hover:bg-dark/20 transition-colors duration-300"></div>
-                    </div>
-                    <div class="p-5 flex items-center justify-between bg-white z-10 relative">
-                        <div>
-                            <h3 class="font-bold text-dark text-lg">Smart Home</h3>
-                            <p class="text-[10px] text-muted font-bold tracking-widest uppercase mt-1">112 Products</p>
-                        </div>
-                        <div class="w-8 h-8 rounded-full bg-light flex items-center justify-center group-hover:bg-dark group-hover:text-light transition-colors text-dark">
-                            <span class="material-icons text-sm">arrow_forward</span>
-                        </div>
-                    </div>
-                </a>
-            </div>
-        </section>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
-        <section id="cat-fashion" class="scroll-mt-28 mb-20 reveal">
-            
-            <div class="relative w-full h-48 md:h-64 rounded-2xl overflow-hidden mb-8 shadow-md group block border border-muted/30">
-                <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?auto=format&fit=crop&q=80&w=1200" alt="Fashion Banner" class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
-                <div class="absolute inset-0 bg-dark/50 mix-blend-multiply"></div>
-                <div class="absolute inset-0 bg-gradient-to-t from-dark/90 via-dark/20 to-transparent"></div>
-                <div class="absolute inset-0 p-8 flex flex-col justify-end">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <span class="text-accent font-bold tracking-widest uppercase text-xs mb-2 block">Trendsetters</span>
-                            <h2 class="text-3xl md:text-5xl font-extrabold text-light flex items-center gap-3">
-                                <span class="material-icons text-3xl md:text-5xl text-accent">checkroom</span> Fashion
-                            </h2>
+                    {% for sub in category.subcategories.all|slice:":4" %}
+                    <a href="{% url 'product_list' %}?subcategory={{ sub.slug }}" class="group bg-white rounded-xl overflow-hidden shadow-sm border border-muted/40 hover:border-dark hover:shadow-xl transition-all duration-300 flex flex-col">
+                        <div class="aspect-[4/3] bg-dark relative overflow-hidden flex items-center justify-center">
+                            <div class="absolute inset-0 bg-gradient-to-br from-dark to-muted opacity-80 group-hover:scale-110 transition-transform duration-700"></div>
+                            <span class="material-icons text-5xl text-light/50 relative z-10 group-hover:text-accent transition-colors">layers</span>
                         </div>
-                        <a href="#" class="hidden sm:flex bg-accent text-dark px-6 py-2.5 rounded-lg font-bold text-sm items-center gap-2 hover:bg-white transition-colors shadow-lg">
-                            View All Products <span class="material-icons text-sm">arrow_forward</span>
-                        </a>
-                    </div>
+                        <div class="p-5 flex items-center justify-between bg-white z-10 relative">
+                            <div>
+                                <h3 class="font-bold text-dark text-lg">{{ sub.name }}</h3>
+                                <p class="text-[10px] text-muted font-bold tracking-widest uppercase mt-1">Explore</p>
+                            </div>
+                            <div class="w-8 h-8 rounded-full bg-light flex items-center justify-center group-hover:bg-dark group-hover:text-light transition-colors text-dark">
+                                <span class="material-icons text-sm">arrow_forward</span>
+                            </div>
+                        </div>
+                    </a>
+                    {% empty %}
+                        <p class="text-muted font-bold text-sm col-span-full py-4">No subcategories listed for {{ category.name }}.</p>
+                    {% endfor %}
+
                 </div>
-            </div>
+            </section>
+            {% endif %}
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <a href="#" class="group bg-white rounded-xl overflow-hidden shadow-sm border border-muted/40 hover:border-dark hover:shadow-xl transition-all duration-300 flex flex-col">
-                    <div class="aspect-[4/3] bg-light relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Women">
-                        <div class="absolute inset-0 bg-dark/0 group-hover:bg-dark/20 transition-colors duration-300"></div>
-                    </div>
-                    <div class="p-5 flex items-center justify-between bg-white z-10 relative">
-                        <div>
-                            <h3 class="font-bold text-dark text-lg">Women's Wear</h3>
-                            <p class="text-[10px] text-muted font-bold tracking-widest uppercase mt-1">320 Products</p>
-                        </div>
-                        <div class="w-8 h-8 rounded-full bg-light flex items-center justify-center group-hover:bg-dark group-hover:text-light transition-colors text-dark">
-                            <span class="material-icons text-sm">arrow_forward</span>
-                        </div>
-                    </div>
-                </a>
-                <a href="#" class="group bg-white rounded-xl overflow-hidden shadow-sm border border-muted/40 hover:border-dark hover:shadow-xl transition-all duration-300 flex flex-col">
-                    <div class="aspect-[4/3] bg-light relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1490578474895-699bc4e3f44f?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Men">
-                        <div class="absolute inset-0 bg-dark/0 group-hover:bg-dark/20 transition-colors duration-300"></div>
-                    </div>
-                    <div class="p-5 flex items-center justify-between bg-white z-10 relative">
-                        <div>
-                            <h3 class="font-bold text-dark text-lg">Men's Wear</h3>
-                            <p class="text-[10px] text-muted font-bold tracking-widest uppercase mt-1">215 Products</p>
-                        </div>
-                        <div class="w-8 h-8 rounded-full bg-light flex items-center justify-center group-hover:bg-dark group-hover:text-light transition-colors text-dark">
-                            <span class="material-icons text-sm">arrow_forward</span>
-                        </div>
-                    </div>
-                </a>
-                <a href="#" class="group bg-white rounded-xl overflow-hidden shadow-sm border border-muted/40 hover:border-dark hover:shadow-xl transition-all duration-300 flex flex-col">
-                    <div class="aspect-[4/3] bg-light relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Footwear">
-                        <div class="absolute inset-0 bg-dark/0 group-hover:bg-dark/20 transition-colors duration-300"></div>
-                    </div>
-                    <div class="p-5 flex items-center justify-between bg-white z-10 relative">
-                        <div>
-                            <h3 class="font-bold text-dark text-lg">Footwear</h3>
-                            <p class="text-[10px] text-muted font-bold tracking-widest uppercase mt-1">150 Products</p>
-                        </div>
-                        <div class="w-8 h-8 rounded-full bg-light flex items-center justify-center group-hover:bg-dark group-hover:text-light transition-colors text-dark">
-                            <span class="material-icons text-sm">arrow_forward</span>
-                        </div>
-                    </div>
-                </a>
-                <a href="#" class="group bg-white rounded-xl overflow-hidden shadow-sm border border-muted/40 hover:border-dark hover:shadow-xl transition-all duration-300 flex flex-col">
-                    <div class="aspect-[4/3] bg-light relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1523206489230-c012c64b2b48?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Accessories">
-                        <div class="absolute inset-0 bg-dark/0 group-hover:bg-dark/20 transition-colors duration-300"></div>
-                    </div>
-                    <div class="p-5 flex items-center justify-between bg-white z-10 relative">
-                        <div>
-                            <h3 class="font-bold text-dark text-lg">Accessories</h3>
-                            <p class="text-[10px] text-muted font-bold tracking-widest uppercase mt-1">89 Products</p>
-                        </div>
-                        <div class="w-8 h-8 rounded-full bg-light flex items-center justify-center group-hover:bg-dark group-hover:text-light transition-colors text-dark">
-                            <span class="material-icons text-sm">arrow_forward</span>
-                        </div>
-                    </div>
-                </a>
+        {% empty %}
+            <div class="text-center py-20 text-muted">
+                <span class="material-icons text-5xl mb-4 opacity-50">category</span>
+                <h3 class="text-xl font-extrabold text-dark mb-2">No Categories Found</h3>
             </div>
-        </section>
-
-        <section id="cat-home" class="scroll-mt-28 mb-20 reveal">
-            
-            <div class="relative w-full h-48 md:h-64 rounded-2xl overflow-hidden mb-8 shadow-md group block border border-muted/30">
-                <img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&q=80&w=1200" alt="Home Decor Banner" class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
-                <div class="absolute inset-0 bg-dark/40 mix-blend-multiply"></div>
-                <div class="absolute inset-0 bg-gradient-to-t from-dark/90 via-dark/20 to-transparent"></div>
-                <div class="absolute inset-0 p-8 flex flex-col justify-end">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <span class="text-accent font-bold tracking-widest uppercase text-xs mb-2 block">Interior Styling</span>
-                            <h2 class="text-3xl md:text-5xl font-extrabold text-light flex items-center gap-3">
-                                <span class="material-icons text-3xl md:text-5xl text-accent">chair</span> Home Decor
-                            </h2>
-                        </div>
-                        <a href="#" class="hidden sm:flex bg-accent text-dark px-6 py-2.5 rounded-lg font-bold text-sm items-center gap-2 hover:bg-white transition-colors shadow-lg">
-                            View All Products <span class="material-icons text-sm">arrow_forward</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <a href="#" class="group bg-white rounded-xl overflow-hidden shadow-sm border border-muted/40 hover:border-dark hover:shadow-xl transition-all duration-300 flex flex-col">
-                    <div class="aspect-[4/3] bg-light relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Furniture">
-                        <div class="absolute inset-0 bg-dark/0 group-hover:bg-dark/20 transition-colors duration-300"></div>
-                    </div>
-                    <div class="p-5 flex items-center justify-between bg-white z-10 relative">
-                        <div>
-                            <h3 class="font-bold text-dark text-lg">Furniture</h3>
-                            <p class="text-[10px] text-muted font-bold tracking-widest uppercase mt-1">75 Products</p>
-                        </div>
-                        <div class="w-8 h-8 rounded-full bg-light flex items-center justify-center group-hover:bg-dark group-hover:text-light transition-colors text-dark">
-                            <span class="material-icons text-sm">arrow_forward</span>
-                        </div>
-                    </div>
-                </a>
-                <a href="#" class="group bg-white rounded-xl overflow-hidden shadow-sm border border-muted/40 hover:border-dark hover:shadow-xl transition-all duration-300 flex flex-col">
-                    <div class="aspect-[4/3] bg-light relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Lighting">
-                        <div class="absolute inset-0 bg-dark/0 group-hover:bg-dark/20 transition-colors duration-300"></div>
-                    </div>
-                    <div class="p-5 flex items-center justify-between bg-white z-10 relative">
-                        <div>
-                            <h3 class="font-bold text-dark text-lg">Lighting</h3>
-                            <p class="text-[10px] text-muted font-bold tracking-widest uppercase mt-1">42 Products</p>
-                        </div>
-                        <div class="w-8 h-8 rounded-full bg-light flex items-center justify-center group-hover:bg-dark group-hover:text-light transition-colors text-dark">
-                            <span class="material-icons text-sm">arrow_forward</span>
-                        </div>
-                    </div>
-                </a>
-                <a href="#" class="group bg-white rounded-xl overflow-hidden shadow-sm border border-muted/40 hover:border-dark hover:shadow-xl transition-all duration-300 flex flex-col">
-                    <div class="aspect-[4/3] bg-light relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Wall Art">
-                        <div class="absolute inset-0 bg-dark/0 group-hover:bg-dark/20 transition-colors duration-300"></div>
-                    </div>
-                    <div class="p-5 flex items-center justify-between bg-white z-10 relative">
-                        <div>
-                            <h3 class="font-bold text-dark text-lg">Wall Art</h3>
-                            <p class="text-[10px] text-muted font-bold tracking-widest uppercase mt-1">98 Products</p>
-                        </div>
-                        <div class="w-8 h-8 rounded-full bg-light flex items-center justify-center group-hover:bg-dark group-hover:text-light transition-colors text-dark">
-                            <span class="material-icons text-sm">arrow_forward</span>
-                        </div>
-                    </div>
-                </a>
-                <a href="#" class="group bg-white rounded-xl overflow-hidden shadow-sm border border-muted/40 hover:border-dark hover:shadow-xl transition-all duration-300 flex flex-col">
-                    <div class="aspect-[4/3] bg-light relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Kitchen">
-                        <div class="absolute inset-0 bg-dark/0 group-hover:bg-dark/20 transition-colors duration-300"></div>
-                    </div>
-                    <div class="p-5 flex items-center justify-between bg-white z-10 relative">
-                        <div>
-                            <h3 class="font-bold text-dark text-lg">Kitchen & Dining</h3>
-                            <p class="text-[10px] text-muted font-bold tracking-widest uppercase mt-1">115 Products</p>
-                        </div>
-                        <div class="w-8 h-8 rounded-full bg-light flex items-center justify-center group-hover:bg-dark group-hover:text-light transition-colors text-dark">
-                            <span class="material-icons text-sm">arrow_forward</span>
-                        </div>
-                    </div>
-                </a>
-            </div>
-        </section>
+        {% endfor %}
 
     </main>
 
-        {% include "customer_templates/Footer.html" %}
+    {% include "customer_templates/Footer.html" %}
         
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Scroll Reveal Animations
-            const reveals = document.querySelectorAll('.reveal');
             
+            // 1. HORIZONTAL MOUSE WHEEL SCROLL FOR PILLS
+            const categoryContainer = document.getElementById('category-pills-container');
+            if(categoryContainer) {
+                categoryContainer.addEventListener('wheel', (evt) => {
+                    if (evt.deltaY !== 0) {
+                        evt.preventDefault();
+                        categoryContainer.scrollBy({
+                            left: evt.deltaY > 0 ? 100 : -100, // Speed multiplier
+                            behavior: 'auto'
+                        });
+                    }
+                });
+            }
+
+            // 2. SCROLL REVEAL ANIMATIONS (Fade & Slide up)
+            const reveals = document.querySelectorAll('.reveal');
             const revealOptions = {
-                threshold: 0.15,
+                threshold: 0.10,
                 rootMargin: "0px 0px -50px 0px" 
             };
-
             const revealOnScroll = new IntersectionObserver(function(entries, observer) {
                 entries.forEach(entry => {
                     if (!entry.isIntersecting) return;
                     entry.target.classList.add('active');
-                    observer.unobserve(entry.target);
+                    observer.unobserve(entry.target); // Only animate once
                 });
             }, revealOptions);
 
             reveals.forEach(reveal => {
                 revealOnScroll.observe(reveal);
             });
+
+            // 3. SCROLLSPY (Highlight active category pill)
+            const sections = document.querySelectorAll('.category-section');
+            const navPills = document.querySelectorAll('.category-pill');
+
+            const spyOptions = {
+                threshold: 0.2, // Trigger when 20% of section is visible
+                rootMargin: "-100px 0px -40% 0px" // Adjusts the "active" detection zone
+            };
+
+            const sectionObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const currentId = entry.target.getAttribute('id');
+                        
+                        // Remove active class from all pills
+                        navPills.forEach(pill => {
+                            pill.classList.remove('pill-active');
+                        });
+
+                        // Add active class to the currently viewed section's pill
+                        const activePill = document.querySelector(`.category-pill[data-target="${currentId}"]`);
+                        if(activePill) {
+                            activePill.classList.add('pill-active');
+                            
+                            // Auto-scroll the horizontal pill container so the active pill is always visible
+                            activePill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                        }
+                    }
+                });
+            }, spyOptions);
+
+            sections.forEach(section => {
+                sectionObserver.observe(section);
+            });
+
         });
     </script>
 </body>

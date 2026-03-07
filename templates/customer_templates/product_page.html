@@ -54,31 +54,38 @@
                 <div class="mb-8">
                     <h3
                         class="font-bold text-sm text-dark uppercase tracking-widest mb-3 border-b border-muted/30 pb-2">
-                        Categories</h3>
+                        Categories
+                    </h3>
                     <ul class="space-y-3">
+
                         <li>
                             <label class="flex items-center gap-3 cursor-pointer group">
-                                <input type="checkbox" class="w-4 h-4 rounded border-muted text-dark focus:ring-dark"
-                                    checked>
+                                <input type="checkbox" name="category" value="all"
+                                    class="w-4 h-4 rounded border-muted text-dark focus:ring-dark" checked>
                                 <span
-                                    class="text-sm font-semibold text-dark/80 group-hover:text-dark transition-colors">All
-                                    Products</span>
+                                    class="text-sm font-semibold text-dark/80 group-hover:text-dark transition-colors">
+                                    All Products
+                                </span>
                             </label>
                         </li>
+
+                        {% for category in categories %}
                         <li>
                             <label class="flex items-center gap-3 cursor-pointer group">
-                                <input type="checkbox" class="w-4 h-4 rounded border-muted text-dark focus:ring-dark">
+                                <input type="checkbox" name="category" value="{{ category.slug }}"
+                                    class="w-4 h-4 rounded border-muted text-dark focus:ring-dark">
                                 <span
-                                    class="text-sm font-semibold text-dark/80 group-hover:text-dark transition-colors">Electronics</span>
+                                    class="text-sm font-semibold text-dark/80 group-hover:text-dark transition-colors">
+                                    {{ category.name }}
+                                </span>
                             </label>
                         </li>
+                        {% empty %}
                         <li>
-                            <label class="flex items-center gap-3 cursor-pointer group">
-                                <input type="checkbox" class="w-4 h-4 rounded border-muted text-dark focus:ring-dark">
-                                <span
-                                    class="text-sm font-semibold text-dark/80 group-hover:text-dark transition-colors">Footwear</span>
-                            </label>
+                            <span class="text-sm font-semibold text-muted italic">No other categories available</span>
                         </li>
+                        {% endfor %}
+
                     </ul>
                 </div>
 
@@ -128,9 +135,9 @@
                         {% csrf_token %}
                         <button type="submit" class="w-10 h-10 backdrop-blur-md rounded-full flex items-center justify-center border shadow-sm transition-all duration-300 hover:scale-110 active:scale-95
                             {% if x.id in wishlist_variant_ids %}
-                                bg-red-500 text-white border-red-500 hover:bg-red-600 hover:border-red-600
+                                bg-accent text-red-500 border-accent hover:bg-accent/90 hover:border-dark
                             {% else %}
-                                bg-white/90 text-muted border-muted/30 hover:text-red-500 hover:bg-red-50 hover:border-red-200
+                                bg-white/90 text-muted border-muted/30 hover:text-dark hover:bg-accent/20 hover:border-accent/50
                             {% endif %}"
                             title="{% if x.id in wishlist_variant_ids %}Remove from Wishlist{% else %}Add to Wishlist{% endif %}">
                             <span class="material-icons text-[20px]">
@@ -207,7 +214,7 @@
                                 <span class="material-icons text-[20px]">check_circle</span>
                             </button>
                             {% else %}
-                            <button type="submit"{% if x.stock_quantity < 0 %}disabled{% endif %}
+                            <button type="submit" {% if x.stock_quantity < 0 %}disabled{% endif %}
                                 class="bg-dark text-light p-2.5 rounded-xl hover:bg-accent hover:text-dark transition-all duration-300 border border-transparent hover:border-dark shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed group/cart"
                                 title="Add to Cart">
                                 <span

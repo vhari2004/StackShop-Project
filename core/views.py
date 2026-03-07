@@ -5,15 +5,23 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from core.decorators import admin_required,seller_required
 from customer.models import Cart,CartItem
+from .models import *
 
 def home_view(request):
     user=request.user
+    category_items=Category.objects.all()
     if user.is_authenticated:
         cart=Cart.objects.filter(user=user).first()
         cart_items=CartItem.objects.filter(cart=cart).prefetch_related('variant__product__subcategory','variant__images')
-        return render(request,'core_templates/homepage.html',{'user':user,'cart_items':cart_items})
-    return render(request,'core_templates/homepage.html')
+        return render(request,'core_templates/homepage.html',{'user':user,'cart_items':cart_items,'categories':category_items})
+    return render(request,'core_templates/homepage.html',{'categories':category_items})
 
+def category_list_view(request):
+    categories = Category.objects.filter(is_active=True).prefetch_related('subcategories')
+    context = {
+        'categories': categories
+    }
+    return render(request, 'core_templates/categories.html', context)
 def register_view(request):
     role=request.GET.get('role')
     if request.method=="POST":

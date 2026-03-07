@@ -59,18 +59,18 @@ class Category(models.Model):
     def __str__(self):
         return self.name
     def save(self, *args, **kwargs):
-        if not self.slug:
-            base_slug = slugify(self.name)
-            slug = base_slug
-            counter = 1
+            if not self.slug:
+                base_slug = slugify(self.name)
+                slug = base_slug
+                counter = 1
 
-            while Category.objects.filter(slug=slug).exists():
-                slug = f"{base_slug}-{counter}"
-                counter += 1
+                while SubCategory.objects.filter(slug=slug).exists():
+                    slug = f"{base_slug}-{counter}"
+                    counter += 1
 
-            self.slug = slug
+                self.slug = slug
 
-        super().save(*args, **kwargs)
+            super().save(*args, **kwargs)
 class SubCategory(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="subcategories")
     name = models.CharField(max_length=100)
@@ -81,19 +81,18 @@ class SubCategory(models.Model):
     def __str__(self):
         return self.name
     def save(self, *args, **kwargs):
-        if not self.slug:
-            category_slug=slugify()
-            base_slug = slugify(self.name)
-            slug = base_slug
-            counter = 1
+            if not self.slug:
+                base_slug = slugify(self.name)
+                slug = base_slug
+                counter = 1
 
-            while SubCategory.objects.filter(slug=slug).exists():
-                slug = f"{base_slug}-{counter}"
-                counter += 1
+                while SubCategory.objects.filter(slug=slug).exists():
+                    slug = f"{base_slug}-{counter}"
+                    counter += 1
 
-            self.slug = slug
+                self.slug = slug
 
-        super().save(*args, **kwargs)
+            super().save(*args, **kwargs)
 class Banner(models.Model):
     title = models.CharField(max_length=255)
     image_url = models.ImageField(upload_to='banner_images/', blank=True, null=True)

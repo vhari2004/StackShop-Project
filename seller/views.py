@@ -49,6 +49,8 @@ def seller_bridge(request):
             ifsc_code = request.POST.get("ifsc_code")
             business_address = request.POST.get("business_address")
             store_image = request.FILES.get("store_image")
+            
+            
     return render(request, "seller_templates/seller_bridge.html")
 def seller_broche_view(request):
     if request.user.is_authenticated:

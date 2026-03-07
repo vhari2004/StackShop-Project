@@ -3,6 +3,7 @@ from django.shortcuts import render,redirect
 from django.contrib.auth.decorators import login_required
 from seller.models import Product,ProductVariant
 from customer.models import Wishlist,WishlistItem,Cart,CartItem
+from core.models import *
 from django.contrib import messages
 from core.models import Address
 from django.shortcuts import get_object_or_404
@@ -35,14 +36,17 @@ def add_wishlist_view(request, id):
         wishlist, created = Wishlist.objects.get_or_create(user=request.user,wishlist_name=f"{request.user.username}'s Wishlist",is_default=True)
         if created:
             messages.success(request, f"( {wishlist.wishlist_name} ) created.")
-        return redirect('product_list')
-    if WishlistItem.objects.filter(wishlist=wishlist, variant=product_variant).exists():
-        messages.error(request, f"Product already in ( {wishlist.wishlist_name} ).")
-        return redirect('product_list')
+    
+    # Toggle: remove if exists, add if doesn't exist
+    wishlist_item = WishlistItem.objects.filter(wishlist=wishlist, variant=product_variant)
+    if wishlist_item.exists():
+        wishlist_item.delete()
+        messages.warning(request, f"Product removed from ( {wishlist.wishlist_name} ).")
     else:
-        WishlistItem.objects.get_or_create(wishlist=wishlist, variant=product_variant)
+        WishlistItem.objects.create(wishlist=wishlist, variant=product_variant)
         messages.success(request, f"Product added to ( {wishlist.wishlist_name} ).")
-        return redirect('product_list')
+    
+    return redirect('product_list')
 @login_required
 def remove_wishlist_view(request, id):
     wishlist_item = get_object_or_404(WishlistItem, id=id, wishlist__user=request.user)
@@ -252,22 +256,37 @@ def set_default_address_view(request):
 #product_view_user-------------------------------------------------------------------
 def product_list_view(request):
     product_var = ProductVariant.objects.select_related('product__subcategory__category').prefetch_related('images').all()
+    categories=Category.objects.all()
+    cart_variant_ids = []
+    wishlist_variant_ids = []
+    
     try:
         if request.user.is_authenticated:
             cart = Cart.objects.filter(user=request.user).first()
             if cart:
-                cart_items = CartItem.objects.filter(cart=cart).prefetch_related('variant__product__subcategory', 'variant__images')  
-            else:
-                cart_items=CartItem.objects.none()
+                cart_items = CartItem.objects.filter(cart=cart).prefetch_related('variant__product__subcategory', 'variant__images')
+                cart_variant_ids = list(cart_items.values_list('variant_id', flat=True))
+            
             wishlist = Wishlist.objects.filter(user=request.user, is_default=True).first()
             if wishlist:
-                wishlist_items = WishlistItem.objects.filter(wishlist=wishlist).prefetch_related('variant__product__subcategory', 'variant__images') 
-            else:
-                wishlist_items=WishlistItem.objects.none()
-            return render(request, 'customer_templates/product_page.html', {"product_var": product_var,"cart_items": cart_items,"wishlist": wishlist_items})
+                wishlist_items = WishlistItem.objects.filter(wishlist=wishlist).prefetch_related('variant__product__subcategory', 'variant__images')
+                wishlist_variant_ids = list(wishlist_items.values_list('variant_id', flat=True))
+            
+            return render(request, 'customer_templates/product_page.html', {
+                "product_var": product_var,
+                "cart_variant_ids": cart_variant_ids,
+                "wishlist_variant_ids": wishlist_variant_ids,
+                'categories':categories
+            })
     except:
         return redirect('login')
-    return render(request, 'customer_templates/product_page.html', {"product_var": product_var})
+    
+    return render(request, 'customer_templates/product_page.html', {
+        "product_var": product_var,
+        "cart_variant_ids": cart_variant_ids,
+        "wishlist_variant_ids": wishlist_variant_ids,
+        'categories':categories
+    })
 def product_single_view(request,id):
     product_var=ProductVariant.objects.select_related('product__subcategory__category').prefetch_related('images').get(id=id)
     cart=Cart.objects.filter(user=request.user).first()
