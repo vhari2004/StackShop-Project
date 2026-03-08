@@ -38,7 +38,7 @@ urlpatterns = [
     #----------------------------------------------------------------------------
 
     # order history and address----------------------
-    path('order-history/',views.orderhistory_view,name='order-history'),
+    path('order-history/',views.order_history_view,name='order-history'),
     #------------------------------------------------------------
     # payment processing and success----------------------
     path("payment-success/",views.payment_success,name="payment_success"),

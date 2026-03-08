@@ -58,19 +58,27 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <p class="text-xs font-bold uppercase tracking-widest text-muted mb-2">Order ID</p>
-                                <p class="text-lg font-extrabold text-dark break-all">{{ order.razorpay_order_id }}</p>
+                                <p class="text-lg font-extrabold text-dark break-all">{{ order.order_number }}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold uppercase tracking-widest text-muted mb-2">Razorpay Order ID</p>
+                                <p class="text-lg font-extrabold text-dark break-all">{{ payment_order.razorpay_order_id }}</p>
                             </div>
                             <div>
                                 <p class="text-xs font-bold uppercase tracking-widest text-muted mb-2">Payment ID</p>
-                                <p class="text-lg font-extrabold text-dark break-all">{{ order.razorpay_payment_id }}</p>
+                                <p class="text-lg font-extrabold text-dark break-all">{{ payment_order.razorpay_payment_id }}</p>
                             </div>
                             <div>
                                 <p class="text-xs font-bold uppercase tracking-widest text-muted mb-2">Order Date</p>
-                                <p class="text-lg font-extrabold text-dark">{{ order.created_at|date:"d M, Y" }}</p>
+                                <p class="text-lg font-extrabold text-dark">{{ order.ordered_at|date:"d M, Y" }}</p>
                             </div>
                             <div>
                                 <p class="text-xs font-bold uppercase tracking-widest text-muted mb-2">Order Amount</p>
-                                <p class="text-lg font-extrabold text-green-600">₹{{ order_amount|floatformat:2 }}</p>
+                                <p class="text-lg font-extrabold text-green-600">₹{{ order.total_amount|floatformat:2 }}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold uppercase tracking-widest text-muted mb-2">Payment Status</p>
+                                <p class="text-lg font-extrabold text-green-600">{{ order.payment_status }}</p>
                             </div>
                         </div>
                     </div>

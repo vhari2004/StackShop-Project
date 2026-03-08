@@ -582,10 +582,17 @@ def product_single_view(request, id):
 # ----------------------------------------------------------------------------------------------------
 
 # order---------------------------------------------------------------------------
-def orderhistory_view(request):
+@login_required
+def order_history_view(request):
+    orders = Order.objects.filter(user=request.user).prefetch_related(
+        'items__variant__product',
+        'items__variant__images'
+    ).order_by('-ordered_at')
 
-    return render(request, "customer_templates/order_history_customer.html")
-
+    context = {
+        'orders': orders,
+    }
+    return render(request, 'customer_templates/order_history_customer.html', context)
 
 # --------------------------------------------------------------------------------
 

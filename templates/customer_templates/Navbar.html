@@ -1,122 +1,71 @@
 {% load static %}
 <div class="sticky top-0 z-50 w-full bg-light/70 backdrop-blur-md pb-2">
-    <header class="w-full pt-1 px-4 z-50 sticky top-0">
-        <nav class="w-full bg-dark text-light rounded-xl px-6 py-4 flex items-center justify-between shadow-lg">
+    <header class="w-full pt-1 px-4 z-50 sticky top-0 relative">
+        <nav class="w-full bg-dark text-light rounded-xl px-4 md:px-6 py-4 flex items-center justify-between shadow-lg">
 
-            <a href="{% url 'home' %}"
-                class="flex items-center gap-3 cursor-pointer hover:opacity-90 transition-opacity">
-                <img alt="Logo" class="w-12 h-12 text-accent" fill="currentColor"
-                    src="{% static 'core/homehtml/stackshoplogo.png' %}" />
-                <span class="text-xl font-bold tracking-wide">StackShop</span>
+            <a href="{% url 'home' %}" class="flex items-center gap-2 md:gap-3 cursor-pointer hover:opacity-90 transition-opacity">
+                <img alt="Logo" class="w-10 h-10 md:w-12 md:h-12 text-accent" fill="currentColor" src="{% static 'core/homehtml/stackshoplogo.png' %}" />
+                <span class="text-lg md:text-xl font-bold tracking-wide">StackShop</span>
             </a>
 
-            <div class="flex-1 max-w-xl mx-12 hidden md:block">
-                <div class="relative group">
-                    <form action="{% url 'search' %}" method="GET" class="hidden md:block w-full mx-4 lg:mx-8">
-
-                        <div class="flex gap-2 items-end">
-                            <div class="flex-1">
-                                <input name="q" value="{{ request.GET.q }}"
-                                    class="w-full bg-light/10 border border-muted/30 rounded-lg py-2 pl-4 pr-4 text-sm text-light focus:outline-none focus:border-muted focus:ring-1 focus:ring-muted transition-all placeholder-muted/70"
-                                    placeholder="Search products, brands..." type="text" />
-                            </div>
-
-                            <button type="submit"
-                                class="flex items-center gap-2 px-4 py-2 bg-accent hover:bg-accent/90 text-dark font-semibold rounded-lg transition-colors group">
-                                <span class="material-icons text-sm">search</span>
-                                <span class="hidden sm:inline text-sm">Search</span>
-                            </button>
+            <div class="flex-1 max-w-xl mx-4 lg:mx-12 hidden md:block">
+                <form action="{% url 'search' %}" method="GET" class="w-full">
+                    <div class="flex gap-2 items-end">
+                        <div class="flex-1">
+                            <input name="q" value="{{ request.GET.q }}"
+                                class="w-full bg-light/10 border border-muted/30 rounded-lg py-2 pl-4 pr-4 text-sm text-light focus:outline-none focus:border-muted focus:ring-1 focus:ring-muted transition-all placeholder-muted/70"
+                                placeholder="Search products, brands..." type="text" />
                         </div>
-
-                    </form>
-                </div>
+                        <button type="submit" class="flex items-center gap-2 px-4 py-2 bg-accent hover:bg-accent/90 text-dark font-semibold rounded-lg transition-colors active:scale-95">
+                            <span class="material-icons text-sm">search</span>
+                            <span class="hidden lg:inline text-sm">Search</span>
+                        </button>
+                    </div>
+                </form>
             </div>
 
-            <div class="flex items-center gap-8">
+            <div class="flex items-center gap-4 md:gap-8">
 
                 <div class="hidden lg:flex items-center gap-6 text-sm font-semibold">
-
                     {% url 'home' as home_url %}
-                    <a href="{{ home_url }}"
-                        class="transition-all py-1 {% if request.path == home_url %}text-light border-b-2 border-accent{% else %}text-muted hover:text-light{% endif %}">
-                        Shop
-                    </a>
+                    <a href="{{ home_url }}" class="transition-all py-1 active:scale-95 {% if request.path == home_url %}text-light border-b-2 border-accent{% else %}text-muted hover:text-light{% endif %}">Shop</a>
+                    
                     {% url 'deals' as deals_url %}
-
-                    <a href="{{deals_url}}"
-                        class="transition-all py-1 {% if request.path == deals_url %}text-light border-b-2 border-accent{% else %}text-muted hover:text-light{% endif %}">
-
-                        Deals
-                    </a>
+                    <a href="{{deals_url}}" class="transition-all py-1 active:scale-95 {% if request.path == deals_url %}text-light border-b-2 border-accent{% else %}text-muted hover:text-light{% endif %}">Deals</a>
 
                     {% url 'product_list' as products_url %}
-                    <a href="{{ products_url }}"
-                        class="transition-all py-1 {% if request.path == products_url %}text-light border-b-2 border-accent{% else %}text-muted hover:text-light{% endif %}">
-                        All Products
+                    <a href="{{ products_url }}" class="transition-all py-1 active:scale-95 {% if request.path == products_url %}text-light border-b-2 border-accent{% else %}text-muted hover:text-light{% endif %}">All Products</a>
+                    
+                    {% if user.is_admin %}
+                    <a href="{% url 'admin_dashboard' %}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-yellow-50 text-yellow-600 hover:text-yellow-700 transition-colors active:scale-95">
+                        <span class="material-icons text-sm">admin_panel_settings</span> Admin
                     </a>
-                    {%if user.is_admin%}
-                    <a href="{% url 'admin_dashboard' %}"
-                        class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-yellow-50 transition-colors group/item">
-                        <span
-                            class="material-icons text-yellow-600 group-hover/item:text-yellow-700 transition-colors">person_outline</span>
-                        <span
-                            class="font-bold text-sm text-yellow-600 group-hover/item:text-yellow-700 transition-colors">Go
-                            to Admin Dashboard</span>
+                    {% elif user.is_seller and user.is_verified_seller %}
+                    <a href="{% url 'add-product' %}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-yellow-50 text-yellow-600 hover:text-yellow-700 transition-colors active:scale-95">
+                        <span class="material-icons text-sm">storefront</span> Dashboard
                     </a>
                     {% elif user.is_seller %}
-                    <a href="{% url 'seller-profile' %}"
-                        class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-yellow-50 transition-colors group/item">
-                        <span
-                            class="material-icons text-yellow-600 group-hover/item:text-yellow-700 transition-colors">person_outline</span>
-                        <span
-                            class="font-bold text-sm text-yellow-600 group-hover/item:text-yellow-700 transition-colors">Go
-                            to seller-profile</span>
-                    </a>
-                    {% elif user.is_seller and user.is_verified_seller%}
-                    <a href="{% url 'add-product' %}"
-                        class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-yellow-50 transition-colors group/item">
-                        <span
-                            class="material-icons text-yellow-600 group-hover/item:text-yellow-700 transition-colors">person_outline</span>
-                        <span
-                            class="font-bold text-sm text-yellow-600 group-hover/item:text-yellow-700 transition-colors">Go
-                            to Seller Dashboard</span>
+                    <a href="{% url 'seller-profile' %}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-yellow-50 text-yellow-600 hover:text-yellow-700 transition-colors active:scale-95">
+                        <span class="material-icons text-sm">person_outline</span> Seller Profile
                     </a>
                     {% else %}
                     <div class="relative group py-2">
-                        <button
-                            class="flex items-center gap-1 text-muted hover:text-light transition-colors focus:outline-none">
-                            More <span
-                                class="material-icons text-sm transition-transform duration-300 group-hover:rotate-180">expand_more</span>
+                        <button class="flex items-center gap-1 text-muted hover:text-light transition-colors focus:outline-none active:scale-95">
+                            More <span class="material-icons text-sm transition-transform duration-300 group-hover:rotate-180">expand_more</span>
                         </button>
-
-                        <div
-                            class="absolute top-full right-0 mt-1 w-56 bg-light text-dark rounded-xl shadow-2xl border border-muted/30 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0 z-50">
+                        <div class="absolute top-full right-0 mt-1 w-56 bg-light text-dark rounded-xl shadow-2xl border border-muted/30 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0 z-50">
                             <div class="absolute -top-4 left-0 w-full h-4"></div>
-
                             <div class="p-2 flex flex-col">
-                                <a href="#"
-                                    class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-accent/50 transition-colors group/item">
-                                    <span
-                                        class="material-icons text-muted group-hover/item:text-dark transition-colors">campaign</span>
-                                    <span class="font-bold text-sm">Advertise Here</span>
+                                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-accent/50 transition-colors">
+                                    <span class="material-icons text-muted">campaign</span><span class="font-bold text-sm">Advertise Here</span>
                                 </a>
-
                                 {% if user.is_authenticated %}
-                                <a href="{% url 'becomeseller' %}"
-                                    class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-yellow-50 transition-colors group/item">
-                                    <span
-                                        class="material-icons text-yellow-600 group-hover/item:text-yellow-700 transition-colors">storefront</span>
-                                    <span
-                                        class="font-bold text-sm text-yellow-600 group-hover/item:text-yellow-700 transition-colors">Become
-                                        a Seller</span>
+                                <a href="{% url 'becomeseller' %}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-yellow-50 text-yellow-600 transition-colors">
+                                    <span class="material-icons">storefront</span><span class="font-bold text-sm">Become a Seller</span>
                                 </a>
                                 {% endif %}
-
-                                <a href="#"
-                                    class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-accent/50 transition-colors group/item">
-                                    <span
-                                        class="material-icons text-muted group-hover/item:text-dark transition-colors">support_agent</span>
-                                    <span class="font-bold text-sm">Customer Care 24/7</span>
+                                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-accent/50 transition-colors">
+                                    <span class="material-icons text-muted">support_agent</span><span class="font-bold text-sm">Customer Care 24/7</span>
                                 </a>
                             </div>
                         </div>
@@ -124,112 +73,119 @@
                     {% endif %}
                 </div>
 
-                {% if user.is_authenticated %}
-                <div class="flex items-center gap-4 border-l border-muted/30 pl-8 text-muted">
-
-                    <div class="relative group py-2">
-                        <button class="flex items-center gap-1 hover:text-light transition-colors focus:outline-none">
-                            <span class="material-icons text-xl">person_outline</span>
-                            <span class="text-sm hidden sm:inline font-semibold">
-                                <a href="{% url 'customer_dashboard' %}">My Account</a>
-                            </span>
-                        </button>
-
-                        <div
-                            class="absolute top-full right-0 mt-1 w-64 bg-light text-dark rounded-xl shadow-2xl border border-muted/30 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0 z-50">
-                            <div class="absolute -top-4 right-0 w-full h-4"></div>
-
-                            <div class="p-2 flex flex-col max-h-[70vh] overflow-y-auto hide-scrollbar">
-
-                                <div class="px-4 py-3 mb-1 border-b border-muted/30">
-                                    <p class="text-xs text-muted uppercase tracking-widest font-bold">Signed in as</p>
-                                    <p class="text-sm font-extrabold truncate">{{ user.username|default:"guest" }}</p>
+                <div class="flex items-center gap-3 md:gap-4 lg:border-l lg:border-muted/30 lg:pl-8">
+                    {% if user.is_authenticated %}
+                        <div class="relative group py-2">
+                            <button class="flex items-center gap-1 text-muted hover:text-light transition-colors focus:outline-none active:scale-95">
+                                <span class="material-icons text-xl md:text-2xl">person_outline</span>
+                                <span class="text-sm hidden sm:inline font-semibold">My Account</span>
+                            </button>
+                            <div class="absolute top-full right-0 mt-1 w-64 bg-light text-dark rounded-xl shadow-2xl border border-muted/30 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0 z-50">
+                                <div class="absolute -top-4 right-0 w-full h-4"></div>
+                                <div class="p-2 flex flex-col max-h-[70vh] overflow-y-auto hide-scrollbar">
+                                    <div class="px-4 py-3 mb-1 border-b border-muted/30">
+                                        <p class="text-xs text-muted uppercase tracking-widest font-bold">Signed in as</p>
+                                        <p class="text-sm font-extrabold truncate">{{ user.username|default:"guest" }}</p>
+                                    </div>
+                                    <a href="{% url 'profile' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors text-sm font-bold"><span class="material-icons text-[18px] text-muted">badge</span> My Profile</a>
+                                    <a href="{% url 'order-history' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors text-sm font-bold"><span class="material-icons text-[18px] text-muted">inventory_2</span> Orders</a>
+                                    <a href="{% url 'wishlist' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors text-sm font-bold"><span class="material-icons text-[18px] text-muted">favorite_border</span> Wishlist</a>
+                                    <a href="{% url 'address' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors text-sm font-bold"><span class="material-icons text-[18px] text-muted">location_on</span> Saved Address</a>
+                                    <div class="border-t border-muted/30 my-1"></div>
+                                    <a href="{% url 'logout' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-red-50 text-red-500 hover:text-red-600 transition-colors text-sm font-bold"><span class="material-icons text-[18px] text-red-400">logout</span> Logout</a>
                                 </div>
-
-                                <a href="{% url 'profile' %}"
-                                    class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors group/item">
-                                    <span
-                                        class="material-icons text-[18px] text-muted group-hover/item:text-dark transition-colors">badge</span>
-                                    <span class="font-bold text-sm">My Profile</span>
-                                </a>
-                                <a href="{% url 'order-history' %}"
-                                    class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors group/item">
-                                    <span
-                                        class="material-icons text-[18px] text-muted group-hover/item:text-dark transition-colors">inventory_2</span>
-                                    <span class="font-bold text-sm">Orders</span>
-                                </a>
-                                <a href="{% url 'wishlist' %}"
-                                    class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors group/item">
-                                    <span
-                                        class="material-icons text-[18px] text-muted group-hover/item:text-dark transition-colors">favorite_border</span>
-                                    <span class="font-bold text-sm">Wishlist</span>
-                                </a>
-                                <a href="#"
-                                    class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors group/item">
-                                    <span
-                                        class="material-icons text-[18px] text-muted group-hover/item:text-dark transition-colors">notifications</span>
-                                    <span class="font-bold text-sm">Notification</span>
-                                </a>
-                                <a href="{% url 'address' %}"
-                                    class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors group/item">
-                                    <span
-                                        class="material-icons text-[18px] text-muted group-hover/item:text-dark transition-colors">location_on</span>
-                                    <span class="font-bold text-sm">Saved Address</span>
-                                </a>
-                                <a href="#"
-                                    class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors group/item">
-                                    <span
-                                        class="material-icons text-[18px] text-muted group-hover/item:text-dark transition-colors">credit_card</span>
-                                    <span class="font-bold text-sm">Saved Cards</span>
-                                </a>
-                                <a href="#"
-                                    class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors group/item">
-                                    <span
-                                        class="material-icons text-[18px] text-muted group-hover/item:text-dark transition-colors">card_giftcard</span>
-                                    <span class="font-bold text-sm">Giftcards</span>
-                                </a>
-
-                                <div class="border-t border-muted/30 my-1"></div>
-
-                                <a href="{% url 'logout' %}"
-                                    class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors group/item text-red-500">
-                                    <span
-                                        class="material-icons text-[18px] text-red-400 group-hover/item:text-red-600 transition-colors">logout</span>
-                                    <span class="font-bold text-sm">Logout</span>
-                                </a>
                             </div>
                         </div>
-                    </div>
-                    {% url 'cart_view' as cart_url %}
-                    <a href="{{ cart_url }}" class="relative hover:text-light transition-colors ml-2">
-                        {% if cart_items.count > 0 %}
-                        <span class="material-icons text-xl text-green-500">shopping_bag</span>
-                        {% else %}
-                        <span class="material-icons text-xl">shopping_bag</span>
-                        {% endif %}
-                        <span
-                            class="absolute -top-1.5 -right-1.5 bg-accent text-dark text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">{{cart_items.count }}</span>
-                    </a>
-                </div>
 
-                {% else %}
-                <div class="flex items-center gap-4 border-l border-muted/30 pl-8">
-                    <a href="{% url 'becomeseller' %}"
-                        class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-yellow-50 transition-colors group/item">
-                        <span
-                            class="material-icons text-yellow-600 group-hover/item:text-yellow-700 transition-colors">storefront</span>
-                        <span
-                            class="font-bold text-sm text-yellow-600 group-hover/item:text-yellow-700 transition-colors">Become
-                            a Seller</span>
-                    </a>
-                    <a class="text-sm font-bold text-muted hover:text-light transition-colors"
-                        href="{% url 'login' %}">Login</a>
-                    <a class="text-sm font-bold bg-accent text-dark px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors shadow-sm"
-                        href="{% url 'register' %}">Sign Up</a>
-                </div>
-                {% endif %}
+                        {% url 'cart_view' as cart_url %}
+                        <a href="{{ cart_url }}" class="relative text-muted hover:text-light transition-colors active:scale-95">
+                            <span class="material-icons text-xl md:text-2xl {% if cart_items.count > 0 %}text-green-500{% endif %}">shopping_bag</span>
+                            <span class="absolute -top-1.5 -right-1.5 bg-accent text-dark text-[10px] w-4 h-4 md:w-5 md:h-5 rounded-full flex items-center justify-center font-bold">{{cart_items.count|default:"0" }}</span>
+                        </a>
+                    {% else %}
+                        <div class="hidden md:flex items-center gap-4">
+                            <a href="{% url 'becomeseller' %}" class="text-sm font-bold text-yellow-500 hover:text-yellow-400 transition-colors active:scale-95">Sell</a>
+                            <a class="text-sm font-bold text-muted hover:text-light transition-colors active:scale-95" href="{% url 'login' %}">Login</a>
+                            <a class="text-sm font-bold bg-accent text-dark px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors shadow-sm active:scale-95" href="{% url 'register' %}">Sign Up</a>
+                        </div>
+                        <div class="md:hidden flex items-center gap-3">
+                            <a href="{% url 'login' %}" class="material-icons text-muted hover:text-light">person</a>
+                        </div>
+                    {% endif %}
 
+                    <button id="mobile-menu-btn" class="lg:hidden text-muted hover:text-light ml-2 focus:outline-none transition-transform active:scale-95">
+                        <span class="material-icons text-2xl md:text-3xl">menu</span>
+                    </button>
+                </div>
             </div>
+            
         </nav>
+
+        <div id="mobile-menu" class="hidden lg:hidden absolute top-full left-4 right-4 mt-2 bg-dark rounded-xl shadow-2xl border border-muted/20 overflow-hidden transition-all z-40">
+            <div class="flex flex-col p-4 space-y-2 max-h-[70vh] overflow-y-auto">
+                
+                <form action="{% url 'search' %}" method="GET" class="md:hidden w-full mb-4">
+                    <div class="relative">
+                        <input name="q" value="{{ request.GET.q }}" class="w-full bg-light/10 border border-muted/30 rounded-lg py-3 pl-10 pr-4 text-sm text-light focus:outline-none focus:border-accent" placeholder="Search products..." type="text" />
+                        <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-muted text-[18px]">search</span>
+                    </div>
+                </form>
+
+                <div class="text-[10px] font-black uppercase tracking-widest text-muted/70 mb-1 pl-2">Navigation</div>
+                <a href="{{ home_url }}" class="text-light font-semibold px-4 py-3 rounded-lg hover:bg-light/10 transition-colors">Shop</a>
+                <a href="{{ deals_url }}" class="text-light font-semibold px-4 py-3 rounded-lg hover:bg-light/10 transition-colors">Deals</a>
+                <a href="{{ products_url }}" class="text-light font-semibold px-4 py-3 rounded-lg hover:bg-light/10 transition-colors">All Products</a>
+
+                <div class="border-t border-muted/20 my-2"></div>
+
+                <div class="text-[10px] font-black uppercase tracking-widest text-muted/70 mb-1 pl-2">More</div>
+                {% if user.is_admin %}
+                    <a href="{% url 'admin_dashboard' %}" class="text-yellow-500 font-semibold px-4 py-3 rounded-lg hover:bg-light/10 flex items-center gap-2"><span class="material-icons text-[18px]">admin_panel_settings</span> Admin Dashboard</a>
+                {% elif user.is_seller and user.is_verified_seller %}
+                    <a href="{% url 'add-product' %}" class="text-yellow-500 font-semibold px-4 py-3 rounded-lg hover:bg-light/10 flex items-center gap-2"><span class="material-icons text-[18px]">storefront</span> Seller Dashboard</a>
+                {% elif user.is_seller %}
+                    <a href="{% url 'seller-profile' %}" class="text-yellow-500 font-semibold px-4 py-3 rounded-lg hover:bg-light/10 flex items-center gap-2"><span class="material-icons text-[18px]">person_outline</span> Seller Profile</a>
+                {% else %}
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'becomeseller' %}" class="text-yellow-500 font-semibold px-4 py-3 rounded-lg hover:bg-light/10 flex items-center gap-2"><span class="material-icons text-[18px]">storefront</span> Become a Seller</a>
+                    {% endif %}
+                {% endif %}
+                <a href="#" class="text-light font-semibold px-4 py-3 rounded-lg hover:bg-light/10 flex items-center gap-2"><span class="material-icons text-muted text-[18px]">campaign</span> Advertise Here</a>
+                <a href="#" class="text-light font-semibold px-4 py-3 rounded-lg hover:bg-light/10 flex items-center gap-2"><span class="material-icons text-muted text-[18px]">support_agent</span> Customer Care</a>
+                
+                {% if not user.is_authenticated %}
+                    <div class="border-t border-muted/20 my-2"></div>
+                    <a href="{% url 'login' %}" class="text-light font-semibold px-4 py-3 rounded-lg hover:bg-light/10">Login</a>
+                    <a href="{% url 'register' %}" class="bg-accent text-dark text-center font-bold px-4 py-3 rounded-lg mt-2">Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+
     </header>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        const icon = btn.querySelector('.material-icons');
+
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            menu.classList.toggle('hidden');
+            if (menu.classList.contains('hidden')) {
+                icon.textContent = 'menu';
+            } else {
+                icon.textContent = 'close';
+            }
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!menu.contains(e.target) && !btn.contains(e.target) && !menu.classList.contains('hidden')) {
+                menu.classList.add('hidden');
+                icon.textContent = 'menu';
+            }
+        });
+    });
+</script>
