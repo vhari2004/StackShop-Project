@@ -145,7 +145,7 @@
 
             <div
                 class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 bg-white p-4 rounded-2xl shadow-sm border border-muted/30">
-                <p class="text-sm font-bold text-muted mb-4 sm:mb-0">Showing <span class="text-dark">{{ product_var.count }}</span> Products
+                <p class="text-sm font-bold text-muted mb-4 sm:mb-0">Showing <span class="text-dark">{{ page_obj.object_list|length }}</span> of <span class="text-dark">{{ paginator.count }}</span> Products {% if page_obj.has_other_pages %}<span class="text-muted font-semibold">(Page {{ page_obj.number }} of {{ paginator.num_pages }}){% endif %}</span>
                 </p>
                 <div class="flex items-center gap-3">
                     <span class="text-xs font-extrabold text-dark uppercase tracking-widest">Sort By:</span>
@@ -168,7 +168,7 @@
             {% endif %}
             <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
                 {% for x in product_var %}
-
+                
                 <div
                     class="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl border border-muted/30 hover:border-dark/30 transition-all duration-300 flex flex-col relative">
 
@@ -283,26 +283,58 @@
         </div>
 
         <div class="mt-12 flex justify-center">
+            {% if page_obj.has_other_pages %}
             <nav class="flex items-center gap-2">
-                <button
-                    class="w-10 h-10 flex items-center justify-center rounded-xl border border-muted/50 text-muted hover:text-dark hover:border-dark hover:bg-white transition-all shadow-sm">
+                <!-- Previous Button -->
+                {% if page_obj.has_previous %}
+                <a href="?page=1" class="w-10 h-10 flex items-center justify-center rounded-xl border border-muted/50 text-muted hover:text-dark hover:border-dark hover:bg-white transition-all shadow-sm" title="First Page">
+                    <span class="material-icons text-sm">first_page</span>
+                </a>
+                <a href="?page={{ page_obj.previous_page_number }}" class="w-10 h-10 flex items-center justify-center rounded-xl border border-muted/50 text-muted hover:text-dark hover:border-dark hover:bg-white transition-all shadow-sm" title="Previous Page">
+                    <span class="material-icons text-sm">chevron_left</span>
+                </a>
+                {% else %}
+                <button disabled class="w-10 h-10 flex items-center justify-center rounded-xl border border-muted/50 text-muted/30 cursor-not-allowed opacity-50">
+                    <span class="material-icons text-sm">first_page</span>
+                </button>
+                <button disabled class="w-10 h-10 flex items-center justify-center rounded-xl border border-muted/50 text-muted/30 cursor-not-allowed opacity-50">
                     <span class="material-icons text-sm">chevron_left</span>
                 </button>
-                <button
-                    class="w-10 h-10 flex items-center justify-center rounded-xl border border-transparent bg-dark text-light font-bold shadow-md">1</button>
-                <button
-                    class="w-10 h-10 flex items-center justify-center rounded-xl border border-muted/50 text-dark font-bold hover:bg-accent hover:border-dark hover:shadow-sm transition-all bg-white">2</button>
-                <button
-                    class="w-10 h-10 flex items-center justify-center rounded-xl border border-muted/50 text-dark font-bold hover:bg-accent hover:border-dark hover:shadow-sm transition-all bg-white">3</button>
-                <span class="px-2 text-muted font-bold tracking-widest">...</span>
-                <button
-                    class="w-10 h-10 flex items-center justify-center rounded-xl border border-muted/50 text-dark font-bold hover:bg-accent hover:border-dark hover:shadow-sm transition-all bg-white">8</button>
-                <button
-                    class="w-10 h-10 flex items-center justify-center rounded-xl border border-muted/50 text-muted hover:text-dark hover:border-dark hover:bg-white transition-all shadow-sm">
+                {% endif %}
+
+                <!-- Page Numbers -->
+                {% for num in paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <button disabled class="w-10 h-10 flex items-center justify-center rounded-xl border border-transparent bg-dark text-light font-bold shadow-md cursor-default">{{ num }}</button>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a href="?page={{ num }}" class="w-10 h-10 flex items-center justify-center rounded-xl border border-muted/50 text-dark font-bold hover:bg-accent hover:border-dark hover:shadow-sm transition-all bg-white">{{ num }}</a>
+                    {% elif num == 1 %}
+                    <a href="?page={{ num }}" class="w-10 h-10 flex items-center justify-center rounded-xl border border-muted/50 text-dark font-bold hover:bg-accent hover:border-dark hover:shadow-sm transition-all bg-white">{{ num }}</a>
+                    {% elif num == paginator.num_pages %}
+                    <a href="?page={{ num }}" class="w-10 h-10 flex items-center justify-center rounded-xl border border-muted/50 text-dark font-bold hover:bg-accent hover:border-dark hover:shadow-sm transition-all bg-white">{{ num }}</a>
+                    {% elif num == page_obj.number|add:'-4' or num == page_obj.number|add:'4' %}
+                    <span class="px-2 text-muted font-bold tracking-widest">...</span>
+                    {% endif %}
+                {% endfor %}
+
+                <!-- Next Button -->
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="w-10 h-10 flex items-center justify-center rounded-xl border border-muted/50 text-muted hover:text-dark hover:border-dark hover:bg-white transition-all shadow-sm" title="Next Page">
+                    <span class="material-icons text-sm">chevron_right</span>
+                </a>
+                <a href="?page={{ paginator.num_pages }}" class="w-10 h-10 flex items-center justify-center rounded-xl border border-muted/50 text-muted hover:text-dark hover:border-dark hover:bg-white transition-all shadow-sm" title="Last Page">
+                    <span class="material-icons text-sm">last_page</span>
+                </a>
+                {% else %}
+                <button disabled class="w-10 h-10 flex items-center justify-center rounded-xl border border-muted/50 text-muted/30 cursor-not-allowed opacity-50">
                     <span class="material-icons text-sm">chevron_right</span>
                 </button>
+                <button disabled class="w-10 h-10 flex items-center justify-center rounded-xl border border-muted/50 text-muted/30 cursor-not-allowed opacity-50">
+                    <span class="material-icons text-sm">last_page</span>
+                </button>
+                {% endif %}
             </nav>
-        </div>
+            {% endif %}
 
         </div>
     </main>

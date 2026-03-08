@@ -20,6 +20,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+# TODO: Use environment variables for production: from decouple import config
+# SECRET_KEY = config('SECRET_KEY')
 SECRET_KEY = 'django-insecure-_)0i^2a$#94urj2^zai=rre0k$c68ohd5o=b$8&5$phimgkk1_'
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -42,6 +44,7 @@ INSTALLED_APPS = [
     'seller',
     'customer',
 ]
+
 AUTH_USER_MODEL = 'core.CustomUser'
 LOGIN_URL = 'login'
 
@@ -96,6 +99,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 8,
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -122,9 +128,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS=[BASE_DIR/'static']
+STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
-MEDIA_ROOT=BASE_DIR/'media'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

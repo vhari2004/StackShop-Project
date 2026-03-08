@@ -220,10 +220,12 @@ def category_view(request):
 
 
 def deals_view(request):
-    cart = Cart.objects.filter(user=request.user).first()
-    cart_items = CartItem.objects.filter(cart=cart).prefetch_related(
-        "variant__product__subcategory", "variant__images"
-    )
+    if request.user.is_authenticated:
+        cart = Cart.objects.filter(user=request.user).first()
+        cart_items = CartItem.objects.filter(cart=cart).prefetch_related(
+            "variant__product__subcategory", "variant__images")
+    else:
+        cart_items = []    
     return render(request, "core_templates/dealspage.html", {"cart_items": cart_items})
 
 

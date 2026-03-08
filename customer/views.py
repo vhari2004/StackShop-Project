@@ -1,12 +1,12 @@
 from urllib import request
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 from seller.models import Product, ProductVariant
 from customer.models import Wishlist, WishlistItem, Cart, CartItem
-from core.models import *
-from django.contrib import messages
-from core.models import Address
-from django.shortcuts import get_object_or_404
+from core.models import Address, Category
 
 # userlogin-----------------------------------------------------------------------------
 
@@ -347,7 +347,7 @@ def set_default_address_view(request):
 
 # product_view_user-------------------------------------------------------------------
 def product_list_view(request):
-    product_var = (
+    product_var_all = (
         ProductVariant.objects.select_related("product__subcategory__category")
         .prefetch_related("images")
         .all()
@@ -357,39 +357,35 @@ def product_list_view(request):
     wishlist_variant_ids = []
     cart_items = []
 
+    # Pagination setup (12 products per page)
+    paginator = Paginator(product_var_all, 12)
+    page_number = request.GET.get('page', 1)
+    
     try:
-        if request.user.is_authenticated:
-            cart = Cart.objects.filter(user=request.user).first()
-            if cart:
-                cart_items = CartItem.objects.filter(cart=cart).prefetch_related(
-                    "variant__product__subcategory", "variant__images"
-                )
-                cart_variant_ids = list(cart_items.values_list("variant_id", flat=True))
+        product_var = paginator.page(page_number)
+    except PageNotAnInteger:
+        product_var = paginator.page(1)
+    except EmptyPage:
+        product_var = paginator.page(paginator.num_pages)
 
-            wishlist = Wishlist.objects.filter(
-                user=request.user, is_default=True
-            ).first()
-            if wishlist:
-                wishlist_items = WishlistItem.objects.filter(
-                    wishlist=wishlist
-                ).prefetch_related("variant__product__subcategory", "variant__images")
-                wishlist_variant_ids = list(
-                    wishlist_items.values_list("variant_id", flat=True)
-                )
-
-            return render(
-                request,
-                "customer_templates/product_page.html",
-                {
-                    "product_var": product_var,
-                    "cart_items": cart_items,
-                    "cart_variant_ids": cart_variant_ids,
-                    "wishlist_variant_ids": wishlist_variant_ids,
-                    "categories": categories,
-                },
+    if request.user.is_authenticated:
+        cart = Cart.objects.filter(user=request.user).first()
+        if cart:
+            cart_items = CartItem.objects.filter(cart=cart).prefetch_related(
+                "variant__product__subcategory", "variant__images"
             )
-    except:
-        return redirect("login")
+            cart_variant_ids = list(cart_items.values_list("variant_id", flat=True))
+
+        wishlist = Wishlist.objects.filter(
+            user=request.user, is_default=True
+        ).first()
+        if wishlist:
+            wishlist_items = WishlistItem.objects.filter(
+                wishlist=wishlist
+            ).prefetch_related("variant__product__subcategory", "variant__images")
+            wishlist_variant_ids = list(
+                wishlist_items.values_list("variant_id", flat=True)
+            )
 
     return render(
         request,
@@ -400,6 +396,8 @@ def product_list_view(request):
             "cart_variant_ids": cart_variant_ids,
             "wishlist_variant_ids": wishlist_variant_ids,
             "categories": categories,
+            "paginator": paginator,
+            "page_obj": product_var,
         },
     )
 
