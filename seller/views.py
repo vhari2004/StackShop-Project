@@ -41,16 +41,18 @@ def seller_bridge(request):
     if user.is_authenticated:
         if SellerProfile.objects.filter(user=request.user).exists():
             return redirect("seller-profile")
-
-        if request.method == "POST":
-            store_name = request.POST.get("store_name")
-            gst_number = request.POST.get("gst_number")
-            pan_number = request.POST.get("pan_number")
-            bank_account_number = request.POST.get("bank_account_number")
-            ifsc_code = request.POST.get("ifsc_code")
-            business_address = request.POST.get("business_address")
-            store_image = request.FILES.get("store_image")
-            
+        else:
+            seller_profile,created=SellerProfile.objects.get_or_create()
+            if request.method == "POST":
+                seller_profile.store_name = request.POST.get("store_name")
+                seller_profile.gst_number = request.POST.get("gst_number")
+                seller_profile.pan_number = request.POST.get("pan_number")
+                seller_profile.bank_account_number = request.POST.get("bank_account_number")
+                seller_profile.ifsc_code = request.POST.get("ifsc_code")
+                seller_profile.business_address = request.POST.get("business_address")
+                seller_profile.store_image = request.FILES.get("store_image")      
+                seller_profile.save()
+                return redirect('seller-profile')
             
     return render(request, "seller_templates/seller_bridge.html")
 def seller_broche_view(request):
@@ -145,7 +147,7 @@ def delete_product(request, product_id):
     return redirect("dashboard")
 
 
-def seller_customers(request):
+def seller_customers_orders(request):
 
     seller = request.user.seller_profile
 
@@ -155,5 +157,8 @@ def seller_customers(request):
         "customers": customers
     }
 
-    return render(request, "seller_templates/customerdetailforseller.html", context)
+    return render(request, "seller_templates/customer_orders.html", context)
+
+def customer_reviews(request):
+    return render(request,'seller_templates/reviews_from_customer.html')
 

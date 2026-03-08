@@ -12,26 +12,23 @@
 
             <div class="flex-1 max-w-xl mx-12 hidden md:block">
                 <div class="relative group">
-<form action="{% url 'search' %}" method="GET" class="hidden md:block w-full mx-4 lg:mx-8">
-    
-    <div class="flex gap-2 items-end">
-        <div class="flex-1">
-            <input
-                name="q"
-                value="{{ request.GET.q }}"
-                class="w-full bg-light/10 border border-muted/30 rounded-lg py-2 pl-4 pr-4 text-sm text-light focus:outline-none focus:border-muted focus:ring-1 focus:ring-muted transition-all placeholder-muted/70"
-                placeholder="Search products, brands..." 
-                type="text" 
-            />
-        </div>
-        
-        <button type="submit" class="flex items-center gap-2 px-4 py-2 bg-accent hover:bg-accent/90 text-dark font-semibold rounded-lg transition-colors group">
-            <span class="material-icons text-sm">search</span>
-            <span class="hidden sm:inline text-sm">Search</span>
-        </button>
-    </div>
+                    <form action="{% url 'search' %}" method="GET" class="hidden md:block w-full mx-4 lg:mx-8">
 
-</form>
+                        <div class="flex gap-2 items-end">
+                            <div class="flex-1">
+                                <input name="q" value="{{ request.GET.q }}"
+                                    class="w-full bg-light/10 border border-muted/30 rounded-lg py-2 pl-4 pr-4 text-sm text-light focus:outline-none focus:border-muted focus:ring-1 focus:ring-muted transition-all placeholder-muted/70"
+                                    placeholder="Search products, brands..." type="text" />
+                            </div>
+
+                            <button type="submit"
+                                class="flex items-center gap-2 px-4 py-2 bg-accent hover:bg-accent/90 text-dark font-semibold rounded-lg transition-colors group">
+                                <span class="material-icons text-sm">search</span>
+                                <span class="hidden sm:inline text-sm">Search</span>
+                            </button>
+                        </div>
+
+                    </form>
                 </div>
             </div>
 
@@ -58,13 +55,32 @@
                         All Products
                     </a>
                     {%if user.is_admin%}
-                                <a href="{% url 'admin_dashboard' %}"
-                                    class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-yellow-50 transition-colors group/item">
-                                    <span
-                                        class="material-icons text-yellow-600 group-hover/item:text-yellow-700 transition-colors">person_outline</span>
-                                    <span
-                                        class="font-bold text-sm text-yellow-600 group-hover/item:text-yellow-700 transition-colors">Go to Admin Dashboard</span>
-                                </a>
+                    <a href="{% url 'admin_dashboard' %}"
+                        class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-yellow-50 transition-colors group/item">
+                        <span
+                            class="material-icons text-yellow-600 group-hover/item:text-yellow-700 transition-colors">person_outline</span>
+                        <span
+                            class="font-bold text-sm text-yellow-600 group-hover/item:text-yellow-700 transition-colors">Go
+                            to Admin Dashboard</span>
+                    </a>
+                    {% elif user.is_seller %}
+                    <a href="{% url 'seller-profile' %}"
+                        class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-yellow-50 transition-colors group/item">
+                        <span
+                            class="material-icons text-yellow-600 group-hover/item:text-yellow-700 transition-colors">person_outline</span>
+                        <span
+                            class="font-bold text-sm text-yellow-600 group-hover/item:text-yellow-700 transition-colors">Go
+                            to seller-profile</span>
+                    </a>
+                    {% elif user.is_seller and user.is_verified_seller%}
+                    <a href="{% url 'add-product' %}"
+                        class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-yellow-50 transition-colors group/item">
+                        <span
+                            class="material-icons text-yellow-600 group-hover/item:text-yellow-700 transition-colors">person_outline</span>
+                        <span
+                            class="font-bold text-sm text-yellow-600 group-hover/item:text-yellow-700 transition-colors">Go
+                            to Seller Dashboard</span>
+                    </a>
                     {% else %}
                     <div class="relative group py-2">
                         <button
@@ -188,11 +204,12 @@
                     <a href="{{ cart_url }}" class="relative hover:text-light transition-colors ml-2">
                         {% if cart_items.count > 0 %}
                         <span class="material-icons text-xl text-green-500">shopping_bag</span>
-                            {% else %}
-                            <span class="material-icons text-xl">shopping_bag</span>
-                            {% endif %}
+                        {% else %}
+                        <span class="material-icons text-xl">shopping_bag</span>
+                        {% endif %}
                         <span
-                            class="absolute -top-1.5 -right-1.5 bg-accent text-dark text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">{{ cart_items.count }}</span>
+                            class="absolute -top-1.5 -right-1.5 bg-accent text-dark text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">{{
+                            cart_items.count }}</span>
                     </a>
                 </div>
 

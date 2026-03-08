@@ -21,6 +21,19 @@ class SellerProfile(models.Model):
     store_image=models.ImageField(upload_to='sellerprofile_image')
     def __str__(self):
         return self.store_name
+    def save(self, *args, **kwargs):
+        if not self.store_slug:
+            base_slug = slugify(self.name)
+            slug = base_slug
+            counter = 1
+
+            while Product.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+
+            self.store_slug = slug
+
+        super().save(*args, **kwargs)
 class Product(models.Model):
     seller = models.ForeignKey(SellerProfile, on_delete=models.CASCADE, related_name="products")
     subcategory = models.ForeignKey(SubCategory, on_delete=models.CASCADE, related_name="products")
