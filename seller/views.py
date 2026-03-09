@@ -51,39 +51,32 @@ def dashboard_view(request):
 
 
 def seller_bridge(request):
-    # If user is authenticated and already has a seller profile, redirect to profile page
     if (
         request.user.is_authenticated
         and SellerProfile.objects.filter(user=request.user).exists()
     ):
         return redirect("seller-profile")
 
-    # If user is authenticated and submitting form to create profile
     if request.user.is_authenticated and request.method == "POST":
         seller_profile, created = SellerProfile.objects.get_or_create(user=request.user)
 
-        # Map form field names to model field names
         seller_profile.store_name = request.POST.get("store_name")
-        # HTML uses "tax_id" for GST number
         seller_profile.gst_number = request.POST.get("tax_id", "")
-        # These fields are not in the form yet, but keep them for future use
         seller_profile.pan_number = request.POST.get("pan_number", "")
         seller_profile.bank_account_number = request.POST.get("bank_account_number", "")
         seller_profile.ifsc_code = request.POST.get("ifsc_code", "")
         seller_profile.business_address = request.POST.get("description", "")
 
-        # HTML form uses "logo" for store image
         if request.FILES.get("logo"):
             seller_profile.store_image = request.FILES.get("logo")
 
         seller_profile.save()
 
-        # Update and save user role and seller status
         user = request.user
         user.is_seller = True
         user.role = "SELLER"
-        user.save()  # Save to database
-        user.refresh_from_db()  # Refresh object from database to sync changes
+        user.save()  
+        user.refresh_from_db()  
 
         return redirect("seller-profile")
     return render(request, "seller_templates/seller_bridge.html")
@@ -217,15 +210,12 @@ def update_order_status(request):
         order_id = request.POST.get("order_id")
         status = request.POST.get("status")
 
-        # Get the order and verify it belongs to this seller
         order = get_object_or_404(Order, id=order_id)
 
-        # Verify that seller has items in this order
         seller_items = OrderItem.objects.filter(order=order, seller=seller)
         if not seller_items.exists():
             return redirect("seller_customers_orders")
 
-        # Update order status
         if status in ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"]:
             order.order_status = status
             order.save()

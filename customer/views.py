@@ -51,13 +51,11 @@ def payment_success(request):
         payment_order.status = "SUCCESS"
         payment_order.save()
 
-        # Update the linked Order object
         order = payment_order.order
         order.payment_status = "SUCCESS"
         order.order_status = "CONFIRMED"
         order.save()
 
-        # Create OrderItems from cart items
         cart = Cart.objects.get(user=payment_order.user)
         cart_items = CartItem.objects.filter(cart=cart)
 
@@ -65,12 +63,11 @@ def payment_success(request):
             OrderItem.objects.create(
                 order=order,
                 variant=cart_item.variant,
-                seller=cart_item.variant.product.seller,  # Get seller from product
+                seller=cart_item.variant.product.seller, 
                 quantity=cart_item.quantity,
                 price_at_purchase=cart_item.price_at_time,
             )
 
-        # Clear the cart
         cart_items.delete()
 
         return JsonResponse({"status": "payment verified"})
@@ -83,7 +80,6 @@ def payment_success(request):
 def order_success(request):
     """Display order success page after payment completion"""
     try:
-        # Get the most recent successful payment order for the user
         payment_order = (
             PaymentOrder.objects.filter(user=request.user, status="SUCCESS")
             .order_by("-created_at")
@@ -91,7 +87,6 @@ def order_success(request):
         )
 
         if payment_order:
-            # Clear the user's cart after successful payment
             cart = Cart.objects.get(user=request.user)
             cart.items.all().delete()
 
@@ -99,7 +94,7 @@ def order_success(request):
                 "order": payment_order.order,
                 "payment_order": payment_order,
                 "order_amount": payment_order.amount
-                / 100,  # Convert from paise to rupees
+                / 100, 
             }
             return render(request, "customer_templates/order_success.html", context)
         else:
@@ -150,7 +145,6 @@ def add_wishlist_view(request, id):
         if created:
             messages.success(request, f"( {wishlist.wishlist_name} ) created.")
 
-    # Toggle: remove if exists, add if doesn't exist
     wishlist_item = WishlistItem.objects.filter(
         wishlist=wishlist, variant=product_variant
     )
@@ -318,7 +312,6 @@ def checkout_view(request):
     tax_amount = cart_total * 0.18
     total_amount = cart_total + tax_amount
 
-    # Convert to paise (Razorpay expects amount in paise)
     amount_in_paise = int(total_amount * 100)
 
     try:
@@ -335,7 +328,6 @@ def checkout_view(request):
             }
         )
 
-        # Create Order object first
         order_obj = Order.objects.create(
             user=request.user,
             order_number=f"ORD-{request.user.id}-{int(time.time())}",
@@ -344,7 +336,6 @@ def checkout_view(request):
             order_status="PENDING",
         )
 
-        # Create PaymentOrder linked to Order
         payment_order = PaymentOrder.objects.create(
             order=order_obj,
             amount=amount_in_paise,
@@ -514,7 +505,6 @@ def product_list_view(request):
     wishlist_variant_ids = []
     cart_items = []
 
-    # Pagination setup (12 products per page)
     paginator = Paginator(product_var_all, 12)
     page_number = request.GET.get("page", 1)
 
