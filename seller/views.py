@@ -184,18 +184,38 @@ def delete_product(request, product_id):
 
     return redirect("dashboard")
 
-
-
+@verified_seller_required
+def customer_reviews(request):
+    return render(request, "seller_templates/reviews_from_customer.html")
 
 @verified_seller_required
 def seller_customers_orders(request):
     seller = request.user.seller_profile
+    orders = (
+        OrderItem.objects.filter(seller=seller)
+        .select_related("order__user", "variant", "variant__product")
+        .prefetch_related("variant__images")
+    )
 
-    customers = OrderItem.objects.filter(seller=seller)
+    context = {"orders": orders}
+    return render(request, "seller_templates/customer_orders.html", context)
 
-    context = {
-        "customers": customers
-    }
+@verified_seller_required
+def update_order_status(request):
+    if request.method == "POST":
+        seller = request.user.seller_profile
+        order_id = request.POST.get("order_id")
+        status = request.POST.get("status")
 
-    return render(request, "seller_templates/customerdetailforseller.html", context)
+        order = get_object_or_404(Order, id=order_id)
+
+        seller_items = OrderItem.objects.filter(order=order, seller=seller)
+        if not seller_items.exists():
+            return redirect("seller_customers_orders")
+
+        if status in ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"]:
+            order.order_status = status
+            order.save()
+
+    return redirect("seller_customers_orders")
 
