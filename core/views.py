@@ -43,12 +43,13 @@ def home_view(request):
                 "cart_items": cart_items,
                 "categories": category_items,
                 "product_var": product_var,
+                "top_picks":top_picks
             },
         )
     return render(
         request,
         "core_templates/homepage.html",
-        {"categories": category_items, "product_var": product_var},
+        {"categories": category_items, "product_var": product_var,"top_picks":top_picks},
     )
 
 
