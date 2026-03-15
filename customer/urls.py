@@ -40,6 +40,8 @@ urlpatterns = [
 
     # order history and address----------------------
     path('order-history/',views.order_history_view,name='order-history'),
+    path('my-reviews/', views.my_reviews_view, name='my_reviews'),
+    path('submit-review/<int:variant_id>/', views.submit_review, name='submit_review'),
     #------------------------------------------------------------
     # payment processing and success----------------------
     path("payment-success/",views.payment_success,name="payment_success"),

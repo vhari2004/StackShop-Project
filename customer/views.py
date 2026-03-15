@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Avg, Sum
 from seller.models import Product, ProductVariant
 from customer.models import (
     Wishlist,
@@ -12,6 +13,7 @@ from customer.models import (
     Order,
     PaymentOrder,
     OrderItem,
+    Review,
 )
 from core.models import Address, Category
 import razorpay
@@ -175,8 +177,13 @@ def wishlist_view(request):
         )
         .order_by("-is_default", "-created_at")
     )
+
+    paginator = Paginator(wishlists, settings.PAGINATE_BY)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        "wishlists": wishlists,
+        "wishlists": page_obj,
         "wishlist_collections": wishlists,
     }
     return render(request, "customer_templates/wishlistpage.html", context)
@@ -552,7 +559,7 @@ def product_list_view(request):
     wishlist_variant_ids = []
     cart_items = []
 
-    paginator = Paginator(product_var_all, 12)
+    paginator = Paginator(product_var_all, settings.PAGINATE_BY)
     page_number = request.GET.get("page", 1)
 
     try:
@@ -595,13 +602,18 @@ def product_list_view(request):
 
 
 def product_single_view(request, variant_id):
-    product_var = (
-        ProductVariant.objects.select_related("product__subcategory__category")
-        .prefetch_related("images")
-        .get(id=variant_id)
+    variant = get_object_or_404(
+        ProductVariant.objects.select_related("product__subcategory__category").prefetch_related("images"),
+        id=variant_id,
     )
-    category = Category.objects.filter()
-    
+
+    reviews = Review.objects.filter(product=variant.product).select_related("user").order_by("-created_at")
+    average_rating = reviews.aggregate(avg=Avg("rating"))["avg"] or 0
+    total_reviews = reviews.count()
+
+    has_purchased = Review.can_user_review(request.user, variant.product)
+    user_review = Review.get_user_review(request.user, variant.product)
+
     cart_items = []
     wishlist_variant_ids = []
     cart_variant_ids = []
@@ -615,7 +627,7 @@ def product_single_view(request, variant_id):
             cart_variant_ids = list(
                 CartItem.objects.filter(cart=cart).values_list("variant_id", flat=True)
             )
-        
+
         wishlist_variant_ids = list(
             WishlistItem.objects.filter(wishlist__user=request.user).values_list(
                 "variant_id", flat=True
@@ -626,13 +638,54 @@ def product_single_view(request, variant_id):
         request,
         "customer_templates/productsinglepage.html",
         {
-            "variant": product_var,
+            "variant": variant,
             "cart_items": cart_items,
             "wishlist_variant_ids": wishlist_variant_ids,
             "cart_variant_ids": cart_variant_ids,
-            "category": category,
+            "category": Category.objects.all(),
+            "reviews": reviews,
+            "average_rating": round(average_rating, 1),
+            "total_reviews": total_reviews,
+            "has_purchased": has_purchased,
+            "user_review": user_review,
         },
     )
+
+
+@login_required
+def submit_review(request, variant_id):
+    variant = get_object_or_404(ProductVariant, id=variant_id)
+    product = variant.product
+
+    if not OrderItem.objects.filter(order__user=request.user, variant__product=product, order__payment_status__in=["SUCCESS", "CONFIRMED", "DELIVERED"]).exists():
+        messages.error(request, "Only verified buyers can add reviews.")
+        return redirect("productsingle", variant_id=variant_id)
+
+    if request.method == "POST":
+        rating = request.POST.get("rating")
+        comment = request.POST.get("comment", "").strip()
+
+        if not rating or not comment:
+            messages.error(request, "Rating and comment are required.")
+            return redirect("productsingle", variant_id=variant_id)
+
+        try:
+            rating_value = int(rating)
+            if rating_value < 1 or rating_value > 5:
+                raise ValueError
+        except ValueError:
+            messages.error(request, "Invalid rating value.")
+            return redirect("productsingle", variant_id=variant_id)
+
+        Review.objects.update_or_create(
+            user=request.user,
+            product=product,
+            defaults={"rating": rating_value, "comment": comment},
+        )
+
+        messages.success(request, "Thank you! Your review has been submitted.")
+
+    return redirect("productsingle", variant_id=variant_id)
 
 
 # ----------------------------------------------------------------------------------------------------
@@ -646,17 +699,62 @@ def order_history_view(request):
         .order_by("-ordered_at")
     )
 
+    paginator = Paginator(orders, settings.PAGINATE_BY)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        "orders": orders,
+        "orders": page_obj,
     }
     return render(request, "customer_templates/order_history_customer.html", context)
+
+
+@login_required
+def my_reviews_view(request):
+    reviews = (
+        Review.objects.filter(user=request.user)
+        .select_related("product", "product__seller")
+        .order_by("-created_at")
+    )
+
+    from django.core.paginator import Paginator
+    paginator = Paginator(reviews, 10)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(
+        request,
+        "customer_templates/my_reviews.html",
+        {
+            "page_obj": page_obj,
+        },
+    )
 
 
 # --------------------------------------------------------------------------------
 
 # customer dashboard-------------------------------------------------------------
+@login_required
 def customer_dashboard_view(request):
-    return render(request, "customer_templates/customer_dashboard.html")
+    orders = Order.objects.filter(user=request.user)
+
+    total_orders = orders.count()
+    total_spent_value = orders.aggregate(total=Sum('total_amount'))['total'] or 0
+    in_transit = orders.filter(order_status__in=['pending', 'processing']).count()
+
+    user_reviews = Review.objects.filter(user=request.user).select_related('product').order_by('-created_at')
+    total_reviews = user_reviews.count()
+    recent_reviews = user_reviews[:2]
+
+    context = {
+        'total_orders': total_orders,
+        'total_spent': total_spent_value,
+        'in_transit': in_transit,
+        'total_reviews': total_reviews,
+        'recent_reviews': recent_reviews,
+    }
+
+    return render(request, 'customer_templates/customer_dashboard.html', context)
 
 
 # ----------------------------------------------------------------------------------

@@ -61,6 +61,19 @@
         Orders
     </a>
 
+    {% url 'my_reviews' as my_reviews_url %}
+    <a href="{{ my_reviews_url|default:'#' }}" class="flex items-center gap-4 px-8 py-3 text-sm font-medium transition-colors border-l-4 
+        {% if request.path == my_reviews_url or '/my-reviews/' in request.path %}
+            text-[#F0F0DB] bg-white/10 border-[#E1D9BC]
+        {% else %}
+            text-[#ACBAC4] border-transparent hover:text-[#F0F0DB] hover:bg-white/5
+        {% endif %}">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11h14M12 5l7 7-7 7"></path>
+        </svg>
+        My Reviews
+    </a>
+
     {% url 'wishlist' as wishlist_url %}
     <a href="{{ wishlist_url|default:'#' }}" class="flex items-center gap-4 px-8 py-3 text-sm font-medium transition-colors border-l-4 
         {% if request.path == wishlist_url or '/wishlist/' in request.path %}

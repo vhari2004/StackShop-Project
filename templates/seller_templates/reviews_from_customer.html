@@ -92,10 +92,10 @@
                         <div class="flex justify-between items-start mb-4">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-full bg-accent/20 border border-accent flex items-center justify-center text-accent font-black text-sm">
-                                    {{ review.customer.first_name|make_list|first|upper|default:review.customer.username|make_list|first|upper }}
+                                    {{ review.user.first_name|make_list|first|upper|default:review.user.username|make_list|first|upper }}
                                 </div>
                                 <div>
-                                    <p class="text-sm font-extrabold text-dark">{{ review.customer.first_name }} {{ review.customer.last_name }}</p>
+                                    <p class="text-sm font-extrabold text-dark">{{ review.user.first_name }} {{ review.user.last_name }}</p>
                                     <p class="text-[10px] font-bold text-muted uppercase tracking-widest">{{ review.created_at|date:"M d, Y" }}</p>
                                 </div>
                             </div>
@@ -130,7 +130,7 @@
                                 </button>
                                 
                                 <div id="reply-form-{{ review.id }}" class="hidden mt-4 bg-light/30 rounded-2xl p-4 border border-muted/30 transition-all">
-                                    <form action="#" method="POST" class="m-0">
+                                    <form action="{% url 'customer_reviews' %}" method="POST" class="m-0">
                                         {% csrf_token %}
                                         <input type="hidden" name="review_id" value="{{ review.id }}">
                                         

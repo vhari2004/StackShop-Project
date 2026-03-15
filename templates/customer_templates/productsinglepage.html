@@ -290,6 +290,16 @@
                         <span class="material-icons text-[16px]">star</span>
                     </div>
                     <p class="text-dark/80 font-medium leading-relaxed">{{ review.comment }}</p>
+
+                    {% if review.seller_reply %}
+                    <div class="mt-4 rounded-xl bg-accent/10 border border-accent/40 p-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="material-icons text-accent text-[16px]">storefront</span>
+                            <span class="text-xs font-bold uppercase tracking-widest text-dark">Seller Reply</span>
+                        </div>
+                        <p class="text-sm text-dark/80">{{ review.seller_reply }}</p>
+                    </div>
+                    {% endif %}
                 </div>
                 {% empty %}
                 <div class="col-span-full flex flex-col items-center justify-center py-12 text-muted">
@@ -317,7 +327,7 @@
             <h2 class="text-2xl font-black text-dark mb-1">{% if user_review %}Update Review{% else %}Write a Review{% endif %}</h2>
             <p class="text-xs text-muted font-bold tracking-wide uppercase mb-6 border-b border-muted/20 pb-4">Share your experience.</p>
             
-            <form action="{% url 'submit_review' product_var.first.id %}" method="POST">
+            <form action="{% url 'submit_review' variant.id %}" method="POST">
                 {% csrf_token %}
                 
                 <div class="mb-6 text-center bg-light/50 py-4 rounded-xl border border-muted/30">

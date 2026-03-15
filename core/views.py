@@ -18,7 +18,6 @@ def home_view(request):
         .prefetch_related("images")
         .filter(product__approval_status="approved")
     )
-
     if user.is_authenticated:
         cart = Cart.objects.filter(user=user).first()
         cart_items = CartItem.objects.filter(cart=cart).prefetch_related(

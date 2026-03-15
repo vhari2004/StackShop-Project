@@ -154,6 +154,17 @@
             
             <div class="flex items-center justify-between mt-8 border-t border-[#ACBAC4]/20 pt-6">
                 <span class="text-sm font-medium text-[#ACBAC4]">Showing your latest orders</span>
+                {% if orders.has_other_pages %}
+                <div class="flex items-center gap-2">
+                    {% if orders.has_previous %}
+                    <a href="?page={{ orders.previous_page_number }}" class="px-3 py-1.5 text-xs font-bold border rounded-lg hover:bg-[#F0F0DB]">Previous</a>
+                    {% endif %}
+                    <span class="text-xs font-semibold text-[#30364F]">{{ orders.number }} / {{ orders.paginator.num_pages }}</span>
+                    {% if orders.has_next %}
+                    <a href="?page={{ orders.next_page_number }}" class="px-3 py-1.5 text-xs font-bold border rounded-lg hover:bg-[#F0F0DB]">Next</a>
+                    {% endif %}
+                </div>
+                {% endif %}
             </div>
 
         </div>

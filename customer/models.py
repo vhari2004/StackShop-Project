@@ -42,7 +42,34 @@ class Review(models.Model):
     product = models.ForeignKey("seller.Product", on_delete=models.CASCADE)
     rating = models.IntegerField()
     comment = models.TextField()
+    seller_reply = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "product")
+
+    def __str__(self):
+        return f"{self.user.username} review for {self.product.name} ({self.rating})"
+
+    @classmethod
+    def can_user_review(cls, user, product):
+        from customer.models import OrderItem
+
+        if not user.is_authenticated:
+            return False
+
+        return OrderItem.objects.filter(
+            order__user=user,
+            variant__product=product,
+            order__payment_status__in=["SUCCESS", "CONFIRMED", "DELIVERED"],
+        ).exists()
+
+    @classmethod
+    def get_user_review(cls, user, product):
+        if not user.is_authenticated:
+            return None
+        return cls.objects.filter(user=user, product=product).first()
+
 class Order(models.Model):
     user = models.ForeignKey("core.CustomUser", on_delete=models.CASCADE, related_name="orders")
     address = models.ForeignKey("core.Address", on_delete=models.SET_NULL, null=True, blank=True, related_name="orders")

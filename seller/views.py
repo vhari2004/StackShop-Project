@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 from core.decorators import seller_required, verified_seller_required
 from .models import (
     SellerProfile,
@@ -11,8 +12,9 @@ from .models import (
     ProductImage,
 )
 from core.models import Category
-from django.db.models import Count, Sum, Max
-from customer.models import Order, OrderItem
+from django.db.models import Count, Avg, Max, Q
+from customer.models import Order, OrderItem, Review
+from django.contrib import messages
 
 
 @login_required
@@ -51,15 +53,11 @@ def dashboard_view(request):
 
 
 def seller_bridge(request):
-    if (
-        request.user.is_authenticated
-        and SellerProfile.objects.filter(user=request.user).exists()
-    ):
+    if request.user.is_authenticated and SellerProfile.objects.filter(user=request.user).exists():
         return redirect("seller-profile")
 
     if request.user.is_authenticated and request.method == "POST":
         seller_profile, created = SellerProfile.objects.get_or_create(user=request.user)
-
         seller_profile.store_name = request.POST.get("store_name")
         seller_profile.gst_number = request.POST.get("tax_id", "")
         seller_profile.pan_number = request.POST.get("pan_number", "")
@@ -77,6 +75,7 @@ def seller_bridge(request):
         user.role = "SELLER"
         user.save()  
         user.refresh_from_db()  
+    
 
         return redirect("seller-profile")
     return render(request, "seller_templates/seller_bridge.html")
@@ -186,7 +185,52 @@ def delete_product(request, product_id):
 
 @verified_seller_required
 def customer_reviews(request):
-    return render(request, "seller_templates/reviews_from_customer.html")
+    seller = request.user.seller_profile
+
+    if request.method == "POST":
+        review_id = request.POST.get("review_id")
+        reply_text = request.POST.get("reply_text", "").strip()
+
+        if review_id and reply_text:
+            review = get_object_or_404(Review, id=review_id, product__seller=seller)
+            review.seller_reply = reply_text
+            review.save()
+            messages.success(request, "Reply posted successfully.")
+        else:
+            messages.error(request, "Please provide a reply message.")
+
+        return redirect("customer_reviews")
+
+    filter_opt = request.GET.get("filter", "all")
+    reviews = Review.objects.filter(product__seller=seller).select_related("user", "product").order_by("-created_at")
+
+    if filter_opt == "needs_reply":
+        reviews = reviews.filter(Q(seller_reply__isnull=True) | Q(seller_reply__exact=""))
+    elif filter_opt == "positive":
+        reviews = reviews.filter(rating__gte=4)
+    elif filter_opt == "critical":
+        reviews = reviews.filter(rating__lte=3)
+
+    from django.core.paginator import Paginator
+    paginator = Paginator(reviews, settings.PAGINATE_BY)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    total_reviews = Review.objects.filter(product__seller=seller).count()
+    average_rating = Review.objects.filter(product__seller=seller).aggregate(avg=Avg("rating"))
+    store_rating = round(average_rating["avg"] or 0, 1)
+
+    return render(
+        request,
+        "seller_templates/reviews_from_customer.html",
+        {
+            "reviews": page_obj,
+            "total_reviews": total_reviews,
+            "store_rating": store_rating,
+            "filter": filter_opt,
+        },
+    )
+
 
 @verified_seller_required
 def seller_customers_orders(request):
