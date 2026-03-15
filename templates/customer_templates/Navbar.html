@@ -5,11 +5,11 @@
     <link rel="stylesheet" href="{% static 'core/homehtml/professional-styles.css' %}">
 </head>
 <body>
-<div class="sticky top-0 z-50 w-full bg-light/70 backdrop-blur-md border-b border-accent/20">
-    <header class="w-full px-4 z-50 sticky top-0 relative">
-        <nav class="w-full bg-dark text-light rounded-lg mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center justify-between shadow-lg transition-all duration-300" id="main-navbar">
+<div class="sticky top-0 z-50 w-full bg-dark backdrop-blur-md border-b border-accent/20">
+    <header class="w-full z-50 sticky top-0 relative">
+        
+        <nav class="w-full bg-dark text-light px-4 md:px-8 py-3 md:py-4 flex items-center justify-between shadow-lg transition-all duration-300" id="main-navbar">
             
-            <!-- LOGO -->
             <a href="{% url 'home' %}" class="flex items-center gap-2 md:gap-3 cursor-pointer hover:opacity-90 transition-opacity duration-300 flex-shrink-0">
                 <img alt="StackShop Logo" class="w-9 h-9 md:w-11 md:h-11 text-accent transition-transform hover:scale-110 duration-300" fill="currentColor" src="{% static 'core/homehtml/stackshoplogo.png' %}" />
                 <span class="text-base md:text-lg font-bold tracking-wide hidden sm:inline">StackShop</span>
@@ -37,12 +37,12 @@
                     {% url 'home' as home_url %}
                     <a href="{{ home_url }}" class="transition-all py-1 active:scale-95 {% if request.path == home_url %}text-light border-b-2 border-accent{% else %}text-muted hover:text-light{% endif %}">Shop</a>
                     
-                    {% url 'deals' as deals_url %}
-                    <a href="{{deals_url}}" class="transition-all py-1 active:scale-95 {% if request.path == deals_url %}text-light border-b-2 border-accent{% else %}text-muted hover:text-light{% endif %}">Deals</a>
-
                     {% url 'product_list' as products_url %}
                     <a href="{{ products_url }}" class="transition-all py-1 active:scale-95 {% if request.path == products_url %}text-light border-b-2 border-accent{% else %}text-muted hover:text-light{% endif %}">All Products</a>
                     
+                    {% url 'deals' as deals_url %}
+                    <a href="{{deals_url}}" class="transition-all py-1 active:scale-95 {% if request.path == deals_url %}text-light border-b-2 border-accent{% else %}text-muted hover:text-light{% endif %}">Deals</a>
+
                     {% if user.is_admin %}
                     <a href="{% url 'admin_dashboard' %}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-yellow-50 text-yellow-600 hover:text-yellow-700 transition-colors active:scale-95">
                         <span class="material-icons text-sm">admin_panel_settings</span> Admin
@@ -128,7 +128,7 @@
             
         </nav>
 
-        <div id="mobile-menu" class="hidden lg:hidden absolute top-full left-4 right-4 mt-2 bg-dark rounded-xl shadow-2xl border border-muted/20 overflow-hidden transition-all z-40">
+        <div id="mobile-menu" class="hidden lg:hidden absolute top-full left-0 right-0 bg-dark border-t border-muted/20 overflow-hidden transition-all z-40 shadow-2xl">
             <div class="flex flex-col p-4 space-y-2 max-h-[70vh] overflow-y-auto">
                 
                 <form action="{% url 'search' %}" method="GET" class="md:hidden w-full mb-4">
@@ -140,8 +140,8 @@
 
                 <div class="text-[10px] font-black uppercase tracking-widest text-muted/70 mb-1 pl-2">Navigation</div>
                 <a href="{{ home_url }}" class="text-light font-semibold px-4 py-3 rounded-lg hover:bg-light/10 transition-colors">Shop</a>
-                <a href="{{ deals_url }}" class="text-light font-semibold px-4 py-3 rounded-lg hover:bg-light/10 transition-colors">Deals</a>
                 <a href="{{ products_url }}" class="text-light font-semibold px-4 py-3 rounded-lg hover:bg-light/10 transition-colors">All Products</a>
+                <a href="{{ deals_url }}" class="text-light font-semibold px-4 py-3 rounded-lg hover:bg-light/10 transition-colors">Deals</a>
 
                 <div class="border-t border-muted/20 my-2"></div>
 
@@ -196,3 +196,5 @@
         });
     });
 </script>
+</body>
+</html>
