@@ -1,6 +1,7 @@
 from urllib import request
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from core.decorators import customer_required
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Avg, Sum
@@ -21,11 +22,11 @@ from django.conf import settings
 from django.shortcuts import render
 import json
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 import time
+from django.views.decorators.http import require_http_methods
 
 
-@csrf_exempt
 @csrf_exempt
 def payment_success(request):
 
@@ -113,7 +114,7 @@ def order_success(request):
 # userlogin-----------------------------------------------------------------------------
 
 
-@login_required
+@customer_required
 def user_profile_view(request):
     user = request.user
     if request.method == "POST":
@@ -133,7 +134,63 @@ def user_profile_view(request):
 # ------------------------------------------------------------------------------
 
 # wishlist---------------------------------------------------------------------
+
+
+@require_http_methods(["POST"])
 @login_required
+@csrf_protect
+def toggle_wishlist_view(request, product_id):
+    """AJAX endpoint to toggle product in user's default wishlist"""
+    try:
+        product = get_object_or_404(Product, id=product_id, approval_status="approved", is_active=True)
+        
+        # Get user's default wishlist
+        try:
+            wishlist = Wishlist.objects.get(user=request.user, is_default=True)
+        except Wishlist.DoesNotExist:
+            wishlist = Wishlist.objects.create(
+                user=request.user,
+                wishlist_name=f"{request.user.username}'s Favorites",
+                is_default=True
+            )
+        
+        # Check if any variant of this product is in wishlist
+        existing_item = WishlistItem.objects.filter(
+            wishlist=wishlist, 
+            variant__product=product
+        ).first()
+        
+        if existing_item:
+            # Remove from wishlist
+            existing_item.delete()
+            return JsonResponse({
+                "success": True, 
+                "message": "Removed from wishlist",
+                "in_wishlist": False
+            })
+        else:
+            # Add first available variant to wishlist
+            variant = product.variants.filter(stock_quantity__gt=0).first()
+            if variant:
+                WishlistItem.objects.create(wishlist=wishlist, variant=variant)
+                return JsonResponse({
+                    "success": True, 
+                    "message": "Added to wishlist",
+                    "in_wishlist": True
+                })
+            else:
+                return JsonResponse({
+                    "success": False, 
+                    "message": "No available variants in stock"
+                })
+                
+    except Product.DoesNotExist:
+        return JsonResponse({"success": False, "message": "Product not found"}, status=404)
+    except Exception as e:
+        return JsonResponse({"success": False, "message": str(e)}, status=500)
+
+
+@customer_required
 def add_wishlist_view(request, variant_id):
     product_variant = get_object_or_404(ProductVariant, id=variant_id)
     try:
@@ -160,7 +217,7 @@ def add_wishlist_view(request, variant_id):
     return redirect(request.META.get("HTTP_REFERER", "home"))
 
 
-@login_required
+@customer_required
 def remove_wishlist_view(request, wishlist_item_id):
     wishlist_item = get_object_or_404(WishlistItem, id=wishlist_item_id, wishlist__user=request.user)
     wishlist_item.delete()
@@ -168,7 +225,7 @@ def remove_wishlist_view(request, wishlist_item_id):
     return redirect("wishlist")
 
 
-@login_required
+@customer_required
 def wishlist_view(request):
     wishlists = (
         Wishlist.objects.filter(user=request.user)
@@ -188,7 +245,7 @@ def wishlist_view(request):
     }
     return render(request, "customer_templates/wishlistpage.html", context)
 
-
+@customer_required
 def create_collection_view(request):
     if request.method == "POST":
         wishlist_name = request.POST.get("collection_name")
@@ -201,7 +258,7 @@ def create_collection_view(request):
             messages.error(request, "Collection name cannot be empty.")
     return redirect("wishlist")
 
-
+@customer_required
 def update_collection_view(request):
     if request.method == "POST":
         wishlist_id = request.POST.get("wishlist_id")
@@ -223,7 +280,7 @@ def update_collection_view(request):
         messages.error(request, "Collection name cannot be empty.")
     return redirect("wishlist")
 
-
+@customer_required
 def delete_collection_view(request, wishlist_id):
     collection = get_object_or_404(Wishlist, id=wishlist_id, user=request.user)
     if collection.is_default:
@@ -242,7 +299,7 @@ def delete_collection_view(request, wishlist_id):
 # ------------------------------------------------------------------------------
 
 # cart---------------------------------------------------------------------------
-@login_required
+@customer_required
 def add_to_cart_view(request, variant_id):
     user = request.user
     product_variant = get_object_or_404(ProductVariant, id=variant_id)
@@ -277,7 +334,7 @@ def add_to_cart_view(request, variant_id):
     return redirect(request.META.get("HTTP_REFERER", "product_list"))
 
 
-@login_required
+@customer_required
 def buy_now_view(request, variant_id):
     """Adds product to cart and redirects directly to checkout"""
     user = request.user
@@ -314,7 +371,7 @@ def buy_now_view(request, variant_id):
     return redirect("checkout")
 
 
-@login_required
+@customer_required
 def cart_view(request):
     cart = get_object_or_404(Cart, user=request.user)
     cart_items = CartItem.objects.filter(cart=cart).prefetch_related(
@@ -335,7 +392,7 @@ def cart_view(request):
     )
 
 
-@login_required
+@customer_required
 def update_cart_view(request, cart_item_id):
     if request.method == "POST":
         cart_item = get_object_or_404(CartItem, id=cart_item_id, cart__user=request.user)
@@ -358,7 +415,7 @@ def update_cart_view(request, cart_item_id):
     return redirect("cart_view")
 
 
-@login_required
+@customer_required
 def checkout_view(request):
     cart = get_object_or_404(Cart, user=request.user)
     cart_items = CartItem.objects.filter(cart=cart).prefetch_related(
@@ -440,7 +497,7 @@ def checkout_view(request):
     return render(request, "customer_templates/checkout.html", context)
 
 
-@login_required
+@customer_required
 def remove_from_cart_view(request, cart_item_id):
     cart_item = get_object_or_404(CartItem, id=cart_item_id, cart__user=request.user)
     cart_item.delete()
@@ -450,7 +507,7 @@ def remove_from_cart_view(request, cart_item_id):
 
 # -----------------------------------------------------------------------------
 # address----------------------------------------------------------------------
-@login_required
+@customer_required
 def add_address_view(request):
     if request.method == "POST":
         has_addresses = Address.objects.filter(user=request.user).exists()
@@ -495,7 +552,7 @@ def add_address_view(request):
     return redirect("address")
 
 
-@login_required
+@customer_required
 def address_view(request):
     user_address = Address.objects.filter(user=request.user).order_by(
         "-is_default", "-created_at"
@@ -505,7 +562,7 @@ def address_view(request):
     )
 
 
-@login_required
+@customer_required
 def update_address_view(request):
     if request.method == "POST":
         address_id = request.POST.get("address_id")
@@ -541,7 +598,7 @@ def update_address_view(request):
     return redirect("address")
 
 
-@login_required
+@customer_required
 def delete_address_view(request, address_id):
     address = get_object_or_404(Address, id=address_id, user=request.user)
     address.delete()
@@ -549,7 +606,7 @@ def delete_address_view(request, address_id):
     return redirect("address")
 
 
-@login_required
+@customer_required
 def set_default_address_view(request):
     if request.method == "POST":
         address_id = request.POST.get("address_id")
@@ -586,6 +643,19 @@ def product_list_view(request):
         products_page = paginator.page(1)
     except EmptyPage:
         products_page = paginator.page(paginator.num_pages)
+
+    # Add is_in_wishlist for logged-in users
+    if request.user.is_authenticated:
+        try:
+            default_wishlist = Wishlist.objects.get(user=request.user, is_default=True)
+            wishlist_variant_ids = set(WishlistItem.objects.filter(wishlist=default_wishlist).values_list('variant__product_id', flat=True))
+        except Wishlist.DoesNotExist:
+            wishlist_variant_ids = set()
+    else:
+        wishlist_variant_ids = set()
+
+    for product in products_page:
+        product.is_in_wishlist = product.id in wishlist_variant_ids
 
     return render(
         request,
@@ -726,7 +796,7 @@ def submit_review(request, variant_id):
 # ----------------------------------------------------------------------------------------------------
 
 # order---------------------------------------------------------------------------
-@login_required
+@customer_required
 def order_history_view(request):
     orders = (
         Order.objects.filter(user=request.user)
@@ -744,7 +814,7 @@ def order_history_view(request):
     return render(request, "customer_templates/order_history_customer.html", context)
 
 
-@login_required
+@customer_required
 def my_reviews_view(request):
     reviews = (
         Review.objects.filter(user=request.user)
@@ -769,7 +839,7 @@ def my_reviews_view(request):
 # --------------------------------------------------------------------------------
 
 # customer dashboard-------------------------------------------------------------
-@login_required
+@customer_required
 def customer_dashboard_view(request):
     orders = Order.objects.filter(user=request.user)
 

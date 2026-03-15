@@ -27,15 +27,21 @@ def admin_dashboard_view(request):
 
 @admin_required
 def seller_verification(request, id):
-    seller = SellerProfile.objects.get(id=id)
+    seller = SellerProfile.objects.get_object_or_404(id=id)
     if request.method == "POST":
         status = request.POST.get("status")
         remarks = request.POST.get("remarks")
         seller.verification_status = status
         seller.admin_remarks = remarks
-        seller.user.is_verified_seller = (status == 'approved')
+        
+        # Update CustomUser field explicitly
+        if status == "approved":
+            seller.user.is_verified_seller = True
+        else:
+            seller.user.is_verified_seller = False        
         seller.user.save()
         seller.save()
+        messages.success(request, f"Seller '{seller.store_name}' {status.upper()} successfully!")
         return redirect("admin_dashboard")
     context = {"seller": seller}
     return render(request, "admin_templates/seller_verification.html", context)
@@ -115,13 +121,22 @@ def verify_seller_ajax(request):
         seller = SellerProfile.objects.get(id=seller_id)
         seller.verification_status = status
         seller.admin_remarks = remarks
+        
+        # Update CustomUser field explicitly
+        if status == "approved":
+            seller.user.is_verified_seller = True
+        else:
+            seller.user.is_verified_seller = False
+        seller.user.save()
+        
         seller.save()
         
         return JsonResponse({
             'status': 'success',
             'message': f"Seller '{seller.store_name}' status updated to {status}!",
             'seller_id': seller.id,
-            'verification_status': seller.verification_status
+            'verification_status': seller.verification_status,
+            'is_verified_seller': seller.user.is_verified_seller
         })
     except SellerProfile.DoesNotExist:
         return JsonResponse({

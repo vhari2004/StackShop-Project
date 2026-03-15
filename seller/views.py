@@ -11,10 +11,12 @@ from .models import (
     ProductVariant,
     ProductImage,
 )
+from core.models import *
 from core.models import Category
 from django.db.models import Count, Avg, Max, Sum, Q
 from customer.models import Order, OrderItem, Review
 from django.contrib import messages
+import random
 
 
 @login_required
@@ -88,31 +90,70 @@ def dashboard_view(request):
 
 
 def seller_bridge(request):
+    role = request.GET.get("role")
     if request.user.is_authenticated and SellerProfile.objects.filter(user=request.user).exists():
         return redirect("seller-profile")
+    if request.method == "POST":
+        if request.user.is_authenticated and request.method == "POST":
+            seller_profile, created = SellerProfile.objects.get_or_create(user=request.user)
+            seller_profile.store_name = request.POST.get("store_name")
+            seller_profile.gst_number = request.POST.get("tax_id", "")
+            seller_profile.pan_number = request.POST.get("pan_number", "")
+            seller_profile.bank_account_number = request.POST.get("bank_account_number", "")
+            seller_profile.ifsc_code = request.POST.get("ifsc_code", "")
+            seller_profile.business_address = request.POST.get("description", "")
 
-    if request.user.is_authenticated and request.method == "POST":
-        seller_profile, created = SellerProfile.objects.get_or_create(user=request.user)
-        seller_profile.store_name = request.POST.get("store_name")
-        seller_profile.gst_number = request.POST.get("tax_id", "")
-        seller_profile.pan_number = request.POST.get("pan_number", "")
-        seller_profile.bank_account_number = request.POST.get("bank_account_number", "")
-        seller_profile.ifsc_code = request.POST.get("ifsc_code", "")
-        seller_profile.business_address = request.POST.get("description", "")
+            if request.FILES.get("logo"):
+                seller_profile.store_image = request.FILES.get("logo")
 
-        if request.FILES.get("logo"):
-            seller_profile.store_image = request.FILES.get("logo")
+            seller_profile.save()
 
-        seller_profile.save()
+            user = request.user
+            user.is_seller = True
+            user.save()  
+            user.refresh_from_db()  
 
-        user = request.user
-        user.is_seller = True
-        user.role = "SELLER"
-        user.save()  
-        user.refresh_from_db()  
-    
-
-        return redirect("seller-profile")
+            return redirect("seller-profile")
+        else:
+            first_name=request.POST.get('first_name')
+            last_name=request.POST.get('last_name')
+            # if first_name and last_name:
+            #     username=first_name+last_name
+            #     if CustomUser.objects.get(username=username).exist():
+            #         return render(request,"seller_templates/seller_bridge.html",{"error": "username already exist"},)
+            #     else:
+            #         username = first_name + last_name + str(random.randint(1000, 9999))            
+            username=request.POST.get('username')
+            email=request.POST.get('emailo')
+            password=request.POST.get('password')
+            cnf_password=request.POST.get('password')
+            if password != cnf_password:
+                return render(request,"seller_templates/seller_bridge.html",{"error": "Passwords do not match"},)
+            if CustomUser.objects.filter(username=username).exists():
+                messages.error(request, "Username already exists!")
+                return render(request, "seller_templates/seller_bridge", {"username": username, "email": email})  
+            if CustomUser.objects.filter(email=email).exists():
+                messages.error(request, "Email already exists!")
+                return render(request, "seller_templates/seller_bridge", {"username": username, "email": email})
+            user = CustomUser.objects.create_user(
+                    username=username,
+                    email=email,
+                    password=password,
+                    role="SELLER",
+                    is_seller=True,
+                )
+            SellerProfile.objects.create(
+                    user=user,
+                    store_name=request.POST.get("store_name"),
+                    business_address=request.POST.get("business_address"),
+                    gst_number=request.POST.get("gst_no"),
+                    description=request.POST.get("description"),
+                    pan_number=request.POST.get("pan_no"),
+                    bank_account_number=request.POST.get("bank_account_number"),
+                    ifsc_code=request.POST.get("ifsc_code"),
+                    store_image = request.FILES.get("logo")
+                )
+        redirect('login')
     return render(request, "seller_templates/seller_bridge.html")
 
 

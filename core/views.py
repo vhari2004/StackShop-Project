@@ -22,9 +22,14 @@ def home_view(request):
     top_picks = (
         Product.objects.filter(approval_status="approved", is_active=True)
         .annotate(review_count=Count("review"))
+        .select_related('subcategory__category')
+        .prefetch_related('variants__images')
         .order_by("-review_count", "-created_at")[:12]
     )
-
+    if user.is_authenticated and user.is_admin:            
+        return redirect(request.META.get('HTTP_REFERER', 'admin_dashboard'))
+    # if user.is_authenticated and user.role=="SELLER":            
+    #     return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
     if user.is_authenticated:
         cart = Cart.objects.filter(user=user).first()
         cart_items = CartItem.objects.filter(cart=cart).prefetch_related(
@@ -188,7 +193,6 @@ def category_list_view(request):
 
 
 def register_view(request):
-    role = request.GET.get("role")
     if request.method == "POST":
         username = request.POST.get("username")
         email = request.POST.get("email")
@@ -215,22 +219,11 @@ def register_view(request):
                 "core_templates/registerpage.html",
                 {"username": username, "email": email},
             )
-        if role == "seller":
-            store_name = request.POST.get("store_name")
-            store_slug = request.POST.get("store_slug")
-            business_address = request.POST.get("business_address")
-            gst_number = request.POST.get("gst_number")
-            pan_number = request.POST.get("pan_number")
-            bank_account_number = request.POST.get("bank_account_number")
-            ifsc_code = request.POST.get("ifsc_code")
-            user = CustomUser.objects.create_user(
-                username=username, email=email, password=password, role="SELLER"
+
+        user = CustomUser.objects.create_user(
+            username=username, email=email, password=password
             )
-        else:
-            user = CustomUser.objects.create_user(
-                username=username, email=email, password=password
-            )
-            user.save()
+        user.save()
         return redirect("login")
     return render(request, "core_templates/registerpage.html")
 

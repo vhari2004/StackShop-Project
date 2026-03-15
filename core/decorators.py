@@ -15,7 +15,7 @@ def admin_required(view_func):
 def seller_required(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
-        if not request.user.is_authenticated:
+        if not request.user.is_authenticated and request.user.is_admin:
             messages.error(request,'Unauthorized !! user not authenticated')
             return redirect(request.META.get('HTTP_REFERER', '/'))
         if request.user.role != 'SELLER':
@@ -35,5 +35,16 @@ def verified_seller_required(view_func):
         if not getattr(request.user, "is_verified_seller", False):
             messages.error(request,'Unauthorized !! not a verified seller')
             return redirect('seller-profile')
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
+
+def customer_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        if not request.user.is_authenticated or request.user.is_admin or request.user.role=="SELLER":
+            messages.warning(request,'not a customer')
+            return redirect(request.META.get('HTTP_REFERER','/'))
+        if request.user.role != "CUSTOMER":
+            return HttpResponse("Forbidden", status=403)
         return view_func(request, *args, **kwargs)
     return _wrapped_view
