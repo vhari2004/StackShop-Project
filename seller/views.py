@@ -124,7 +124,8 @@ def seller_bridge(request):
             #     else:
             #         username = first_name + last_name + str(random.randint(1000, 9999))            
             username=request.POST.get('username')
-            email=request.POST.get('emailo')
+            email=request.POST.get('email')
+            phone_number=request.POST.get('phone_number')
             password=request.POST.get('password')
             cnf_password=request.POST.get('password')
             if password != cnf_password:
@@ -139,6 +140,7 @@ def seller_bridge(request):
                     username=username,
                     email=email,
                     password=password,
+                    phone_number=phone_number,
                     role="SELLER",
                     is_seller=True,
                 )

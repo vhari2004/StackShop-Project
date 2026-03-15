@@ -129,12 +129,12 @@
                                 <td class="p-4">
                                     <p class="font-bold text-dark text-base">{{ seller.store_name|default:"Unnamed Store" }}</p>
                                     <p class="text-xs text-muted">
-                                        Owned by: {{ seller.user.first_name }} {{ seller.user.last_name }}
+                                        Owned by: {{ seller.user.username}}
                                     </p>
                                 </td>                                
                                 <td class="p-4 text-dark/80">
                                     {{ seller.user.email }}<br>
-                                    <span class="text-xs">{{ seller.phone_number|default:"No Phone Provided" }}</span>
+                                    <span class="text-xs">{{ seller.user.phone_number|default:"No Phone Provided" }}</span>
                                 </td>
 
                                 <td class="p-4">
