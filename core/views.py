@@ -121,24 +121,35 @@ def search_and_filter_view(request):
             subcategory__category__slug__in=selected_categories
         ).distinct()
 
+    # Price filtering using annotations since min/max_variant_price are properties (product-level)
+    product_var = product_var.annotate(
+        min_product_price=models.Min('variants__selling_price'),
+        max_product_price=models.Max('variants__selling_price')
+    )
+    
     if min_price:
         try:
             min_price_val = float(min_price)
-            product_var = product_var.filter(min_variant_price__gte=min_price_val)
+            product_var = product_var.filter(min_product_price__gte=min_price_val)
         except (ValueError, TypeError):
             pass
 
     if max_price:
         try:
             max_price_val = float(max_price)
-            product_var = product_var.filter(max_variant_price__lte=max_price_val)
+            product_var = product_var.filter(max_product_price__lte=max_price_val)
         except (ValueError, TypeError):
             pass
 
+    # Sorting using annotations since min/max_variant_price are properties (product-level)
     if sort_by == "price-low-high":
-        product_var = product_var.order_by("min_variant_price")
+        product_var = product_var.annotate(
+            min_product_price=models.Min('variants__selling_price')
+        ).order_by('min_product_price')
     elif sort_by == "price-high-low":
-        product_var = product_var.order_by("-max_variant_price")
+        product_var = product_var.annotate(
+            max_product_price=models.Max('variants__selling_price')
+        ).order_by('-max_product_price')
     elif sort_by == "newest":
         product_var = product_var.order_by("-created_at")
 
