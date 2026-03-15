@@ -5,7 +5,7 @@ from core.decorators import customer_required
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Avg, Sum
-from seller.models import Product, ProductVariant
+from seller.models import Product, ProductVariant,InventoryLog
 from customer.models import (
     Wishlist,
     WishlistItem,
@@ -63,6 +63,19 @@ def payment_success(request):
         cart_items = CartItem.objects.filter(cart=cart)
 
         for cart_item in cart_items:
+            # Decrease stock quantity
+            cart_item.variant.stock_quantity -= cart_item.quantity
+            
+            # Create inventory log
+            InventoryLog.objects.create(
+                variant=cart_item.variant,
+                change_amount=-cart_item.quantity,
+                reason="Order fulfillment",
+                performed_by=payment_order.user
+            )
+            
+            cart_item.variant.save()
+            
             OrderItem.objects.create(
                 order=order,
                 variant=cart_item.variant,
