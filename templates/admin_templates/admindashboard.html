@@ -631,6 +631,56 @@
             }
         }
 
+        // Seller Filtering Logic
+        function filterSellers(filter) {
+            const rows = document.querySelectorAll('.seller-row');
+            let visibleCount = 0;
+
+            // Update button active state
+            document.querySelectorAll('.seller-filter-btn').forEach(btn => {
+                btn.classList.remove('active-filter');
+                if (btn.getAttribute('data-filter') === filter) {
+                    btn.classList.add('active-filter');
+                }
+            });
+
+            // Filter rows based on status
+            rows.forEach(row => {
+                const status = row.getAttribute('data-status');
+                const shouldShow = filter === 'all' || status === filter;
+                
+                if (shouldShow) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Show/hide empty state message
+            const tbody = document.getElementById('sellers-tbody');
+            const existingEmpty = tbody.querySelector('#sellers-empty-state');
+            
+            if (visibleCount === 0) {
+                if (!existingEmpty) {
+                    let emptyHTML = `
+                        <tr id="sellers-empty-state">
+                            <td colspan="5" class="p-12 text-center text-muted">
+                                <span class="material-icons text-5xl mb-3 opacity-50 block">store_off</span>
+                                <p class="font-extrabold text-dark text-lg">No sellers found</p>
+                                <p class="text-sm font-medium">There are currently no sellers matching your criteria.</p>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.insertAdjacentHTML('beforeend', emptyHTML);
+                }
+            } else {
+                if (existingEmpty) {
+                    existingEmpty.remove();
+                }
+            }
+        }
+
         // ==================== ATTRIBUTE FORM HANDLERS ====================
 
         // Handle Attribute Form Submission
