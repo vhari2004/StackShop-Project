@@ -18,7 +18,7 @@ def seller_required(view_func):
         if not request.user.is_authenticated and request.user.is_admin:
             messages.error(request,'Unauthorized !! user not authenticated')
             return redirect(request.META.get('HTTP_REFERER', '/'))
-        if request.user.role != 'SELLER':
+        if request.user.is_seller != True:
             messages.error(request,'Forbidden !! user not a Seller')
             return redirect(request.META.get('HTTP_REFERER', '/'))
         return view_func(request, *args, **kwargs)
@@ -29,7 +29,7 @@ def verified_seller_required(view_func):
         if not request.user.is_authenticated:
             messages.error(request,'Unauthorized !! user not authenticated')
             return redirect('seller-profile')
-        if request.user.role != 'SELLER':
+        if request.user.is_seller != True:
             messages.error(request,'Unauthorized !! Not a Seller')
             return redirect('seller-profile')        
         if not getattr(request.user, "is_verified_seller", False):
