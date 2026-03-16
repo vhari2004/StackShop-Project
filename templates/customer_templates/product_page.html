@@ -171,9 +171,16 @@
                         </div>
                         {% endif %}
 
-                        <button class="wishlist-btn absolute top-3 right-3 z-20 text-xl transition-all duration-300 hover:scale-125 hover:rotate-8 cursor-pointer group {% if x.is_in_wishlist %}text-red-500 scale-110 drop-shadow-lg{% else %}text-muted/40 hover:text-red-500 hover:drop-shadow-md{% endif %}" data-product-id="{{ x.id }}" title="{% if x.is_in_wishlist %}Remove from wishlist{% else %}Add to wishlist{% endif %}">
-                            <span class="material-icons transition-all duration-200 {% if x.is_in_wishlist %}favorite{% else %}favorite_border{% endif %}"></span>
-                        </button>
+                        {% with first_variant=x.variants.first %}
+                        {% if first_variant %}
+                        <form action="{% url 'addwishlist' first_variant.id %}" method="post" class="absolute top-3 right-3 z-20">
+                            {% csrf_token %}
+                            <button type="submit" class="text-xl transition-all duration-300 hover:scale-125 hover:rotate-8 cursor-pointer group {% if x.is_in_wishlist %}text-red-500 scale-110 drop-shadow-lg{% else %}text-muted/40 hover:text-red-500 hover:drop-shadow-md{% endif %}" title="{% if x.is_in_wishlist %}Remove from wishlist{% else %}Add to wishlist{% endif %}">
+                                <span class="material-icons transition-all duration-200 {% if x.is_in_wishlist %}favorite{% else %}favorite_border{% endif %}"></span>
+                            </button>
+                        </form>
+                        {% endif %}
+                        {% endwith %}
                     </div>
 
                     <div class="p-5 flex flex-col flex-grow bg-white">
@@ -306,90 +313,6 @@
                 document.getElementById('filter-form').submit();
             });
         });
-
-        // CORRECTED Wishlist toggle function
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.wishlist-btn').forEach(btn => {
-                btn.addEventListener('click', async function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    const productId = this.dataset.productId;
-                    const heartIcon = this.querySelector('.material-icons');
-                    
-                    // CORRECTED: Now checks for text-red-500
-                    const isCurrentlyWishlist = this.classList.contains('text-red-500');
-
-                    // Show loading state
-                    const originalTitle = this.title;
-                    this.title = 'Updating...';
-                    heartIcon.style.opacity = '0.5';
-
-                    try {
-                        const response = await fetch(`/toggle-wishlist/${productId}/`, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRFToken': getCookie('csrftoken'),
-                                'Content-Type': 'application/json',
-                            },
-                        });
-
-                        if (!response.ok) {
-                            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                        }
-                        const data = await response.json();
-
-                        if (data.success) {
-                            // Toggle visual state
-                            if (isCurrentlyWishlist) {
-                                // Remove from wishlist
-                                this.classList.remove('text-red-500', 'scale-110', 'drop-shadow-lg');
-                                this.classList.add('text-muted/40', 'hover:text-red-500', 'hover:drop-shadow-md');
-                                heartIcon.textContent = 'favorite_border';
-                                this.title = 'Add to wishlist';
-                            } else {
-                                // Add to wishlist
-                                this.classList.remove('text-muted/40', 'hover:text-red-500', 'hover:drop-shadow-md');
-                                this.classList.add('text-red-500', 'scale-110', 'drop-shadow-lg');
-                                heartIcon.textContent = 'favorite';
-                                this.title = 'Remove from wishlist';
-                            }
-                        } else {
-                            throw new Error(data.message || 'Failed to toggle wishlist');
-                        }
-                    } catch (error) {
-                        console.error('Error:', error);
-                        
-                        // Handle authentication redirect
-                        if (error.message.includes('401') || error.message.includes('403')) {
-                            window.location.href = '/login/?next=' + window.location.pathname;
-                        } else {
-                            alert(error.message || 'Failed to update wishlist. Please try again.');
-                        }
-                    } finally {
-                        // Reset loading state
-                        this.title = originalTitle;
-                        heartIcon.style.opacity = '1';
-                    }
-                });
-            });
-        });
-
-        // Utility function to get CSRF token cookie
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
     </script>
 
 </body>

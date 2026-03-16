@@ -165,61 +165,6 @@ def user_profile_view(request):
 
 # wishlist---------------------------------------------------------------------
 
-
-@require_http_methods(["POST"])
-@login_required
-@csrf_protect
-def toggle_wishlist_view(request, product_id):
-    """AJAX endpoint to toggle product in user's default wishlist"""
-    try:
-        product = get_object_or_404(Product, id=product_id, approval_status="approved", is_active=True)
-        
-        # Get user's default wishlist
-        try:
-            wishlist = Wishlist.objects.get(user=request.user, is_default=True)
-        except Wishlist.DoesNotExist:
-            wishlist = Wishlist.objects.create(
-                user=request.user,
-                wishlist_name=f"{request.user.username}'s Favorites",
-                is_default=True
-            )
-        
-        # Check if any variant of this product is in wishlist
-        existing_item = WishlistItem.objects.filter(
-            wishlist=wishlist, 
-            variant__product=product
-        ).first()
-        
-        if existing_item:
-            # Remove from wishlist
-            existing_item.delete()
-            return JsonResponse({
-                "success": True, 
-                "message": "Removed from wishlist",
-                "in_wishlist": False
-            })
-        else:
-            # Add first available variant to wishlist
-            variant = product.variants.filter(stock_quantity__gt=0).first()
-            if variant:
-                WishlistItem.objects.create(wishlist=wishlist, variant=variant)
-                return JsonResponse({
-                    "success": True, 
-                    "message": "Added to wishlist",
-                    "in_wishlist": True
-                })
-            else:
-                return JsonResponse({
-                    "success": False, 
-                    "message": "No available variants in stock"
-                })
-                
-    except Product.DoesNotExist:
-        return JsonResponse({"success": False, "message": "Product not found"}, status=404)
-    except Exception as e:
-        return JsonResponse({"success": False, "message": str(e)}, status=500)
-
-
 @customer_required
 def add_wishlist_view(request, variant_id):
     product_variant = get_object_or_404(ProductVariant, id=variant_id)

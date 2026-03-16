@@ -353,10 +353,16 @@
                         </a>
                         <!-- Red Wishlist Heart Icon -->
                         {% if request.user.is_authenticated %}
-                        <button class="wishlist-btn text-xl transition-all duration-300 hover:scale-125 hover:rotate-8 cursor-pointer group {% if product.is_in_wishlist %}text-red-500 scale-110 drop-shadow-lg{% else %}text-muted/40 hover:text-red-500 hover:drop-shadow-md{% endif %}" data-product-id="{{ product.id }}" title="{% if product.is_in_wishlist %}Remove from wishlist{% else %}Add to wishlist{% endif %}">
-                            <span class="material-icons {% if product.is_in_wishlist %}favorite{% else %}favorite_border{% endif %} group-hover:scale-110 transition-all duration-200">
-                            </span>
-                        </button>
+                        {% with first_variant=product.variants.first %}
+                        {% if first_variant %}
+                        <form action="{% url 'addwishlist' first_variant.id %}" method="post" class="absolute top-3 right-3 z-20">
+                            {% csrf_token %}
+                            <button type="submit" class="text-xl transition-all duration-300 hover:scale-125 hover:rotate-8 cursor-pointer group {% if product.is_in_wishlist %}text-red-500 scale-110 drop-shadow-lg{% else %}text-muted/40 hover:text-red-500 hover:drop-shadow-md{% endif %}" title="{% if product.is_in_wishlist %}Remove from wishlist{% else %}Add to wishlist{% endif %}">
+                                <span class="material-icons {% if product.is_in_wishlist %}favorite{% else %}favorite_border{% endif %} group-hover:scale-110 transition-all duration-200"></span>
+                            </button>
+                        </form>
+                        {% endif %}
+                        {% endwith %}
                         {% endif %}
                     </div>
                 </div>
@@ -377,81 +383,6 @@
     {% include "customer_templates/Footer.html" %}
 
     <script src="{% static 'core/homehtml/animations.js' %}"></script>
-    <script>
-        // Wishlist toggle function for homepage (same as product page)
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.wishlist-btn').forEach(btn => {
-                btn.addEventListener('click', async function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    const productId = this.dataset.productId;
-                    const heartIcon = this.querySelector('.material-icons');
-                    const isCurrentlyWishlist = this.classList.contains('text-red-500');
-
-                    // Show loading state
-                    const originalTitle = this.title;
-                    this.title = 'Updating...';
-                    heartIcon.style.opacity = '0.5';
-
-                    try {
-                        const response = await fetch(`/toggle-wishlist/${productId}/`, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRFToken': getCookie('csrftoken'),
-                                'Content-Type': 'application/json',
-                            },
-                        });
-
-                        if (!response.ok) {
-                            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                        }
-                        const data = await response.json();
-
-                        if (data.success) {
-                            if (isCurrentlyWishlist) {
-                                // Remove from wishlist
-                                this.classList.remove('text-red-500', 'scale-110', 'drop-shadow-lg');
-                                this.classList.add('text-muted/40', 'hover:text-red-500');
-                                heartIcon.textContent = 'favorite_border';
-                                this.title = 'Add to wishlist';
-                            } else {
-                                // Add to wishlist
-                                this.classList.remove('text-muted/40');
-                                this.classList.add('text-red-500', 'scale-110', 'drop-shadow-lg');
-                                heartIcon.textContent = 'favorite';
-                                this.title = 'Remove from wishlist';
-                            }
-                        } else {
-                            throw new Error(data.message || 'Failed to toggle wishlist');
-                        }
-                    } catch (error) {
-                        console.error('Error:', error);
-                        alert(error.message || 'Failed to update wishlist. Please try again.');
-                    } finally {
-                        this.title = originalTitle;
-                        heartIcon.style.opacity = '1';
-                    }
-                });
-            });
-        });
-
-        // Utility function to get CSRF token cookie
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-    </script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const mainTrack = document.getElementById('carousel-track');
