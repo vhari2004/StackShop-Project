@@ -52,9 +52,11 @@ def dashboard_view(request):
 
     total_products = products.count()
 
-    active_orders = OrderItem.objects.filter(seller=seller).exclude(
-        status__in=["delivered", "cancelled"]
-    ).count()
+    active_orders = (
+        OrderItem.objects.filter(seller=seller)
+        .exclude(status__in=["delivered", "cancelled"])
+        .count()
+    )
 
     needs_shipping = OrderItem.objects.filter(
         seller=seller, status__in=["pending", "processing"]
@@ -69,9 +71,21 @@ def dashboard_view(request):
     )
     avg_rating = round(avg_rating, 1)
 
-    total_orders = OrderItem.objects.filter(seller=seller).values("order_id").distinct().count()
-    pending_actions = OrderItem.objects.filter(seller=seller, status__in=["pending", "processing"]).values("order_id").distinct().count()
-    revenue_from_completed = OrderItem.objects.filter(seller=seller, status="delivered").aggregate(total=Sum("price_at_purchase"))["total"] or 0
+    total_orders = (
+        OrderItem.objects.filter(seller=seller).values("order_id").distinct().count()
+    )
+    pending_actions = (
+        OrderItem.objects.filter(seller=seller, status__in=["pending", "processing"])
+        .values("order_id")
+        .distinct()
+        .count()
+    )
+    revenue_from_completed = (
+        OrderItem.objects.filter(seller=seller, status="delivered").aggregate(
+            total=Sum("price_at_purchase")
+        )["total"]
+        or 0
+    )
 
     context = {
         "products": products,
@@ -88,18 +102,24 @@ def dashboard_view(request):
     return render(request, "seller_templates/sellerdashboard.html", context)
 
 
-
 def seller_bridge(request):
     role = request.GET.get("role")
-    if request.user.is_authenticated and SellerProfile.objects.filter(user=request.user).exists():
+    if (
+        request.user.is_authenticated
+        and SellerProfile.objects.filter(user=request.user).exists()
+    ):
         return redirect("seller-profile")
     if request.method == "POST":
         if request.user.is_authenticated and request.method == "POST":
-            seller_profile, created = SellerProfile.objects.get_or_create(user=request.user)
+            seller_profile, created = SellerProfile.objects.get_or_create(
+                user=request.user
+            )
             seller_profile.store_name = request.POST.get("store_name")
             seller_profile.gst_number = request.POST.get("tax_id", "")
             seller_profile.pan_number = request.POST.get("pan_number", "")
-            seller_profile.bank_account_number = request.POST.get("bank_account_number", "")
+            seller_profile.bank_account_number = request.POST.get(
+                "bank_account_number", ""
+            )
             seller_profile.ifsc_code = request.POST.get("ifsc_code", "")
             seller_profile.business_address = request.POST.get("description", "")
 
@@ -110,52 +130,64 @@ def seller_bridge(request):
 
             user = request.user
             user.is_seller = True
-            user.save()  
-            user.refresh_from_db()  
+            user.save()
+            user.refresh_from_db()
 
             return redirect("seller-profile")
         else:
-            first_name=request.POST.get('first_name')
-            last_name=request.POST.get('last_name')
+            first_name = request.POST.get("first_name")
+            last_name = request.POST.get("last_name")
             # if first_name and last_name:
             #     username=first_name+last_name
             #     if CustomUser.objects.get(username=username).exist():
             #         return render(request,"seller_templates/seller_bridge.html",{"error": "username already exist"},)
             #     else:
-            #         username = first_name + last_name + str(random.randint(1000, 9999))            
-            username=request.POST.get('username')
-            email=request.POST.get('email')
-            phone_number=request.POST.get('phone_number')
-            password=request.POST.get('password')
-            cnf_password=request.POST.get('password')
+            #         username = first_name + last_name + str(random.randint(1000, 9999))
+            username = request.POST.get("username")
+            email = request.POST.get("email")
+            phone_number = request.POST.get("phone_number")
+            password = request.POST.get("password")
+            cnf_password = request.POST.get("password")
             if password != cnf_password:
-                return render(request,"seller_templates/seller_bridge.html",{"error": "Passwords do not match"},)
+                return render(
+                    request,
+                    "seller_templates/seller_bridge.html",
+                    {"error": "Passwords do not match"},
+                )
             if CustomUser.objects.filter(username=username).exists():
                 messages.error(request, "Username already exists!")
-                return render(request, "seller_templates/seller_bridge", {"username": username, "email": email})  
+                return render(
+                    request,
+                    "seller_templates/seller_bridge",
+                    {"username": username, "email": email},
+                )
             if CustomUser.objects.filter(email=email).exists():
                 messages.error(request, "Email already exists!")
-                return render(request, "seller_templates/seller_bridge", {"username": username, "email": email})
+                return render(
+                    request,
+                    "seller_templates/seller_bridge",
+                    {"username": username, "email": email},
+                )
             user = CustomUser.objects.create_user(
-                    username=username,
-                    email=email,
-                    password=password,
-                    phone_number=phone_number,
-                    role="SELLER",
-                    is_seller=True,
-                )
+                username=username,
+                email=email,
+                password=password,
+                phone_number=phone_number,
+                role="SELLER",
+                is_seller=True,
+            )
             SellerProfile.objects.create(
-                    user=user,
-                    store_name=request.POST.get("store_name"),
-                    business_address=request.POST.get("business_address"),
-                    gst_number=request.POST.get("gst_no"),
-                    description=request.POST.get("description"),
-                    pan_number=request.POST.get("pan_no"),
-                    bank_account_number=request.POST.get("bank_account_number"),
-                    ifsc_code=request.POST.get("ifsc_code"),
-                    store_image = request.FILES.get("logo")
-                )
-        redirect('login')
+                user=user,
+                store_name=request.POST.get("store_name"),
+                business_address=request.POST.get("business_address"),
+                gst_number=request.POST.get("gst_no"),
+                description=request.POST.get("description"),
+                pan_number=request.POST.get("pan_no"),
+                bank_account_number=request.POST.get("bank_account_number"),
+                ifsc_code=request.POST.get("ifsc_code"),
+                store_image=request.FILES.get("logo"),
+            )
+        redirect("login")
     return render(request, "seller_templates/seller_bridge.html")
 
 
@@ -254,8 +286,12 @@ def update_product(request, product_slug):
 def manage_variants(request, product_slug):
     seller = request.user.seller_profile
     product = get_object_or_404(Product, slug=product_slug, seller=seller)
-    attributes = Attribute.objects.filter(subcategory=product.subcategory).prefetch_related("options")
-    variants = product.variants.prefetch_related("images", "attributes__option__attribute")
+    attributes = Attribute.objects.filter(
+        subcategory=product.subcategory
+    ).prefetch_related("options")
+    variants = product.variants.prefetch_related(
+        "images", "attributes__option__attribute"
+    )
 
     edit_variant = None
     selected_option_ids = []
@@ -263,7 +299,9 @@ def manage_variants(request, product_slug):
     if request.method == "POST":
         edit_variant_id = request.POST.get("edit_variant_id")
         if edit_variant_id:
-            variant = get_object_or_404(ProductVariant, id=edit_variant_id, product=product)
+            variant = get_object_or_404(
+                ProductVariant, id=edit_variant_id, product=product
+            )
             variant.mrp = request.POST.get("mrp") or 0
             variant.selling_price = request.POST.get("selling_price") or 0
             variant.cost_price = request.POST.get("cost_price") or 0
@@ -279,16 +317,22 @@ def manage_variants(request, product_slug):
             for attribute in attributes:
                 option_id = request.POST.get(f"attribute_{attribute.id}")
                 if option_id:
-                    VariantAttributeBridge.objects.create(variant=variant, option_id=option_id)
+                    VariantAttributeBridge.objects.create(
+                        variant=variant, option_id=option_id
+                    )
 
             primary_image = request.FILES.get("primary_image")
             if primary_image:
                 ProductImage.objects.filter(variant=variant, is_primary=True).delete()
-                ProductImage.objects.create(variant=variant, image_url=primary_image, is_primary=True)
+                ProductImage.objects.create(
+                    variant=variant, image_url=primary_image, is_primary=True
+                )
 
             additional_images = request.FILES.getlist("additional_images")
             for image in additional_images:
-                ProductImage.objects.create(variant=variant, image_url=image, is_primary=False)
+                ProductImage.objects.create(
+                    variant=variant, image_url=image, is_primary=False
+                )
 
             messages.success(request, "Variant updated successfully.")
             return redirect("manage_variants", product_slug=product.slug)
@@ -310,15 +354,21 @@ def manage_variants(request, product_slug):
         for attribute in attributes:
             option_id = request.POST.get(f"attribute_{attribute.id}")
             if option_id:
-                VariantAttributeBridge.objects.create(variant=variant, option_id=option_id)
+                VariantAttributeBridge.objects.create(
+                    variant=variant, option_id=option_id
+                )
 
         primary_image = request.FILES.get("primary_image")
         if primary_image:
-            ProductImage.objects.create(variant=variant, image_url=primary_image, is_primary=True)
+            ProductImage.objects.create(
+                variant=variant, image_url=primary_image, is_primary=True
+            )
 
         additional_images = request.FILES.getlist("additional_images")
         for image in additional_images:
-            ProductImage.objects.create(variant=variant, image_url=image, is_primary=False)
+            ProductImage.objects.create(
+                variant=variant, image_url=image, is_primary=False
+            )
 
         messages.success(request, "Variant added successfully.")
         return redirect("manage_variants", product_slug=product.slug)
@@ -326,18 +376,26 @@ def manage_variants(request, product_slug):
     # GET section: check whether user requested editing
     edit_variant_id = request.GET.get("edit_variant_id")
     if edit_variant_id:
-        edit_variant = get_object_or_404(ProductVariant, id=edit_variant_id, product=product)
+        edit_variant = get_object_or_404(
+            ProductVariant, id=edit_variant_id, product=product
+        )
         selected_option_ids = list(
-            VariantAttributeBridge.objects.filter(variant=edit_variant).values_list("option_id", flat=True)
+            VariantAttributeBridge.objects.filter(variant=edit_variant).values_list(
+                "option_id", flat=True
+            )
         )
 
-    return render(request, "seller_templates/manage_variants.html", {
-        "product": product,
-        "attributes": attributes,
-        "variants": variants,
-        "edit_variant": edit_variant,
-        "selected_option_ids": selected_option_ids,
-    })
+    return render(
+        request,
+        "seller_templates/manage_variants.html",
+        {
+            "product": product,
+            "attributes": attributes,
+            "variants": variants,
+            "edit_variant": edit_variant,
+            "selected_option_ids": selected_option_ids,
+        },
+    )
 
 
 @verified_seller_required
@@ -350,6 +408,7 @@ def delete_product(request, product_slug):
         return redirect("dashboard")
 
     return redirect("dashboard")
+
 
 @verified_seller_required
 def customer_reviews(request):
@@ -370,22 +429,31 @@ def customer_reviews(request):
         return redirect("customer_reviews")
 
     filter_opt = request.GET.get("filter", "all")
-    reviews = Review.objects.filter(product__seller=seller).select_related("user", "product").order_by("-created_at")
+    reviews = (
+        Review.objects.filter(product__seller=seller)
+        .select_related("user", "product")
+        .order_by("-created_at")
+    )
 
     if filter_opt == "needs_reply":
-        reviews = reviews.filter(Q(seller_reply__isnull=True) | Q(seller_reply__exact=""))
+        reviews = reviews.filter(
+            Q(seller_reply__isnull=True) | Q(seller_reply__exact="")
+        )
     elif filter_opt == "positive":
         reviews = reviews.filter(rating__gte=4)
     elif filter_opt == "critical":
         reviews = reviews.filter(rating__lte=3)
 
     from django.core.paginator import Paginator
+
     paginator = Paginator(reviews, settings.PAGINATE_BY)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
     total_reviews = Review.objects.filter(product__seller=seller).count()
-    average_rating = Review.objects.filter(product__seller=seller).aggregate(avg=Avg("rating"))
+    average_rating = Review.objects.filter(product__seller=seller).aggregate(
+        avg=Avg("rating")
+    )
     store_rating = round(average_rating["avg"] or 0, 1)
 
     return render(
@@ -426,6 +494,7 @@ def seller_customers_orders(request):
         )
 
     from django.core.paginator import Paginator
+
     paginator = Paginator(orders, settings.PAGINATE_BY)
     page_number = request.GET.get("page")
     orders_page = paginator.get_page(page_number)
@@ -439,6 +508,7 @@ def seller_customers_orders(request):
         "query": query,
     }
     return render(request, "seller_templates/customer_orders.html", context)
+
 
 @verified_seller_required
 def update_order_status(request):
@@ -458,6 +528,7 @@ def update_order_status(request):
             order.save()
 
     return redirect("seller_customers_orders")
-def seller_analytics(request):
-    return render(request,'seller_templates/selleranalytics.html')
 
+
+def seller_analytics(request):
+    return render(request, "seller_templates/selleranalytics.html")

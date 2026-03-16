@@ -65,21 +65,21 @@ def payment_success(request):
         for cart_item in cart_items:
             # Decrease stock quantity
             cart_item.variant.stock_quantity -= cart_item.quantity
-            
+
             # Create inventory log
             InventoryLog.objects.create(
                 variant=cart_item.variant,
                 change_amount=-cart_item.quantity,
                 reason="Order fulfillment",
-                performed_by=payment_order.user
+                performed_by=payment_order.user,
             )
-            
+
             cart_item.variant.save()
-            
+
             OrderItem.objects.create(
                 order=order,
                 variant=cart_item.variant,
-                seller=cart_item.variant.product.seller, 
+                seller=cart_item.variant.product.seller,
                 quantity=cart_item.quantity,
                 price_at_purchase=cart_item.price_at_time,
             )
@@ -109,8 +109,7 @@ def order_success(request):
             context = {
                 "order": payment_order.order,
                 "payment_order": payment_order,
-                "order_amount": payment_order.amount
-                / 100, 
+                "order_amount": payment_order.amount / 100,
             }
             return render(request, "customer_templates/order_success.html", context)
         else:
@@ -128,10 +127,10 @@ def order_success(request):
 def order_success_cod(request, order_id):
     """Display order success page for COD orders"""
     order = get_object_or_404(Order, id=order_id, user=request.user)
-    
+
     cart = Cart.objects.get(user=request.user)
     cart.items.all().delete()
-    
+
     context = {
         "order": order,
         "order_amount": order.total_amount,
@@ -165,6 +164,7 @@ def user_profile_view(request):
 
 # wishlist---------------------------------------------------------------------
 
+
 @customer_required
 def add_wishlist_view(request, variant_id):
     product_variant = get_object_or_404(ProductVariant, id=variant_id)
@@ -194,7 +194,9 @@ def add_wishlist_view(request, variant_id):
 
 @customer_required
 def remove_wishlist_view(request, wishlist_item_id):
-    wishlist_item = get_object_or_404(WishlistItem, id=wishlist_item_id, wishlist__user=request.user)
+    wishlist_item = get_object_or_404(
+        WishlistItem, id=wishlist_item_id, wishlist__user=request.user
+    )
     wishlist_item.delete()
     messages.success(request, "Product removed from wishlist.")
     return redirect("wishlist")
@@ -220,6 +222,7 @@ def wishlist_view(request):
     }
     return render(request, "customer_templates/wishlistpage.html", context)
 
+
 @customer_required
 def create_collection_view(request):
     if request.method == "POST":
@@ -232,6 +235,7 @@ def create_collection_view(request):
         else:
             messages.error(request, "Collection name cannot be empty.")
     return redirect("wishlist")
+
 
 @customer_required
 def update_collection_view(request):
@@ -254,6 +258,7 @@ def update_collection_view(request):
     else:
         messages.error(request, "Collection name cannot be empty.")
     return redirect("wishlist")
+
 
 @customer_required
 def delete_collection_view(request, wishlist_id):
@@ -300,7 +305,9 @@ def add_to_cart_view(request, variant_id):
     if not created:
         new_quantity = min(cart_item.quantity + quantity, max_allowed)
         if new_quantity == cart_item.quantity:
-            messages.warning(request, "Each product can have a maximum of 3 units in the cart.")
+            messages.warning(
+                request, "Each product can have a maximum of 3 units in the cart."
+            )
         else:
             cart_item.quantity = new_quantity
             cart_item.price_at_time = product_variant.selling_price
@@ -336,13 +343,18 @@ def buy_now_view(request, variant_id):
     if not created:
         new_quantity = min(cart_item.quantity + quantity, max_allowed)
         if new_quantity == cart_item.quantity:
-            messages.warning(request, "Each product can have a maximum of 3 units in the cart.")
+            messages.warning(
+                request, "Each product can have a maximum of 3 units in the cart."
+            )
         else:
             cart_item.quantity = new_quantity
             cart_item.price_at_time = product_variant.selling_price
             cart_item.save()
-    
-    messages.success(request, f"{product_variant.product.name} added to cart. Proceeding to checkout...")
+
+    messages.success(
+        request,
+        f"{product_variant.product.name} added to cart. Proceeding to checkout...",
+    )
     return redirect("checkout")
 
 
@@ -370,7 +382,9 @@ def cart_view(request):
 @customer_required
 def update_cart_view(request, cart_item_id):
     if request.method == "POST":
-        cart_item = get_object_or_404(CartItem, id=cart_item_id, cart__user=request.user)
+        cart_item = get_object_or_404(
+            CartItem, id=cart_item_id, cart__user=request.user
+        )
         action = request.POST.get("action")
         if action == "increase":
             max_allowed = min(3, cart_item.variant.stock_quantity)
@@ -379,7 +393,9 @@ def update_cart_view(request, cart_item_id):
                 cart_item.price_at_time = cart_item.variant.selling_price
                 cart_item.save()
             else:
-                messages.warning(request, "Each product can have a maximum of 3 units in the cart.")
+                messages.warning(
+                    request, "Each product can have a maximum of 3 units in the cart."
+                )
         elif action == "decrease":
             if cart_item.quantity > 1:
                 cart_item.quantity -= 1
@@ -398,7 +414,9 @@ def checkout_view(request):
     )
 
     # Get user's addresses
-    user_addresses = Address.objects.filter(user=request.user).order_by('-is_default', '-created_at')
+    user_addresses = Address.objects.filter(user=request.user).order_by(
+        "-is_default", "-created_at"
+    )
     default_address = user_addresses.filter(is_default=True).first()
 
     cart_total = sum(item.get_total() for item in cart_items)
@@ -406,9 +424,9 @@ def checkout_view(request):
     total_amount = cart_total + tax_amount
 
     # Get selected address ID and payment method from POST request
-    selected_address_id = request.POST.get('address_id')
-    payment_method = request.POST.get('payment_method', 'online')
-    
+    selected_address_id = request.POST.get("address_id")
+    payment_method = request.POST.get("payment_method", "online")
+
     if selected_address_id:
         selected_address = user_addresses.filter(id=selected_address_id).first()
     else:
@@ -425,14 +443,16 @@ def checkout_view(request):
         "payment_method": payment_method,
     }
 
-    if request.method == 'POST' and payment_method == 'cod':
+    if request.method == "POST" and payment_method == "cod":
         # Handle Cash on Delivery
-        selected_address_id = request.POST.get('address_id')
+        selected_address_id = request.POST.get("address_id")
         if not selected_address_id:
             messages.error(request, "Please select a delivery address.")
             return render(request, "customer_templates/checkout.html", context)
 
-        selected_address = get_object_or_404(Address, id=selected_address_id, user=request.user)
+        selected_address = get_object_or_404(
+            Address, id=selected_address_id, user=request.user
+        )
 
         # Create COD order
         order_obj = Order.objects.create(
@@ -440,7 +460,7 @@ def checkout_view(request):
             address=selected_address,
             order_number=f"COD-ORD-{request.user.id}-{int(time.time())}",
             total_amount=total_amount,
-            payment_method='cod',
+            payment_method="cod",
             payment_status="PENDING",
             order_status="CONFIRMED",  # COD orders are auto-confirmed
         )
@@ -449,17 +469,17 @@ def checkout_view(request):
         for cart_item in cart_items:
             # Decrease stock quantity
             cart_item.variant.stock_quantity -= cart_item.quantity
-            
+
             # Create inventory log
             InventoryLog.objects.create(
                 variant=cart_item.variant,
                 change_amount=-cart_item.quantity,
                 reason="COD Order fulfillment",
-                performed_by=request.user
+                performed_by=request.user,
             )
-            
+
             cart_item.variant.save()
-            
+
             OrderItem.objects.create(
                 order=order_obj,
                 variant=cart_item.variant,
@@ -471,7 +491,9 @@ def checkout_view(request):
         # Clear cart
         cart_items.delete()
 
-        messages.success(request, "Order placed successfully! Cash on Delivery confirmed.")
+        messages.success(
+            request, "Order placed successfully! Cash on Delivery confirmed."
+        )
         return redirect("order_success_cod", order_id=order_obj.id)
 
     # For online payment
@@ -494,7 +516,7 @@ def checkout_view(request):
             address=selected_address,
             order_number=f"ORD-{request.user.id}-{int(time.time())}",
             total_amount=total_amount,
-            payment_method='online',
+            payment_method="online",
             payment_status="PENDING",
             order_status="PENDING",
         )
@@ -507,11 +529,13 @@ def checkout_view(request):
             status="PENDING",
         )
 
-        context.update({
-            "payment": payment,
-            "razorpay_key": settings.RAZORPAY_KEY_ID,
-            "order": order_obj,
-        })
+        context.update(
+            {
+                "payment": payment,
+                "razorpay_key": settings.RAZORPAY_KEY_ID,
+                "order": order_obj,
+            }
+        )
 
     except Exception as e:
         messages.error(request, f"Payment initialization failed: {str(e)}")
@@ -672,7 +696,11 @@ def product_list_view(request):
     if request.user.is_authenticated:
         try:
             default_wishlist = Wishlist.objects.get(user=request.user, is_default=True)
-            wishlist_variant_ids = set(WishlistItem.objects.filter(wishlist=default_wishlist).values_list('variant__product_id', flat=True))
+            wishlist_variant_ids = set(
+                WishlistItem.objects.filter(wishlist=default_wishlist).values_list(
+                    "variant__product_id", flat=True
+                )
+            )
         except Wishlist.DoesNotExist:
             wishlist_variant_ids = set()
     else:
@@ -703,8 +731,11 @@ def product_single_view(request, product_slug=None, product_id=None):
         return redirect("product_list")
 
     product = get_object_or_404(
-        Product.objects.select_related("subcategory__category", "seller")
-        .prefetch_related("variants__images", "variants__attributes__option__attribute"),
+        Product.objects.select_related(
+            "subcategory__category", "seller"
+        ).prefetch_related(
+            "variants__images", "variants__attributes__option__attribute"
+        ),
         approval_status="approved",
         is_active=True,
         **lookup,
@@ -730,7 +761,11 @@ def product_single_view(request, product_slug=None, product_id=None):
             option_descs.append(f"{brid.option.attribute.name}: {brid.option.value}")
         v.variant_label = ", ".join(sorted(option_descs)) if option_descs else "Default"
 
-    reviews = Review.objects.filter(product=product).select_related("user").order_by("-created_at")
+    reviews = (
+        Review.objects.filter(product=product)
+        .select_related("user")
+        .order_by("-created_at")
+    )
     average_rating = reviews.aggregate(avg=Avg("rating"))["avg"] or 0
     total_reviews = reviews.count()
 
@@ -786,7 +821,11 @@ def submit_review(request, variant_id):
     variant = get_object_or_404(ProductVariant, id=variant_id)
     product = variant.product
 
-    if not OrderItem.objects.filter(order__user=request.user, variant__product=product, order__payment_status__in=["SUCCESS", "CONFIRMED", "DELIVERED"]).exists():
+    if not OrderItem.objects.filter(
+        order__user=request.user,
+        variant__product=product,
+        order__payment_status__in=["SUCCESS", "CONFIRMED", "DELIVERED"],
+    ).exists():
         messages.error(request, "Only verified buyers can add reviews.")
         return redirect("productsingle", product_slug=product.slug)
 
@@ -848,6 +887,7 @@ def my_reviews_view(request):
     )
 
     from django.core.paginator import Paginator
+
     paginator = Paginator(reviews, 10)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
@@ -870,26 +910,29 @@ def customer_dashboard_view(request):
     orders = Order.objects.filter(user=request.user)
 
     total_orders = orders.count()
-    total_spent_value = orders.aggregate(total=Sum('total_amount'))['total'] or 0
-    in_transit = orders.filter(order_status__in=['pending', 'processing']).count()
+    total_spent_value = orders.aggregate(total=Sum("total_amount"))["total"] or 0
+    in_transit = orders.filter(order_status__in=["pending", "processing"]).count()
 
-    user_reviews = Review.objects.filter(user=request.user).select_related('product').order_by('-created_at')
+    user_reviews = (
+        Review.objects.filter(user=request.user)
+        .select_related("product")
+        .order_by("-created_at")
+    )
     total_reviews = user_reviews.count()
     recent_reviews = user_reviews[:2]
 
     context = {
-        'total_orders': total_orders,
-        'total_spent': total_spent_value,
-        'in_transit': in_transit,
-        'total_reviews': total_reviews,
-        'recent_reviews': recent_reviews,
+        "total_orders": total_orders,
+        "total_spent": total_spent_value,
+        "in_transit": in_transit,
+        "total_reviews": total_reviews,
+        "recent_reviews": recent_reviews,
     }
 
-    return render(request, 'customer_templates/customer_dashboard.html', context)
+    return render(request, "customer_templates/customer_dashboard.html", context)
 
 
 # ----------------------------------------------------------------------------------
 
 
 # Create your views here.
-

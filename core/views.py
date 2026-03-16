@@ -22,13 +22,13 @@ def home_view(request):
     top_picks = (
         Product.objects.filter(approval_status="approved", is_active=True)
         .annotate(review_count=Count("review"))
-        .select_related('subcategory__category')
-        .prefetch_related('variants__images')
+        .select_related("subcategory__category")
+        .prefetch_related("variants__images")
         .order_by("-review_count", "-created_at")[:12]
     )
-    if user.is_authenticated and user.is_admin:            
-        return redirect(request.META.get('HTTP_REFERER', 'admin_dashboard'))
-    # if user.is_authenticated and user.role=="SELLER":            
+    if user.is_authenticated and user.is_admin:
+        return redirect(request.META.get("HTTP_REFERER", "admin_dashboard"))
+    # if user.is_authenticated and user.role=="SELLER":
     #     return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
     if user.is_authenticated:
         cart = Cart.objects.filter(user=user).first()
@@ -43,13 +43,17 @@ def home_view(request):
                 "cart_items": cart_items,
                 "categories": category_items,
                 "product_var": product_var,
-                "top_picks":top_picks
+                "top_picks": top_picks,
             },
         )
     return render(
         request,
         "core_templates/homepage.html",
-        {"categories": category_items, "product_var": product_var,"top_picks":top_picks},
+        {
+            "categories": category_items,
+            "product_var": product_var,
+            "top_picks": top_picks,
+        },
     )
 
 
@@ -64,13 +68,17 @@ def search_and_filter_view(request):
     user = request.user
 
     if query:
-        matched_variants = ProductVariant.objects.filter(
-            product__approval_status="approved", product__is_active=True
-        ).filter(
-            Q(product__name__icontains=query)
-            | Q(product__description__icontains=query)
-            | Q(product__subcategory__category__name__icontains=query)
-        ).distinct()
+        matched_variants = (
+            ProductVariant.objects.filter(
+                product__approval_status="approved", product__is_active=True
+            )
+            .filter(
+                Q(product__name__icontains=query)
+                | Q(product__description__icontains=query)
+                | Q(product__subcategory__category__name__icontains=query)
+            )
+            .distinct()
+        )
     elif selected_subcategory:
         matched_variants = ProductVariant.objects.filter(
             product__subcategory__slug=selected_subcategory,
@@ -114,8 +122,14 @@ def search_and_filter_view(request):
     elif sort_by == "newest":
         matched_variants = matched_variants.order_by("-created_at")
 
-    product_ids = matched_variants.values_list('product_id', flat=True).distinct()
-    product_var = Product.objects.filter(id__in=product_ids, approval_status='approved', is_active=True).select_related('subcategory__category').prefetch_related('variants__images')
+    product_ids = matched_variants.values_list("product_id", flat=True).distinct()
+    product_var = (
+        Product.objects.filter(
+            id__in=product_ids, approval_status="approved", is_active=True
+        )
+        .select_related("subcategory__category")
+        .prefetch_related("variants__images")
+    )
 
     if selected_categories and "all" not in selected_categories:
         product_var = product_var.filter(
@@ -124,10 +138,10 @@ def search_and_filter_view(request):
 
     # Price filtering using annotations since min/max_variant_price are properties (product-level)
     product_var = product_var.annotate(
-        min_product_price=models.Min('variants__selling_price'),
-        max_product_price=models.Max('variants__selling_price')
+        min_product_price=models.Min("variants__selling_price"),
+        max_product_price=models.Max("variants__selling_price"),
     )
-    
+
     if min_price:
         try:
             min_price_val = float(min_price)
@@ -145,12 +159,12 @@ def search_and_filter_view(request):
     # Sorting using annotations since min/max_variant_price are properties (product-level)
     if sort_by == "price-low-high":
         product_var = product_var.annotate(
-            min_product_price=models.Min('variants__selling_price')
-        ).order_by('min_product_price')
+            min_product_price=models.Min("variants__selling_price")
+        ).order_by("min_product_price")
     elif sort_by == "price-high-low":
         product_var = product_var.annotate(
-            max_product_price=models.Max('variants__selling_price')
-        ).order_by('-max_product_price')
+            max_product_price=models.Max("variants__selling_price")
+        ).order_by("-max_product_price")
     elif sort_by == "newest":
         product_var = product_var.order_by("-created_at")
 
@@ -197,9 +211,12 @@ def search_and_filter_view(request):
 
 
 def category_list_view(request):
-    categories = Category.objects.filter(is_active=True).prefetch_related(
-        "subcategories"
-    ).filter(subcategories__products__approval_status="approved").distinct()
+    categories = (
+        Category.objects.filter(is_active=True)
+        .prefetch_related("subcategories")
+        .filter(subcategories__products__approval_status="approved")
+        .distinct()
+    )
     context = {"categories": categories}
     return render(request, "core_templates/categories.html", context)
 
@@ -234,7 +251,7 @@ def register_view(request):
 
         user = CustomUser.objects.create_user(
             username=username, email=email, password=password
-            )
+        )
         user.save()
         return redirect("login")
     return render(request, "core_templates/registerpage.html")
