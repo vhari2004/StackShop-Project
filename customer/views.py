@@ -706,6 +706,12 @@ def product_list_view(request):
     else:
         wishlist_variant_ids = set()
 
+    cart_items = []
+    if request.user.is_authenticated:
+        cart = Cart.objects.filter(user=request.user).first()
+        if cart:
+            cart_items = CartItem.objects.filter(cart=cart)
+
     for product in products_page:
         product.is_in_wishlist = product.id in wishlist_variant_ids
 
@@ -717,6 +723,7 @@ def product_list_view(request):
             "categories": categories,
             "paginator": paginator,
             "page_obj": products_page,
+            "cart_items": cart_items,
         },
     )
 
