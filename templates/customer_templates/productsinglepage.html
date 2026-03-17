@@ -109,9 +109,9 @@
                     {{ variant.product.description|truncatewords:40 }}
                 </p>
 
-                <div class="bg-white rounded-2xl border border-gray-100 shadow-md p-6 lg:p-8 mb-8">
+                <div class="bg-slate-100 rounded-2xl border border-slate-300 shadow-md p-6 lg:p-8 mb-8">
                     
-                    <div class="flex items-end gap-3 mb-6 pb-6 border-b border-muted/20">
+                    <div class="flex items-end gap-3 mb-6 pb-6 border-b border-slate-200">
                         <span class="text-4xl font-black text-dark">₹{{ variant.selling_price }}</span>
                         {% if variant.mrp > variant.selling_price %}
                             <span class="text-lg font-bold text-muted line-through mb-1">₹{{ variant.mrp }}</span>
