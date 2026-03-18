@@ -186,7 +186,7 @@
                         {% endif %}
                     </div>
 
-                    <div class="p-5 flex flex-col flex-grow bg-white">
+                    <div class="p-5 flex flex-col flex-grow">
                         <div class="flex justify-between items-start mb-2">
                             <span class="text-[10px] font-extrabold uppercase tracking-widest text-muted">
                                 {{ x.subcategory.category.name|default:"General" }}
@@ -194,18 +194,18 @@
                         </div>
                         
                         <div class="flex items-start justify-between gap-3 mb-2">
-                            <h3 class="font-extrabold text-dark text-lg leading-tight line-clamp-2 group-hover:text-accent transition-colors flex-1" title="{{ x.name }}">
+                            <h3 class="font-extrabold text-dark text-lg leading-tight line-clamp-2 group-hover: transition-colors flex-1" title="{{ x.name }}">
                                 <a href="{% url 'productsingle' x.slug %}">{{ x.name }}</a>
                             </h3>
 
                             <a href="{% url 'productsingle' x.slug %}"
-                                class="flex-shrink-0 flex items-center gap-1 text-[10px] uppercase tracking-widest font-bold bg-light text-dark px-2.5 py-1.5 rounded-lg border border-muted/30 hover:bg-dark hover:text-white hover:border-dark transition-all mt-0.5 shadow-sm">
+                                class="flex-shrink-0 flex items-center gap-1 text-[10px] uppercase tracking-widest font-bold bg-white text-dark px-2.5 py-1.5 rounded-lg border border-muted/30 hover:bg-dark hover:text-white hover:border-dark transition-all mt-0.5 shadow-sm">
                                 <span>View</span>
                                 <span class="material-icons text-[14px]">arrow_forward</span>
                             </a>
                         </div>
 
-                        <div class="mt-auto pt-4 border-t border-muted/20">
+                        <div class="mt-auto pt-4 border-t border-slate-200">
                             <div class="flex flex-col">
                                 {% if x.min_variant_price and x.max_variant_price and x.min_variant_price < x.max_variant_price %}
                                     <span class="text-[11px] font-bold text-muted">From</span>
