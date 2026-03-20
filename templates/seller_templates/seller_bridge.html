@@ -46,11 +46,11 @@
     <div class="sticky top-0 z-50 w-full bg-light/70 backdrop-blur-md pb-2">
         <header class="w-full pt-1 px-4 z-50 sticky top-0">
             <nav class="bg-dark text-light rounded-xl px-6 py-4 flex items-center justify-between shadow-lg w-full">
-                <a href="{%url 'home'%}" class="flex items-center gap-3 cursor-pointer hover:opacity-90 transition-opacity">
+                <a href="{% url 'home' %}" class="flex items-center gap-3 cursor-pointer hover:opacity-90 transition-opacity">
                     <img alt="Logo" class="w-12 h-12 text-accent" fill="currentColor" src="{% static 'core/homehtml/stackshoplogo.png' %}" />
                     <span class="text-xl font-bold tracking-wide">StackShop</span>
                 </a>
-                <a href="{%url 'home'%}" class="text-sm font-bold text-muted hover:text-light transition-colors flex items-center gap-1.5">
+                <a href="{% url 'home' %}" class="text-sm font-bold text-muted hover:text-light transition-colors flex items-center gap-1.5">
                     <span class="material-icons text-sm">arrow_back</span>
                     Return to Shop
                 </a>
@@ -76,6 +76,24 @@
                     <p class="text-sm text-dark/80 font-medium">To maintain a secure marketplace, all new seller accounts require approval from the StackShop admin team. Please allow 24-48 hours for account activation.</p>
                 </div>
             </div>
+
+            {% if messages %}
+            <div class="mb-6 space-y-3">
+                {% for message in messages %}
+                <div class="px-4 py-3 rounded-lg text-sm font-medium
+                    {% if message.tags == 'error' %}
+                        bg-red-50 text-red-600 border border-red-200
+                    {% elif message.tags == 'success' %}
+                        bg-green-50 text-green-600 border border-green-200
+                    {% else %}
+                        bg-gray-100 text-gray-700
+                    {% endif %}
+                ">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
 
             <form id="registrationForm" action="#" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
@@ -182,10 +200,10 @@
                             <input class="w-full px-4 py-2.5 border border-muted rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark bg-transparent transition-colors placeholder-muted" type="text" id="tax_id" name="gst_no" placeholder="Optional for individuals">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-dark mb-1 uppercase flex items-center gap-1" for="tax_id">
-                                PAN / ID <span class="material-icons text-[12px] text-muted" title="GSTIN, EIN, or equivalent">info</span>
+                            <label class="block text-xs font-bold text-dark mb-1 uppercase flex items-center gap-1" for="pan_id">
+                                PAN / ID <span class="material-icons text-[12px] text-muted" title="PAN or equivalent">info</span>
                             </label>
-                            <input class="w-full px-4 py-2.5 border border-muted rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark bg-transparent transition-colors placeholder-muted" type="text" id="tax_id" name="pan_no" placeholder="Optional for individuals">
+                            <input class="w-full px-4 py-2.5 border border-muted rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark bg-transparent transition-colors placeholder-muted" type="text" id="pan_id" name="pan_no" placeholder="Optional for individuals">
                         </div>
 
                         <div class="md:col-span-2">
@@ -255,28 +273,61 @@
             const highlight = document.getElementById('tab-highlight');
             const btnName = document.getElementById('btn-name');
             const btnUser = document.getElementById('btn-username');
+            
+            // Get the input elements
+            const firstNameInput = document.getElementById('first_name');
+            const lastNameInput = document.getElementById('last_name');
+            const usernameInput = document.getElementById('username');
 
             if (type === 'name') {
+                // Show Name, Hide Username
                 nameFields.classList.remove('hidden');
                 usernameField.classList.add('hidden');
+                
+                // Update UI Styles
                 highlight.style.transform = 'translateX(0)';
                 btnName.classList.add('text-dark');
                 btnName.classList.remove('text-muted');
                 btnUser.classList.add('text-muted');
                 btnUser.classList.remove('text-dark');
+                
+                // Toggle Required Attributes
+                {% if not request.user.is_authenticated %}
+                firstNameInput.required = true;
+                lastNameInput.required = true;
+                usernameInput.required = false;
+                {% endif %}
+                
             } else {
+                // Show Username, Hide Name
                 nameFields.classList.add('hidden');
                 usernameField.classList.remove('hidden');
+                
+                // Update UI Styles
                 highlight.style.transform = 'translateX(100%)';
                 btnUser.classList.add('text-dark');
                 btnUser.classList.remove('text-muted');
                 btnName.classList.add('text-muted');
                 btnName.classList.remove('text-dark');
+                
+                // Toggle Required Attributes
+                {% if not request.user.is_authenticated %}
+                firstNameInput.required = false;
+                lastNameInput.required = false;
+                usernameInput.required = true;
+                {% endif %}
             }
         }
 
         document.addEventListener("DOMContentLoaded", function () {
             
+            // Initialize required state based on default visible tab
+            {% if not request.user.is_authenticated %}
+            document.getElementById('first_name').required = true;
+            document.getElementById('last_name').required = true;
+            document.getElementById('username').required = false;
+            {% endif %}
+
             // 2. Telephone Input Logic
             const phoneInput = document.querySelector("#phone");
             const form = document.getElementById("registrationForm");

@@ -258,7 +258,6 @@ def seller_inventory_view(request):
         .order_by("-created_at")[:200]
     )
 
-    # Populate old_stock for display to avoid unsupported template arithmetic operations
     for log in logs:
         log.old_stock = log.variant.stock_quantity - log.change_amount
 
@@ -326,26 +325,33 @@ def seller_broche_view(request):
             return redirect("seller-bridge")
     return render(request, "seller_templates/seller_broche.html")
 
+import random
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.db import transaction
+
 def seller_bridge(request):
     role = request.GET.get("role")
     if (
         request.user.is_authenticated
         and SellerProfile.objects.filter(user=request.user).exists()
-        and request.user.is_verified_seller
-
+        and getattr(request.user, 'is_verified_seller', False) 
     ):
         return redirect("dashboard")
+
     if request.method == "POST":
+
         if request.user.is_authenticated:
             seller_profile, created = SellerProfile.objects.get_or_create(
                 user=request.user
             )
             seller_profile.store_name = request.POST.get("store_name")
-            seller_profile.gst_number = request.POST.get("tax_id", "")
-            seller_profile.pan_number = request.POST.get("pan_number", "")
-            seller_profile.bank_account_number = request.POST.get("bank_account_number", "" )
+            seller_profile.gst_number = request.POST.get("gst_no", "")
+            seller_profile.pan_number = request.POST.get("pan_no", "")
+            seller_profile.bank_account_number = request.POST.get("bank_account_number", "")
             seller_profile.ifsc_code = request.POST.get("ifsc_code", "")
-            seller_profile.business_address = request.POST.get("description", "")
+            seller_profile.description = request.POST.get("description", "")
+            seller_profile.business_address = request.POST.get("business_address", "")
 
             if request.FILES.get("logo"):
                 seller_profile.store_image = request.FILES.get("logo")
@@ -354,64 +360,77 @@ def seller_bridge(request):
 
             user = request.user
             user.is_seller = True
+            phone = request.POST.get("phone_number")
+            if phone:
+                user.phone_number = phone
+                
             user.save()
             user.refresh_from_db()
 
-            return redirect("seller-profile")
+            messages.success(request, "Seller application submitted successfully!")
+            return redirect("seller-profile") 
+
         else:
-            first_name = request.POST.get("first_name")
-            last_name = request.POST.get("last_name")
-            # if first_name and last_name:
-            #     username=first_name+last_name
-            #     if CustomUser.objects.get(username=username).exist():
-            #         return render(request,"seller_templates/seller_bridge.html",{"error": "username already exist"},)
-            #     else:
-            #         username = first_name + last_name + str(random.randint(1000, 9999))
-            username = request.POST.get("username")
-            email = request.POST.get("email")
-            phone_number = request.POST.get("phone_number")
+            first_name = request.POST.get("first_name", "").strip()
+            last_name = request.POST.get("last_name", "").strip()
+            username = request.POST.get("username", "").strip()
+            email = request.POST.get("email", "").strip()
+            phone_number = request.POST.get("phone_number", "").strip()
             password = request.POST.get("password")
             cnf_password = request.POST.get("confirm_password")
+
             if password != cnf_password:
-                return render(
-                    request,
-                    "seller_templates/seller_bridge.html",
-                    {"error": "Passwords do not match"},
-                )
+                messages.error(request, "Passwords do not match!")
+                return render(request, "seller_templates/seller_bridge.html", {
+                    "email": email, "username": username
+                })
+
+            if not username:
+                base_username = f"{first_name.lower()}{last_name.lower()}"
+                if not base_username:
+                    base_username = email.split('@')[0]
+                username = base_username
+                if CustomUser.objects.filter(username=username).exists():
+                    username = f"{base_username}{random.randint(1000, 9999)}"
+
             if CustomUser.objects.filter(username=username).exists():
-                messages.error(request, "Username already exists!")
-                return render(
-                    request,
-                    "seller_templates/seller_bridge.html",
-                    {"username": username, "email": email},
-                )
+                messages.error(request, "Username already exists! Please choose another.")
+                return render(request, "seller_templates/seller_bridge.html", {"email": email})
+
             if CustomUser.objects.filter(email=email).exists():
-                messages.error(request, "Email already exists!")
-                return render(
-                    request,
-                    "seller_templates/seller_bridge.html",
-                    {"username": username, "email": email},
-                )
-            user = CustomUser.objects.create_user(
-                username=username,
-                email=email,
-                password=password,
-                phone_number=phone_number,
-                role="SELLER",
-                is_seller=True,
-            )
-            SellerProfile.objects.create(
-                user=user,
-                store_name=request.POST.get("store_name"),
-                business_address=request.POST.get("business_address"),
-                gst_number=request.POST.get("gst_no"),
-                description=request.POST.get("description"),
-                pan_number=request.POST.get("pan_no"),
-                bank_account_number=request.POST.get("bank_account_number"),
-                ifsc_code=request.POST.get("ifsc_code"),
-                store_image=request.FILES.get("logo"),
-            )
-        return redirect("login")
+                messages.error(request, "Email already exists! Please log in instead.")
+                return render(request, "seller_templates/seller_bridge.html", {"username": username})
+            try:
+                with transaction.atomic():
+                    user = CustomUser.objects.create_user(
+                        username=username,
+                        email=email,
+                        password=password,
+                        first_name=first_name,
+                        last_name=last_name,
+                        phone_number=phone_number,
+                        role="SELLER",
+                        is_seller=True,
+                    )
+                    SellerProfile.objects.create(
+                        user=user,
+                        store_name=request.POST.get("store_name"),
+                        business_address=request.POST.get("business_address", ""),
+                        gst_number=request.POST.get("gst_no", ""),
+                        pan_number=request.POST.get("pan_no", ""),
+                        description=request.POST.get("description", ""),
+                        bank_account_number=request.POST.get("bank_account_number", ""),
+                        ifsc_code=request.POST.get("ifsc_code", ""),
+                        store_image=request.FILES.get("logo"),
+                    )
+                    
+                messages.success(request, "Account created successfully! Please log in.")
+                return redirect("login")
+                
+            except Exception as e:
+                messages.error(request, f"An error occurred: {str(e)}")
+                return render(request, "seller_templates/seller_bridge.html")
+
     return render(request, "seller_templates/seller_bridge.html")
 
 
