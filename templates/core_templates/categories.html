@@ -73,7 +73,7 @@
                 
                 {% for category in categories %}
                     {% if category.is_active %}
-                    <a href="#cat-{{ category.slug }}" data-target="cat-{{ category.slug }}" class="category-pill group flex-shrink-0 flex items-center gap-2 bg-white border border-muted/30 text-dark rounded-full px-5 py-2.5 hover:bg-accent hover:border-transparent hover:-translate-y-1 shadow-sm hover:shadow-md active:scale-95 transition-all duration-300 text-sm font-bold">
+                    <a href="#cat-{{ category.name|slugify }}" data-target="cat-{{ category.name|slugify }}" class="category-pill group flex-shrink-0 flex items-center gap-2 bg-white border border-muted/30 text-dark rounded-full px-5 py-2.5 hover:bg-accent hover:border-transparent hover:-translate-y-1 shadow-sm hover:shadow-md active:scale-95 transition-all duration-300 text-sm font-bold">
                         <span class="material-icons text-dark text-lg group-hover:rotate-12 transition-transform">
                             {{ category.icon|default:"category" }}
                         </span> 
@@ -89,7 +89,7 @@
 
         {% for category in categories %}
             {% if category.is_active %}
-            <section id="cat-{{ category.slug }}" class="category-section scroll-mt-40 mb-24 reveal">
+            <section id="cat-{{ category.name|slugify }}" class="category-section scroll-mt-40 mb-24 reveal">
 
                 <div class="relative w-full h-48 md:h-64 rounded-2xl overflow-hidden mb-8 shadow-md group block border border-gray-100">
                     
