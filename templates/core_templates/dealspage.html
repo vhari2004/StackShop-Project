@@ -66,19 +66,19 @@
         {% for deal in deals %}
         <section id="deal-{{ deal.id }}" class="scroll-mt-40 mb-20">
             {% if deal.banner_image %}
-            <div class="relative bg-dark rounded-2xl overflow-hidden shadow-xl mb-8 flex flex-col md:flex-row border border-dark">
-                <div class="p-8 md:p-12 lg:p-16 md:w-1/2 flex flex-col justify-center relative z-10">
-                    <div class="inline-flex items-center gap-2 bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full mb-4 w-max uppercase tracking-widest animate-soft-pulse shadow-sm">
+            <div class="relative bg-dark rounded-2xl overflow-hidden shadow-md mb-6 flex flex-col md:flex-row border border-dark">
+                <div class="p-3 md:p-4 lg:p-6 md:w-1/2 flex flex-col justify-center relative z-10">
+                    <div class="inline-flex items-center gap-2 bg-red-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full mb-2 w-max uppercase tracking-widest animate-soft-pulse shadow-sm">
                         <span class="w-2 h-2 rounded-full bg-white"></span> {{ deal.discount_percentage }}% OFF
                     </div>
-                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-4">
+                    <h1 class="text-xl md:text-2xl lg:text-3xl font-extrabold text-white leading-tight mb-2">
                         {{ deal.title }}
                     </h1>
                     {% if deal.description %}
-                    <p class="text-muted font-medium mb-8 max-w-md">{{ deal.description }}</p>
+                    <p class="text-muted font-medium mb-3 max-w-sm text-xs">{{ deal.description }}</p>
                     {% endif %}
                 </div>
-                <div class="md:w-1/2 h-64 md:h-auto relative">
+                <div class="md:w-1/2 h-28 md:h-40 relative">
                     <div class="absolute inset-0 bg-gradient-to-r from-dark to-transparent z-10 hidden md:block"></div>
                     <div class="absolute inset-0 bg-gradient-to-t from-dark to-transparent z-10 md:hidden"></div>
                     <img src="{{ deal.banner_image.url }}" alt="{{ deal.title }}" class="w-full h-full object-cover opacity-80 mix-blend-overlay">
