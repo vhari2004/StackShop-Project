@@ -14,7 +14,7 @@ from core.decorators import admin_required, seller_required
 from customer.models import Cart, CartItem, WishlistItem
 from .models import CustomUser, EmailOTP, Category, Banner
 from seller.models import *
-from django.db.models import Q, Count
+from django.db.models import Q
 import random
 
 
@@ -40,7 +40,6 @@ def home_view(request):
 
     top_picks = (
         Product.objects.filter(approval_status="approved", is_active=True)
-        .annotate(review_count=Count("review"))
         .select_related("subcategory__category")
         .prefetch_related("variants__images")
         .order_by("-review_count", "-created_at")[:12]

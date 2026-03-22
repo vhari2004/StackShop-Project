@@ -64,6 +64,7 @@ class Product(models.Model):
     approval_status = models.CharField(max_length=20,choices=product_choices,default='pending')
     admin_remarks = models.TextField(blank=True, null=True, help_text="Admin remarks for product approval/rejection")
     is_active = models.BooleanField(default=True)
+    review_count = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
@@ -76,6 +77,8 @@ class Product(models.Model):
             models.Index(fields=['slug']),
             models.Index(fields=['created_at']),
             models.Index(fields=['is_active']),
+            models.Index(fields=['review_count']),
+            models.Index(fields=['-review_count', '-created_at']),
         ]
         unique_together = [['slug', 'seller']]
         ordering = ['-created_at']
