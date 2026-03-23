@@ -120,14 +120,12 @@
 
                     <div class="flex flex-col gap-4">
                         <div class="mb-4">
-                            <label for="variant-selector" class="text-xs font-black uppercase tracking-wide text-muted">Choose Variant</label>
-                            <select id="variant-selector" class="w-full mt-2 bg-light border border-gray-200 rounded-xl px-3 py-3 font-bold text-sm text-dark focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark shadow-sm cursor-pointer" onchange="onVariantChange(this)">
+                            <label for="variant-selector" class="text-xs font-black uppercase tracking-wide text-muted">Stock Availability</label>
                                 {% for v in variants %}
-                                    <option value="{{ v.id }}" {% if v.id == variant.id %}selected{% endif %}>
-                                        {{ v.variant_label }} ({{ v.stock_quantity }} in stock, ₹{{ v.selling_price }})
-                                    </option>
+                                <span class="inline-block bg-green-100 text-green-800 px-2 py-1 rounded-md text-sm">
+                                    {{ v.stock_quantity }}
+                                </span>                               
                                 {% endfor %}
-                            </select>
                         </div>
 
                         <form action="{% url 'add_to_cart' variant.id %}" method="POST" class="flex gap-3">
