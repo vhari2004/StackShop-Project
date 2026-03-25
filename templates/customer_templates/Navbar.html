@@ -79,7 +79,7 @@
                         <div class="relative group py-2">
                             <button class="flex items-center gap-1 text-muted hover:text-light transition-colors focus:outline-none active:scale-95">
                                 <span class="material-icons text-xl md:text-2xl">person_outline</span>
-                                <span class="text-sm hidden sm:inline font-semibold"><a href="{% url 'profile' %}">{{ user.username|default:"guest" }}</a></span>
+                                <span class="text-sm hidden sm:inline font-semibold"><a href="{% url 'profile' %}" class="hover:text-accent">{{ user.username|default:"guest" }}</a></span>
                             </button>
                             <div class="absolute top-full right-0 mt-1 w-64 bg-light text-dark rounded-xl shadow-2xl border border-muted/30 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0 z-50">
                                 <div class="absolute -top-4 right-0 w-full h-4"></div>
