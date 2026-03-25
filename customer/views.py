@@ -196,6 +196,9 @@ def delete_collection_view(request, wishlist_id):
 def add_to_cart_view(request, variant_id):
     user = request.user
     product_variant = get_object_or_404(ProductVariant, id=variant_id)
+    if product_variant.product.seller.user == user:
+        messages.error(request, "You cannot add your own product to the cart.")
+        return redirect(request.META.get("HTTP_REFERER", "product_list"))
     cart, _ = Cart.objects.get_or_create(user=user)
 
     try:

@@ -102,6 +102,13 @@
                         {{ product.name }}
                     </h1>
                     
+                    {% if product.seller %}
+                    <div class="flex items-center gap-2 mb-4 bg-light px-3 py-2 rounded-lg w-max border border-gray-100">
+                        <span class="material-icons text-[16px] text-muted">storefront</span>
+                        <p class="text-xs font-bold text-dark uppercase tracking-widest">Sold by: <a href="#" >{{ product.seller.shop_name|default:product.seller.user.get_full_name }}</a></p>
+                    </div>
+                    {% endif %}
+                    
                     <div class="flex items-center gap-4">
                         <div class="flex items-center text-yellow-500 bg-yellow-50 px-2 py-1 rounded border border-yellow-100">
                             <span class="font-extrabold text-dark text-sm mr-1">{{ average_rating|default:"0.0" }}</span>
