@@ -9,6 +9,11 @@
                 <span class="text-base md:text-lg font-bold tracking-wide hidden sm:inline">StackShop</span>
             </a>
 
+            <!-- Mobile Welcome Text -->
+            <div class="flex-1 text-center md:hidden">
+                <span class="text-xs text-muted/80 font-medium tracking-wide">Welcome to StackShop</span>
+            </div>
+
             <div class="flex-1 max-w-xl mx-4 lg:mx-12 hidden md:block">
                 <form action="{% url 'search' %}" method="GET" class="w-full">
                     <div class="flex gap-2 items-end">
@@ -87,6 +92,27 @@
                                     <div class="px-4 py-3 mb-1 border-b border-muted/30">
                                         <p class="text-xs text-muted uppercase tracking-widest font-bold">Signed in as</p>
                                         <p class="text-sm font-extrabold truncate"><a href="{% url 'profile' %}" class="text-sm font-extrabold truncate hover:text-accent">{{ user.username|default:"guest" }}</a></p>
+                                    </div>
+                                    <a href="{% url 'profile' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors text-sm font-bold"><span class="material-icons text-[18px] text-muted">badge</span> My Profile</a>
+                                    <a href="{% url 'order-history' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors text-sm font-bold"><span class="material-icons text-[18px] text-muted">inventory_2</span> Orders</a>
+                                    <a href="{% url 'wishlist' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors text-sm font-bold"><span class="material-icons text-[18px] text-muted">favorite_border</span> Wishlist</a>
+                                    <a href="{% url 'address' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors text-sm font-bold"><span class="material-icons text-[18px] text-muted">location_on</span> Saved Address</a>
+                                    <div class="border-t border-muted/30 my-1"></div>
+                                    <a href="{% url 'logout' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-red-50 text-red-500 hover:text-red-600 transition-colors text-sm font-bold"><span class="material-icons text-[18px] text-red-400">logout</span> Logout</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mobile dropdown button -->
+                        <div class="md:hidden relative">
+                            <button id="mobile-user-dropdown-btn" class="text-muted hover:text-light focus:outline-none transition-transform active:scale-95 p-1">
+                                <span class="material-icons text-lg">expand_more</span>
+                            </button>
+                            <div id="mobile-user-dropdown" class="hidden absolute top-full right-0 mt-2 w-64 bg-light text-dark rounded-xl shadow-2xl border border-muted/30 z-50">
+                                <div class="p-2 flex flex-col max-h-[70vh] overflow-y-auto hide-scrollbar">
+                                    <div class="px-4 py-3 mb-1 border-b border-muted/30">
+                                        <p class="text-xs text-muted uppercase tracking-widest font-bold">Signed in as</p>
+                                        <p class="text-sm font-extrabold truncate">{{ user.username|default:"guest" }}</p>
                                     </div>
                                     <a href="{% url 'profile' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors text-sm font-bold"><span class="material-icons text-[18px] text-muted">badge</span> My Profile</a>
                                     <a href="{% url 'order-history' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/50 transition-colors text-sm font-bold"><span class="material-icons text-[18px] text-muted">inventory_2</span> Orders</a>
@@ -215,6 +241,24 @@
                 }
             }
         });
+
+        // Mobile user dropdown functionality
+        const mobileUserDropdownBtn = document.getElementById('mobile-user-dropdown-btn');
+        const mobileUserDropdown = document.getElementById('mobile-user-dropdown');
+
+        if (mobileUserDropdownBtn && mobileUserDropdown) {
+            mobileUserDropdownBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                mobileUserDropdown.classList.toggle('hidden');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!mobileUserDropdown.contains(e.target) && !mobileUserDropdownBtn.contains(e.target) && !mobileUserDropdown.classList.contains('hidden')) {
+                    mobileUserDropdown.classList.add('hidden');
+                }
+            });
+        }
 
         // Close menu when clicking outside
         document.addEventListener('click', (e) => {

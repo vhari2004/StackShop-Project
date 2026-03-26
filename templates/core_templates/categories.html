@@ -73,10 +73,14 @@
                 
                 {% for category in categories %}
                     {% if category.is_active %}
-                    <a href="#cat-{{ category.name|slugify }}" data-target="cat-{{ category.name|slugify }}" class="category-pill group flex-shrink-0 flex items-center gap-2 bg-white border border-muted/30 text-dark rounded-full px-5 py-2.5 hover:bg-accent hover:border-transparent hover:-translate-y-1 shadow-sm hover:shadow-md active:scale-95 transition-all duration-300 text-sm font-bold">
-                        <span class="material-icons text-dark text-lg group-hover:rotate-12 transition-transform">
-                            {{ category.icon|default:"category" }}
-                        </span> 
+                    <a href="#cat-{{ category.name|slugify }}" data-target="cat-{{ category.name|slugify }}" class="category-pill group flex-shrink-0 flex items-center gap-3 bg-white border border-muted/30 text-dark rounded-full px-4 py-2.5 hover:bg-accent hover:border-transparent hover:-translate-y-1 shadow-sm hover:shadow-md active:scale-95 transition-all duration-300 text-sm font-bold whitespace-nowrap">
+                        <span class="flex items-center justify-center w-6 h-6 rounded-full bg-light overflow-hidden">
+                            {% if category.image_url %}
+                            <img src="{{ category.image_url.url }}" alt="{{ category.name }}" class="w-full h-full object-cover" />
+                            {% else %}
+                            <span class="material-icons text-accent text-sm">{{ category.icon|default:"category" }}</span>
+                            {% endif %}
+                        </span>
                         {{ category.name }}
                     </a>
                     {% endif %}
