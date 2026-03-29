@@ -92,8 +92,7 @@
                         class="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-widest border border-red-200">Rejected</span>
                     {% endif %}
                 </div>
-                <p class="text-muted font-medium">Editing: <span class="text-dark font-bold">{{
-                        product.name|default:"Studio Bass Headphones" }}</span></p>
+                <p class="text-muted font-medium">Editing: <span class="text-dark font-bold">{{product.name|default:"Studio Bass Headphones" }}</span></p>
             </div>
 
             <a href="#"
@@ -144,8 +143,7 @@
                         <select name="category" id="category-select" required
                             class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark">
                             {% for cat in categories %}
-                            <option value="{{ cat.id }}" {% if cat.id==product.subcategory.category.id %}selected{%
-                                endif %}>
+                            <option value="{{ cat.id }}" {% if cat.id == product.subcategory.category.id %}selected{% endif %}>
                                 {{ cat.name }}
                             </option>
                             {% endfor %}
@@ -158,7 +156,7 @@
                         <select name="subcategory" id="subcategory-select" required
                             class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark">
                             {% for sub in subcategories %}
-                            <option value="{{ sub.id }}" {% if sub.id==product.subcategory.id %}selected{% endif %}>
+                            <option value="{{ sub.id }}" data-category-id="{{ sub.category.id }}" {% if sub.id == product.subcategory.id %}selected{% endif %}>
                                 {{ sub.name }}
                             </option>
                             {% endfor %}
@@ -426,6 +424,43 @@
         document.addEventListener('DOMContentLoaded', () => {
             toggleReturnDays();
             updateStatusText();
+
+            const categorySelect = document.getElementById('category-select');
+            const subcategorySelect = document.getElementById('subcategory-select');
+
+            function filterSubcategories() {
+                if (!categorySelect || !subcategorySelect) return;
+
+                const selectedCategoryId = categorySelect.value;
+                let firstVisibleOption = null;
+                let selectedStillValid = false;
+
+                Array.from(subcategorySelect.options).forEach(option => {
+                    if (option.dataset.categoryId === selectedCategoryId) {
+                        option.hidden = false;
+                        option.disabled = false;
+                        if (!firstVisibleOption) {
+                            firstVisibleOption = option;
+                        }
+                        if (option.selected) {
+                            selectedStillValid = true;
+                        }
+                    } else {
+                        option.hidden = true;
+                        option.disabled = true;
+                        option.selected = false;
+                    }
+                });
+
+                if (!selectedStillValid && firstVisibleOption) {
+                    firstVisibleOption.selected = true;
+                }
+            }
+
+            if (categorySelect && subcategorySelect) {
+                categorySelect.addEventListener('change', filterSubcategories);
+                filterSubcategories();
+            }
         });
 
         // Hide/disable Return Days if "Returnable" is turned off

@@ -240,18 +240,23 @@
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="border-2 border-dashed border-dark rounded-xl p-6 flex flex-col items-center justify-center text-center bg-light/20 relative group hover:bg-light/50 transition-colors">
+                        <div id="primary-image-preview" class="hidden w-full mb-4 rounded-xl overflow-hidden border border-muted/30">
+                            <img src="" alt="Primary Image Preview" class="w-full h-40 object-cover">
+                        </div>
                         <span class="material-icons text-4xl text-dark mb-2">add_photo_alternate</span>
                         <h4 class="text-sm font-bold text-dark mb-1">Upload Primary Image</h4>
                         <p class="text-[10px] text-muted uppercase tracking-widest mb-4">Max 2MB (JPG, PNG)</p>
-                        <input type="file" name="primary_image" accept="image/*" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                        <input id="primary-image-input" type="file" name="primary_image" accept="image/*" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
                         <span class="bg-dark text-light px-4 py-2 rounded text-xs font-bold pointer-events-none">Choose File</span>
                     </div>
 
                     <div class="border-2 border-dashed border-muted rounded-xl p-6 flex flex-col items-center justify-center text-center bg-light/20 relative group hover:bg-light/50 transition-colors">
+                        <div id="additional-images-preview" class="hidden w-full mb-4 flex flex-wrap gap-3"></div>
+                        <div id="additional-images-count" class="hidden w-full mb-4 text-sm text-dark font-semibold"></div>
                         <span class="material-icons text-4xl text-muted mb-2">collections</span>
                         <h4 class="text-sm font-bold text-muted mb-1">Additional Images</h4>
                         <p class="text-[10px] text-muted uppercase tracking-widest mb-4">Select multiple files</p>
-                        <input type="file" name="additional_images" accept="image/*" multiple class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                        <input id="additional-images-input" type="file" name="additional_images" accept="image/*" multiple class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
                         <span class="border border-muted text-muted px-4 py-2 rounded text-xs font-bold pointer-events-none group-hover:bg-muted group-hover:text-white transition-colors">Choose Files</span>
                     </div>
                 </div>
@@ -272,6 +277,10 @@
 const categorySelect = document.getElementById("category-select");
 const subcategorySelect = document.getElementById("subcategory-select");
 const subcategoryOptions = Array.from(document.querySelectorAll(".subcategory-option"));
+const primaryImageInput = document.getElementById("primary-image-input");
+const additionalImagesInput = document.getElementById("additional-images-input");
+const primaryPreview = document.getElementById("primary-image-preview");
+const additionalPreview = document.getElementById("additional-images-preview");
 
 categorySelect.addEventListener("change", function () {
     const selectedCategory = this.value;
@@ -286,6 +295,64 @@ categorySelect.addEventListener("change", function () {
         }
     });
 });
+
+function renderPrimaryPreview(file) {
+    if (!file || !primaryPreview) return;
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        const img = primaryPreview.querySelector('img');
+        img.src = e.target.result;
+        primaryPreview.classList.remove('hidden');
+    };
+    reader.readAsDataURL(file);
+}
+
+const additionalImagesCount = document.getElementById('additional-images-count');
+
+function renderAdditionalPreviews(files) {
+    if (!files || !additionalPreview) return;
+    additionalPreview.innerHTML = '';
+    const fileList = Array.from(files);
+
+    if (fileList.length === 0) {
+        additionalPreview.classList.add('hidden');
+        if (additionalImagesCount) {
+            additionalImagesCount.classList.add('hidden');
+            additionalImagesCount.textContent = '';
+        }
+        return;
+    }
+
+    fileList.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const thumb = document.createElement('div');
+            thumb.className = 'w-20 h-20 rounded-xl overflow-hidden border border-muted/20 bg-white';
+            thumb.innerHTML = `<img src="${e.target.result}" alt="Additional Preview" class="w-full h-full object-cover">`;
+            additionalPreview.appendChild(thumb);
+            additionalPreview.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+    });
+
+    if (additionalImagesCount) {
+        additionalImagesCount.textContent = `${fileList.length} additional image${fileList.length === 1 ? '' : 's'} selected`;
+        additionalImagesCount.classList.remove('hidden');
+    }
+}
+
+if (primaryImageInput) {
+    primaryImageInput.addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        renderPrimaryPreview(file);
+    });
+}
+
+if (additionalImagesInput) {
+    additionalImagesInput.addEventListener('change', function (event) {
+        renderAdditionalPreviews(event.target.files);
+    });
+}
 </script>
     
 </body>

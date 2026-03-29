@@ -506,6 +506,15 @@ def add_product(request):
 def update_product(request, product_slug):
     seller = request.user.seller_profile
     product = get_object_or_404(Product, slug=product_slug, seller=seller)
+    categories = Category.objects.all()
+    subcategories = SubCategory.objects.all()
+    variant = product.variants.first()
+    primary_image = None
+    additional_images = []
+
+    if variant:
+        primary_image = ProductImage.objects.filter(variant=variant, is_primary=True).first()
+        additional_images = ProductImage.objects.filter(variant=variant, is_primary=False)
 
     if request.method == "POST":
         product.name = request.POST.get("name")
@@ -514,7 +523,15 @@ def update_product(request, product_slug):
         product.save()
         return redirect("dashboard")
 
-    return render(request, "seller_templates/update_product.html", {"product": product})
+    context = {
+        "product": product,
+        "categories": categories,
+        "subcategories": subcategories,
+        "variant": variant,
+        "primary_image": primary_image,
+        "additional_images": additional_images,
+    }
+    return render(request, "seller_templates/update_product.html", context)
 
 
 @verified_seller_required
