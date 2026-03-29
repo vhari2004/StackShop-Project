@@ -140,14 +140,15 @@
             
             <section id="content-sellers" class="page-content block">
 
-                <div class="flex items-center gap-3 mb-6">
-                    <button onclick="filterSellers('all')" class="seller-filter-btn active-filter bg-dark text-light px-5 py-2 rounded-lg text-xs font-bold shadow-sm transition-all" data-filter="all">All Sellers</button>
-                    <button onclick="filterSellers('pending')" class="seller-filter-btn bg-yellow-100 text-yellow-700 px-5 py-2 rounded-lg text-xs font-bold transition-all hover:shadow-md" data-filter="pending">Pending Review</button>
-                    <button onclick="filterSellers('approved')" class="seller-filter-btn bg-green-100 text-green-700 px-5 py-2 rounded-lg text-xs font-bold transition-all hover:shadow-md" data-filter="approved">Approved</button>
-                    <button onclick="filterSellers('rejected')" class="seller-filter-btn bg-red-100 text-red-700 px-5 py-2 rounded-lg text-xs font-bold transition-all hover:shadow-md" data-filter="rejected">Rejected</button>
+                <div class="flex flex-wrap gap-3 items-center mb-6">
+                    <button onclick="filterSellers('all')" class="seller-filter-btn active-filter bg-dark text-light px-4 py-2 rounded-lg text-xs font-bold shadow-sm transition-all" data-filter="all">All Sellers</button>
+                    <button onclick="filterSellers('pending')" class="seller-filter-btn bg-yellow-100 text-yellow-700 px-4 py-2 rounded-lg text-xs font-bold transition-all hover:shadow-md" data-filter="pending">Pending Review</button>
+                    <button onclick="filterSellers('approved')" class="seller-filter-btn bg-green-100 text-green-700 px-4 py-2 rounded-lg text-xs font-bold transition-all hover:shadow-md" data-filter="approved">Approved</button>
+                    <button onclick="filterSellers('rejected')" class="seller-filter-btn bg-red-100 text-red-700 px-4 py-2 rounded-lg text-xs font-bold transition-all hover:shadow-md" data-filter="rejected">Rejected</button>
                 </div>
                 <div class="bg-white border border-muted/30 rounded-2xl shadow-sm overflow-hidden">
-                    <table class="w-full text-left border-collapse">
+                    <div class="overflow-x-auto hide-scrollbar">
+                    <table class="min-w-full text-left border-collapse">
                         <thead>
                             <tr
                                 class="bg-light/50 text-muted text-[10px] uppercase tracking-widest border-b border-muted/20">
@@ -233,6 +234,7 @@
                             {% endfor %}
                         </tbody>
                     </table>
+                    </div>
                 </div>
             </section>
 
@@ -314,27 +316,28 @@
 
             <section id="content-products" class="page-content hidden">
 
-                <div class="flex items-center justify-between mb-6">
-                    <div class="flex items-center gap-3">
-                        <button onclick="filterProducts('all')" class="product-filter-btn active-filter bg-dark text-light px-5 py-2 rounded-lg text-xs font-bold shadow-sm transition-all" data-filter="all">
+                <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-6">
+                    <div class="flex flex-wrap gap-3 items-center">
+                        <button onclick="filterProducts('all')" class="product-filter-btn active-filter bg-dark text-light px-4 py-2 rounded-lg text-xs font-bold shadow-sm transition-all" data-filter="all">
                             All Products
                         </button>
-                        <button onclick="filterProducts('pending')" class="product-filter-btn bg-yellow-100 text-yellow-700 px-5 py-2 rounded-lg text-xs font-bold transition-all hover:shadow-md" data-filter="pending">
+                        <button onclick="filterProducts('pending')" class="product-filter-btn bg-yellow-100 text-yellow-700 px-4 py-2 rounded-lg text-xs font-bold transition-all hover:shadow-md" data-filter="pending">
                             Pending Review
                         </button>
-                        <button onclick="filterProducts('approved')" class="product-filter-btn bg-green-100 text-green-700 px-5 py-2 rounded-lg text-xs font-bold transition-all hover:shadow-md" data-filter="approved">
+                        <button onclick="filterProducts('approved')" class="product-filter-btn bg-green-100 text-green-700 px-4 py-2 rounded-lg text-xs font-bold transition-all hover:shadow-md" data-filter="approved">
                             Approved
                         </button>
-                        <button onclick="filterProducts('rejected')" class="product-filter-btn bg-red-100 text-red-700 px-5 py-2 rounded-lg text-xs font-bold transition-all hover:shadow-md" data-filter="rejected">
+                        <button onclick="filterProducts('rejected')" class="product-filter-btn bg-red-100 text-red-700 px-4 py-2 rounded-lg text-xs font-bold transition-all hover:shadow-md" data-filter="rejected">
                             Rejected
                         </button>
                     </div>
                     <input type="text" id="productSearch" placeholder="Search products..."
-                        class="border border-muted/50 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-dark">
+                        class="w-full md:w-80 border border-muted/50 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-dark">
                 </div>
 
                 <div class="bg-white border border-muted/30 rounded-2xl shadow-sm overflow-hidden">
-                    <table class="w-full text-left border-collapse">
+                    <div class="overflow-x-auto hide-scrollbar">
+                    <table class="min-w-full text-left border-collapse">
                         <thead>
                             <tr
                                 class="bg-light/50 text-muted text-[10px] uppercase tracking-widest border-b border-muted/20">
@@ -430,6 +433,7 @@
                             {% endfor %}
                         </tbody>
                     </table>
+                    </div>
                 </div>
             </section>
 
