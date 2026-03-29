@@ -1,8 +1,10 @@
 from urllib import request
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 from core.decorators import customer_required
 from django.contrib import messages
+from django.core.mail import send_mail
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Avg, Sum
 from seller.models import Product, ProductVariant, InventoryLog
@@ -15,11 +17,11 @@ from customer.models import (
     PaymentOrder,
     OrderItem,
     Review,
+    ReactivationRequest,
 )
 from core.models import Address, Category
 import razorpay
 from django.conf import settings
-from django.shortcuts import render
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
@@ -50,25 +52,92 @@ def user_profile_view(request):
     return render(request, "customer_templates/profile.html", {"user": user})
 
 
+def _get_email_sender():
+    return getattr(settings, "DEFAULT_FROM_EMAIL", settings.EMAIL_HOST_USER or "noreply@stackshop.com")
+
+
+def _send_email(recipient_email, subject, message):
+    if not recipient_email:
+        return
+    from_email = _get_email_sender()
+    send_mail(subject, message, from_email, [recipient_email], fail_silently=True)
+
+
+def _notify_admin_of_reactivation(user):
+    admin_email = getattr(settings, "ADMIN_EMAIL", settings.EMAIL_HOST_USER)
+    if not admin_email:
+        return
+    subject = "StackShop Reactivation Request"
+    message = (
+        f"Customer {user.get_full_name() or user.username} ({user.email}) has deactivated their account "
+        "and requested re-activation. Please review the request in the admin dashboard."
+    )
+    _send_email(admin_email, subject, message)
+
+
 @customer_required
 def settings_view(request):
     user = request.user
     if request.method == "POST":
-        current_password = request.POST.get("current_password")
-        new_password = request.POST.get("new_password")
-        confirm_password = request.POST.get("confirm_password")
+        action = request.POST.get("action", "change_password")
 
-        if not user.check_password(current_password):
-            messages.error(request, "Current password is incorrect.")
-        elif new_password != confirm_password:
-            messages.error(request, "New password and confirm password do not match.")
-        elif len(new_password) < 8:
-            messages.error(request, "New password must be at least 8 characters long.")
-        else:
-            user.set_password(new_password)
+        if action == "change_password":
+            current_password = request.POST.get("current_password")
+            new_password = request.POST.get("new_password")
+            confirm_password = request.POST.get("confirm_password")
+
+            if not user.check_password(current_password):
+                messages.error(request, "Current password is incorrect.")
+            elif new_password != confirm_password:
+                messages.error(request, "New password and confirm password do not match.")
+            elif len(new_password) < 8:
+                messages.error(request, "New password must be at least 8 characters long.")
+            else:
+                user.set_password(new_password)
+                user.save()
+                messages.success(request, "Password changed successfully.")
+                return redirect("settings")
+
+        elif action == "deactivate_account":
+            ReactivationRequest.objects.create(user=user)
+            user.is_active = False
             user.save()
-            messages.success(request, "Password changed successfully.")
-            return redirect("settings")
+
+            subject = "StackShop Account Deactivated"
+            message = (
+                f"Hello {user.get_full_name() or user.username},\n\n"
+                "Your StackShop account has been deactivated. "
+                "An account re-activation request has been sent to admin. "
+                "You will need admin approval to restore access.\n\n"
+                "If this was not you, please contact support.\n\n"
+                "Thank you,\nStackShop Team"
+            )
+            _send_email(user.email, subject, message)
+            _notify_admin_of_reactivation(user)
+            logout(request)
+            messages.success(
+                request,
+                "Your account has been deactivated. Admin has been notified and will review your reactivation request."
+            )
+            return redirect("home")
+
+        elif action == "delete_account":
+            old_email = user.email
+            old_name = user.get_full_name() or user.username
+            user.delete()
+            logout(request)
+
+            subject = "StackShop Account Deleted"
+            message = (
+                f"Hello {old_name},\n\n"
+                "Your StackShop account has been permanently deleted. "
+                "All your customer data has been removed from our system.\n\n"
+                "If you change your mind later, you will need to register again.\n\n"
+                "Thank you,\nStackShop Team"
+            )
+            _send_email(old_email, subject, message)
+            messages.success(request, "Your account has been permanently deleted.")
+            return redirect("home")
 
     return render(request, "customer_templates/settings.html", {"user": user})
 
@@ -325,6 +394,65 @@ def update_cart_view(request, cart_item_id):
     return redirect("cart_view")
 
 
+def _create_address_from_post(request):
+    has_addresses = Address.objects.filter(user=request.user).exists()
+    first_name = request.POST.get("first_name", "").strip()
+    last_name = request.POST.get("last_name", "").strip()
+    full_name = f"{first_name} {last_name}".strip()
+    phone_number = request.POST.get("phone_number", "").strip()
+    locality = request.POST.get("locality", "").strip()
+    city = request.POST.get("city", "").strip()
+    state = request.POST.get("state", "").strip()
+    pincode = request.POST.get("pincode", "").strip()
+    country = request.POST.get("country", "India").strip() or "India"
+    house_info = request.POST.get("house_info", "").strip()
+    landmark = request.POST.get("landmark", "").strip()
+    address_type = request.POST.get("address_type", "Home")
+    is_default_checked = request.POST.get("is_default") == "on"
+
+    if not has_addresses:
+        is_default_checked = True
+
+    if not (
+        first_name
+        and last_name
+        and phone_number
+        and locality
+        and city
+        and state
+        and pincode
+        and house_info
+    ):
+        messages.error(request, "Please complete all required address fields.")
+        return False
+
+    if not re.fullmatch(r"\d{6}", pincode):
+        messages.error(request, "PIN code must be exactly 6 digits.")
+        return False
+
+    if is_default_checked:
+        Address.objects.filter(user=request.user, is_default=True).update(
+            is_default=False
+        )
+
+    Address.objects.create(
+        user=request.user,
+        full_name=full_name,
+        phone_number=phone_number,
+        locality=locality,
+        city=city,
+        state=state,
+        pincode=pincode,
+        country=country,
+        house_info=house_info,
+        landmark=landmark,
+        address_type=address_type,
+        is_default=is_default_checked,
+    )
+    messages.success(request, "Address added successfully.")
+    return True
+
+
 @customer_required
 def checkout_view(request):
     cart = get_object_or_404(Cart, user=request.user)
@@ -340,6 +468,10 @@ def checkout_view(request):
     cart_total = sum(item.get_total() for item in cart_items)
     tax_amount = cart_total * 0.18
     total_amount = cart_total + tax_amount
+
+    if request.method == "POST" and request.POST.get("add_address"):
+        if _create_address_from_post(request):
+            return redirect("checkout")
 
     selected_address_id = request.POST.get("address_id")
     payment_method = request.POST.get("payment_method", "online")
@@ -359,6 +491,11 @@ def checkout_view(request):
         "selected_address": selected_address,
         "payment_method": payment_method,
     }
+
+    if not selected_address:
+        context["payment"] = None
+        context["razorpay_key"] = settings.RAZORPAY_KEY_ID
+        return render(request, "customer_templates/checkout.html", context)
 
     if request.method == "POST" and payment_method == "cod":
         selected_address_id = request.POST.get("address_id")

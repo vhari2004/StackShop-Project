@@ -115,11 +115,84 @@
                     </form>
                 </div>
                 {% else %}
-                <div class="bg-yellow-50 border border-yellow-200 text-yellow-700 px-6 py-6 rounded-2xl shadow-sm flex flex-col items-center justify-center text-center">
-                    <span class="material-icons text-yellow-500 text-4xl mb-2">location_off</span>
-                    <strong class="text-lg mb-1">No Delivery Address Found</strong>
-                    <p class="text-sm mb-4">Please add a delivery address before proceeding with checkout.</p>
-                    <a href="{% url 'address' %}" class="bg-yellow-500 text-white px-6 py-2.5 rounded-lg font-bold shadow-sm hover:bg-yellow-600 transition-colors">Add Address</a>
+                <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-muted/30">
+                    <div class="mb-6">
+                        <h2 class="text-xl font-extrabold text-dark">Add Delivery Address</h2>
+                        <p class="text-sm text-muted mt-2">Enter your shipping address to continue checkout.</p>
+                    </div>
+
+                    <form method="POST" class="space-y-4">
+                        {% csrf_token %}
+                        <input type="hidden" name="add_address" value="1">
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-bold text-dark mb-2">First Name</label>
+                                <input type="text" name="first_name" required class="w-full px-4 py-3 border border-muted/30 rounded-xl focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-dark mb-2">Last Name</label>
+                                <input type="text" name="last_name" required class="w-full px-4 py-3 border border-muted/30 rounded-xl focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-dark mb-2">Phone Number</label>
+                                <input type="tel" name="phone_number" required class="w-full px-4 py-3 border border-muted/30 rounded-xl focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-dark mb-2">PIN Code</label>
+                                <input type="text" name="pincode" maxlength="6" required class="w-full px-4 py-3 border border-muted/30 rounded-xl focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-dark mb-2">City</label>
+                                <input type="text" name="city" required class="w-full px-4 py-3 border border-muted/30 rounded-xl focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-dark mb-2">State</label>
+                                <input type="text" name="state" required class="w-full px-4 py-3 border border-muted/30 rounded-xl focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-dark mb-2">Locality / Area</label>
+                                <input type="text" name="locality" required class="w-full px-4 py-3 border border-muted/30 rounded-xl focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-dark mb-2">Country</label>
+                                <select name="country" required class="w-full px-4 py-3 border border-muted/30 rounded-xl focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark">
+                                    <option value="India" selected>India</option>
+                                    <option value="United States">United States</option>
+                                    <option value="United Kingdom">United Kingdom</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-dark mb-2">House / Flat / Building</label>
+                            <input type="text" name="house_info" required class="w-full px-4 py-3 border border-muted/30 rounded-xl focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark" />
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-dark mb-2">Landmark (Optional)</label>
+                            <input type="text" name="landmark" class="w-full px-4 py-3 border border-muted/30 rounded-xl focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark" />
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-dark mb-2">Address Type</label>
+                            <div class="flex flex-wrap gap-4">
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="address_type" value="Home" checked class="w-4 h-4 text-dark" /> Home
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="address_type" value="Office" class="w-4 h-4 text-dark" /> Office
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="address_type" value="Other" class="w-4 h-4 text-dark" /> Other
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-dark text-light px-6 py-4 rounded-xl text-sm font-black uppercase tracking-widest hover:bg-accent hover:text-dark shadow-md transition-all">
+                            Save Address & Continue
+                        </button>
+                    </form>
                 </div>
                 {% endif %}
 
@@ -160,9 +233,13 @@
                         {% if not selected_address %}disabled title="Please select an address first"{% endif %}>
                         <span class="material-icons text-[18px]">credit_card</span> Pay Online
                     </button>
+                    {% elif selected_address %}
+                    <button disabled class="w-full bg-muted/50 text-muted text-center py-4 rounded-xl font-black text-sm uppercase tracking-widest cursor-not-allowed flex items-center justify-center gap-2">
+                        <span class="material-icons text-[18px]">autorenew</span> Payment initialization failed. Please refresh.
+                    </button>
                     {% else %}
                     <button disabled class="w-full bg-muted/50 text-muted text-center py-4 rounded-xl font-black text-sm uppercase tracking-widest cursor-not-allowed flex items-center justify-center gap-2">
-                        <span class="material-icons animate-spin text-[18px]">autorenew</span> Loading Payment...
+                        <span class="material-icons text-[18px]">location_off</span> Please add a delivery address to proceed
                     </button>
                     {% endif %}
 

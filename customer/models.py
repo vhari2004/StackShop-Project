@@ -123,4 +123,23 @@ class PaymentOrder(models.Model):
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class ReactivationRequest(models.Model):
+    STATUS_CHOICES = [
+        ("PENDING", "Pending"),
+        ("APPROVED", "Approved"),
+        ("REJECTED", "Rejected"),
+    ]
+
+    user = models.ForeignKey("core.CustomUser", on_delete=models.CASCADE, related_name="reactivation_requests")
+    requested_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="PENDING")
+    admin_notes = models.TextField(blank=True, null=True)
+
+    class Meta:
+        ordering = ["-requested_at"]
+
+    def __str__(self):
+        return f"{self.user.username} reactivation request ({self.status})"
 # Create your models here.

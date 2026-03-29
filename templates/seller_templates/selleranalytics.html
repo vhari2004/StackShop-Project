@@ -300,56 +300,8 @@
 
     </main>
 
-    <footer class="bg-dark text-light pt-16 pb-8 border-t-4 border-accent mt-auto relative overflow-hidden">
-        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-accent/5 via-dark to-dark pointer-events-none"></div>
-        <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-12">
-                <div>
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-10 h-10 rounded-xl bg-light/10 flex items-center justify-center border border-muted/30 shadow-sm">
-                            <span class="material-icons text-accent">shopping_bag</span>
-                        </div>
-                        <span class="text-2xl font-black tracking-wide text-light">StackShop</span>
-                    </div>
-                    <p class="text-muted text-sm leading-relaxed mb-6 font-medium">Elevating your lifestyle through curated collections. Quality is our standard, elegance is our soul.</p>
-                </div>
-                <div>
-                    <h4 class="text-[10px] uppercase tracking-widest font-black mb-6 text-accent">Quick Links</h4>
-                    <ul class="space-y-4 text-muted text-sm font-bold">
-                        <li><a class="hover:text-light hover:translate-x-1 inline-block transition-all duration-200" href="#">About Us</a></li>
-                        <li><a class="hover:text-light hover:translate-x-1 inline-block transition-all duration-200" href="#">Our Story</a></li>
-                        <li><a class="hover:text-light hover:translate-x-1 inline-block transition-all duration-200" href="#">Careers</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-[10px] uppercase tracking-widest font-black mb-6 text-accent">Seller Support</h4>
-                    <ul class="space-y-4 text-muted text-sm font-bold">
-                        <li><a class="hover:text-light hover:translate-x-1 inline-block transition-all duration-200" href="#">Seller Help Center</a></li>
-                        <li><a class="hover:text-light hover:translate-x-1 inline-block transition-all duration-200" href="#">Community Forum</a></li>
-                        <li><a class="hover:text-light hover:translate-x-1 inline-block transition-all duration-200" href="#">API Documentation</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-[10px] uppercase tracking-widest font-black mb-6 text-accent">Seller Updates</h4>
-                    <p class="text-muted text-sm mb-4 font-medium">Get the latest platform updates and tips.</p>
-                    <form class="space-y-3" method="POST" action="#">
-                        {% csrf_token %}
-                        <div class="relative">
-                            <input class="w-full bg-light/10 text-light border border-muted/30 rounded-xl py-3 pl-10 pr-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all placeholder-muted/50 shadow-inner" placeholder="Email Address" type="email" required />
-                            <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-muted/70 text-[18px]">mail</span>
-                        </div>
-                        <button type="submit" class="w-full bg-accent text-dark py-3 rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-light hover:-translate-y-0.5 active:translate-y-0 transition-all shadow-md">Subscribe</button>
-                    </form>
-                </div>
-            </div>
-            <div class="border-t border-muted/20 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-muted text-[10px] uppercase font-black tracking-widest">
-                <p>© 2026 StackShop. All rights reserved.</p>
-                <div class="flex gap-6">
-                    <a class="hover:text-light transition-colors" href="#">Privacy Policy</a>
-                    <a class="hover:text-light transition-colors" href="#">Terms of Service</a>
-                </div>
-            </div>
-        </div>
+    <footer class="bg-dark text-light py-3 text-center text-xs uppercase tracking-wide">
+        © {% now "Y" %} StackShop. All rights reserved.
     </footer>
 
 </body>

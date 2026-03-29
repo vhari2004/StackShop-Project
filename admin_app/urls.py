@@ -13,5 +13,7 @@ urlpatterns = [
     path('edit-deal/<int:id>/', views.edit_deal, name='edit_deal'),
     path('manage-deals/', views.manage_deals, name='manage_deals'),
     path('delete-deal/', views.delete_deal, name='delete_deal'),
+    path('reactivation/approve/<int:request_id>/', views.approve_reactivation_request, name='approve_reactivation_request'),
+    path('reactivation/reject/<int:request_id>/', views.reject_reactivation_request, name='reject_reactivation_request'),
     path('dashboard/save-deal/', views.add_deal, name='save_deal'),
 ]

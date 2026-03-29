@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Reactivation - StackShop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+</head>
+
+<body class="font-sans flex flex-col min-h-screen text-[#30364F] relative bg-cover bg-center bg-no-repeat"
+      style="background-image: url('https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&q=80&w=2070');">
+
+    <div class="absolute inset-0 bg-[#30364F]/70 backdrop-blur-[4px] z-0"></div>
+
+    <main class="relative z-10 flex-grow flex flex-col items-center justify-center p-4">
+        <div class="w-full max-w-md bg-[#F0F0DB] p-8 rounded-2xl shadow-2xl border-t-4 border-[#E1D9BC]">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-extrabold text-[#30364F]">Request Account Reactivation</h2>
+                <p class="text-sm text-[#30364F] mt-2 opacity-80 font-medium">Enter your registered email address and we'll ask an admin to review your request.</p>
+            </div>
+
+            {% include "core_templates/messages.html" %}
+
+            <form method="POST" action="">
+                {% csrf_token %}
+                <div class="mb-5">
+                    <label class="block text-xs font-bold uppercase tracking-widest mb-2 text-[#30364F]" for="email">Registered Email</label>
+                    <input id="email" name="email" type="email" required
+                           class="w-full px-4 py-3.5 border border-[#ACBAC4]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#30364F] focus:border-transparent bg-white placeholder-[#ACBAC4] transition-all font-medium shadow-inner"
+                           placeholder="you@example.com" />
+                </div>
+
+                <button type="submit"
+                        class="w-full bg-[#30364F] hover:bg-[#30364F]/90 text-[#F0F0DB] font-black uppercase tracking-widest py-3.5 px-4 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#ACBAC4] transition-all duration-200 shadow-md hover:-translate-y-0.5 active:translate-y-0">
+                    Send Reactivation Request
+                </button>
+            </form>
+
+            <p class="text-center text-sm mt-6 font-medium text-[#30364F]/80">
+                Remembered your password? <a href="{% url 'login' %}" class="font-black text-[#30364F] hover:underline">Sign in</a>
+            </p>
+        </div>
+    </main>
+
+    <footer class="relative z-10 py-6 text-center text-[#F0F0DB]/70 text-xs font-bold tracking-widest uppercase">
+        <div class="container mx-auto">
+            <p>&copy; 2026 StackShop. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+
+</html>

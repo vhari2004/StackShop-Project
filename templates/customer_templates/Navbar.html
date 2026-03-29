@@ -173,7 +173,7 @@
                 {% if user.is_admin %}
                     <a href="{% url 'admin_dashboard' %}" class="text-yellow-500 font-semibold px-4 py-3 rounded-lg hover:bg-light/10 flex items-center gap-2"><span class="material-icons text-[18px]">admin_panel_settings</span> Admin Dashboard</a>
                 {% elif user.is_seller and user.is_verified_seller %}
-                    <a href="{% url 'add-product' %}" class="text-yellow-500 font-semibold px-4 py-3 rounded-lg hover:bg-light/10 flex items-center gap-2"><span class="material-icons text-[18px]">storefront</span> Seller Dashboard</a>
+                    <a href="{% url 'dashboard' %}" class="text-yellow-500 font-semibold px-4 py-3 rounded-lg hover:bg-light/10 flex items-center gap-2"><span class="material-icons text-[18px]">storefront</span> Seller Dashboard</a>
                 {% elif user.is_seller %}
                     <a href="{% url 'seller-profile' %}" class="text-yellow-500 font-semibold px-4 py-3 rounded-lg hover:bg-light/10 flex items-center gap-2"><span class="material-icons text-[18px]">person_outline</span> Seller Profile</a>
                 {% else %}

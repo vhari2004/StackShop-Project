@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 
@@ -39,6 +40,7 @@
 
             <form method="POST" class="space-y-8">
                 {% csrf_token %}
+                <input type="hidden" name="action" value="change_password">
 
                 <div class="border rounded-xl p-6 bg-gray-50">
                     <h3 class="text-xl font-bold mb-4">Change Password</h3>
@@ -62,7 +64,7 @@
                     </div>
                 </div>
 
-                <div class="flex justify-end gap-4 pt-6 border-t border-muted/20">
+                <div class="flex justify-between flex-col md:flex-row gap-4 pt-6 border-t border-muted/20">
                     <a href="{% url 'profile' %}"
                         class="px-6 py-2.5 text-sm font-bold text-muted hover:text-dark transition-colors">Back to Profile</a>
                     <button type="submit"
@@ -70,6 +72,30 @@
                         Password</button>
                 </div>
             </form>
+
+            <div class="mt-10 border rounded-2xl p-6 bg-[#FFF4F1] border-red-200">
+                <div class="flex items-start gap-4">
+                    <span class="material-icons text-red-600 text-4xl">warning</span>
+                    <div>
+                        <h3 class="text-xl font-bold text-red-700">Danger Zone</h3>
+                        <p class="text-sm text-red-600 mt-2">Deactivating will suspend your account and require admin approval to reactivate. Deleting your account is permanent and cannot be undone.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                    <form method="POST" class="space-y-3" onsubmit="return confirm('Are you sure you want to deactivate your account? You will be logged out and an admin reactivation request will be submitted.');">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="deactivate_account">
+                        <button type="submit" class="w-full bg-yellow-500 text-white px-6 py-4 rounded-xl text-sm font-black uppercase tracking-widest hover:bg-yellow-600 transition-all">Deactivate Account</button>
+                    </form>
+
+                    <form method="POST" class="space-y-3" onsubmit="return confirm('Are you sure you want to permanently delete your account? This action cannot be undone.');">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="delete_account">
+                        <button type="submit" class="w-full bg-red-600 text-white px-6 py-4 rounded-xl text-sm font-black uppercase tracking-widest hover:bg-red-700 transition-all">Delete Account</button>
+                    </form>
+                </div>
+            </div>
 
         </div>
     </main>

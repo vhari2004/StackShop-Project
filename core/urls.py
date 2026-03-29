@@ -5,6 +5,7 @@ urlpatterns = [
     path('', views.home_view, name='home'),
     path('search/', views.search_and_filter_view, name='search'),
     path('login/',views.login_view,name='login'),
+    path('reactivation-request/', views.reactivation_request_view, name='reactivation_request'),
     path('forgot-password/', views.forgot_password_view, name='forgot_password'),
     path('reset-password/<uidb64>/<token>/', views.reset_password_view, name='reset_password'),
     path('register/',views.register_view,name='register'),

@@ -48,13 +48,17 @@
                 <div class="relative group flex items-center">
                     <button class="flex items-center gap-2 hover:text-light transition-all duration-200 active:scale-95 py-2">
                         
-                        <div class="w-8 h-8 rounded-full bg-accent/20 border border-accent flex items-center justify-center text-accent font-black">
-                            {% if request.user.is_authenticated %}
-                                {{ request.user.username|make_list|first|upper }}
-                            {% else %}
-                                <span class="material-icons text-sm">person</span>
-                            {% endif %}
-                        </div>
+                        {% if request.user.is_authenticated and request.user.seller_profile.store_image %}
+                            <img src="{{ request.user.seller_profile.store_image.url }}" alt="{{ request.user.seller_profile.store_name }}" class="w-8 h-8 rounded-full object-cover border border-accent" />
+                        {% else %}
+                            <div class="w-8 h-8 rounded-full bg-accent/20 border border-accent flex items-center justify-center text-accent font-black">
+                                {% if request.user.is_authenticated %}
+                                    {{ request.user.username|make_list|first|upper }}
+                                {% else %}
+                                    <span class="material-icons text-sm">person</span>
+                                {% endif %}
+                            </div>
+                        {% endif %}
                         
                         <span class="text-sm hidden sm:inline font-bold text-light">
                             {{ request.user.username|default:"Profile" }}
@@ -90,53 +94,63 @@
                     </div>
                 </div>
 
-                <button id="seller-mobile-menu-btn" class="lg:hidden text-muted hover:text-light focus:outline-none transition-transform active:scale-95">
-                    <span class="material-icons text-2xl md:text-3xl">menu</span>
-                </button>
-
             </div>
         </div>
     </nav>
 
-    <div id="seller-mobile-menu" class="hidden lg:hidden absolute top-full left-4 right-4 mt-2 bg-dark rounded-xl shadow-2xl border border-muted/20 overflow-hidden transition-all z-40">
-        <div class="flex flex-col p-4 space-y-2 max-h-[70vh] overflow-y-auto">
-            
-            <div class="text-[10px] font-black uppercase tracking-widest text-muted/70 mb-1 pl-2">Menu</div>
-            
-            <a href="{% url 'customer_reviews' %}" class="text-light font-semibold px-4 py-3 rounded-lg hover:bg-light/10 transition-colors">Reviews</a>
-            <a href="{% url 'dashboard' %}" class="text-light font-semibold px-4 py-3 rounded-lg hover:bg-light/10 transition-colors">My Products</a>
-            <a href="{% url 'seller_inventory' %}" class="text-light font-semibold px-4 py-3 rounded-lg hover:bg-light/10 transition-colors">Inventory</a>
-            <a href="{% url 'seller_customers_orders' %}" class="flex items-center justify-between text-light font-semibold px-4 py-3 rounded-lg hover:bg-light/10 transition-colors">
-                Orders <span class="bg-accent text-dark text-xs px-2 py-0.5 rounded-full">5</span>
-            </a>
-            <a href="#" class="text-light font-semibold px-4 py-3 rounded-lg hover:bg-light/10 transition-colors">Analytics</a>
-            
+    <div class="lg:hidden px-4 pb-4 bg-light border-b border-muted/20">
+        <div class="rounded-2xl bg-white border border-muted/20 p-3 shadow-sm">
+            <div class="flex gap-3 overflow-x-auto hide-scrollbar pb-1">
+                <a href="{% url 'customer_reviews' %}"
+                   class="shrink-0 px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all {% if request.resolver_match.url_name == 'customer_reviews' %}bg-dark text-light shadow-sm{% else %}bg-light text-dark hover:bg-accent/10{% endif %}">
+                    Reviews
+                </a>
+                <a href="{% url 'dashboard' %}"
+                   class="shrink-0 px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all {% if request.resolver_match.url_name == 'dashboard' %}bg-dark text-light shadow-sm{% else %}bg-light text-dark hover:bg-accent/10{% endif %}">
+                    My Products
+                </a>
+                <a href="{% url 'seller_inventory' %}"
+                   class="shrink-0 px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all {% if request.resolver_match.url_name == 'seller_inventory' %}bg-dark text-light shadow-sm{% else %}bg-light text-dark hover:bg-accent/10{% endif %}">
+                    Inventory
+                </a>
+                <a href="{% url 'seller_customers_orders' %}"
+                   class="shrink-0 px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all {% if request.resolver_match.url_name == 'seller_customers_orders' %}bg-dark text-light shadow-sm{% else %}bg-light text-dark hover:bg-accent/10{% endif %}">
+                    Orders
+                </a>
+                <a href="{% url 'seller_analytics' %}"
+                   class="shrink-0 px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all {% if request.resolver_match.url_name == 'seller_analytics' %}bg-dark text-light shadow-sm{% else %}bg-light text-dark hover:bg-accent/10{% endif %}">
+                    Analytics
+                </a>
+            </div>
         </div>
     </div>
+
 </header>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const btn = document.getElementById('seller-mobile-menu-btn');
         const menu = document.getElementById('seller-mobile-menu');
-        const icon = btn.querySelector('.material-icons');
+        if (btn && menu) {
+            const icon = btn.querySelector('.material-icons');
 
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            menu.classList.toggle('hidden');
-            if (menu.classList.contains('hidden')) {
-                icon.textContent = 'menu';
-            } else {
-                icon.textContent = 'close';
-            }
-        });
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                menu.classList.toggle('hidden');
+                if (menu.classList.contains('hidden')) {
+                    icon.textContent = 'menu';
+                } else {
+                    icon.textContent = 'close';
+                }
+            });
 
-        // Close menu when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!menu.contains(e.target) && !btn.contains(e.target) && !menu.classList.contains('hidden')) {
-                menu.classList.add('hidden');
-                icon.textContent = 'menu';
-            }
-        });
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!menu.contains(e.target) && !btn.contains(e.target) && !menu.classList.contains('hidden')) {
+                    menu.classList.add('hidden');
+                    icon.textContent = 'menu';
+                }
+            });
+        }
     });
 </script>

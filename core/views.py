@@ -11,11 +11,34 @@ from django.urls import reverse
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from core.decorators import admin_required, seller_required
-from customer.models import Cart, CartItem, WishlistItem
+from customer.models import Cart, CartItem, WishlistItem, ReactivationRequest
 from .models import CustomUser, EmailOTP, Category, Banner
 from seller.models import *
 from django.db.models import Q
 import random
+
+
+def _get_email_sender():
+    return getattr(settings, "DEFAULT_FROM_EMAIL", settings.EMAIL_HOST_USER or "noreply@stackshop.com")
+
+
+def _send_email(recipient_email, subject, message):
+    if not recipient_email:
+        return
+    from_email = _get_email_sender()
+    send_mail(subject, message, from_email, [recipient_email], fail_silently=True)
+
+
+def _notify_admin_of_reactivation(user):
+    admin_email = getattr(settings, "ADMIN_EMAIL", settings.EMAIL_HOST_USER)
+    if not admin_email:
+        return
+    subject = "StackShop Reactivation Request"
+    message = (
+        f"Customer {user.get_full_name() or user.username} ({user.email}) has requested account reactivation. "
+        "Please review and approve or reject the request in the admin dashboard."
+    )
+    _send_email(admin_email, subject, message)
 
 
 def home_view(request):
@@ -459,13 +482,13 @@ def reset_password_view(request, uidb64, token):
 
 def login_view(request):
     if request.method == "POST":
-        username = request.POST.get("usernameoremail")
+        raw_username = request.POST.get("usernameoremail")
         password = request.POST.get("password")
-        try:
-            user_obj = CustomUser.objects.get(email=username)
+        username = raw_username
+
+        user_obj = CustomUser.objects.filter(email__iexact=raw_username).first()
+        if user_obj:
             username = user_obj.username
-        except CustomUser.DoesNotExist:
-            username = username
 
         user = authenticate(username=username, password=password)
         if user is not None:
@@ -479,9 +502,54 @@ def login_view(request):
             if user.is_admin:
                 return redirect("admin_dashboard")
             return redirect("home")
+
+        user_check = CustomUser.objects.filter(
+            Q(email__iexact=raw_username) | Q(username__iexact=raw_username)
+        ).first()
+        if user_check and not user_check.is_active:
+            messages.error(
+                request,
+                "Your account has been deactivated. Request reactivation from the link below."
+            )
         else:
             messages.error(request, "Invalid credentials !")
     return render(request, "core_templates/loginpage.html")
+
+
+def reactivation_request_view(request):
+    if request.method == "POST":
+        email = request.POST.get("email", "").strip()
+        if not email:
+            messages.error(request, "Please enter your registered email address.")
+            return redirect("reactivation_request")
+
+        user = CustomUser.objects.filter(email__iexact=email).first()
+        if not user:
+            messages.error(request, "No account was found with that email address.")
+            return redirect("reactivation_request")
+
+        if user.is_active:
+            messages.info(request, "Your account is already active. Please sign in.")
+            return redirect("login")
+
+        if ReactivationRequest.objects.filter(user=user, status="PENDING").exists():
+            messages.info(request, "A reactivation request is already pending. Please wait for admin review.")
+            return redirect("login")
+
+        ReactivationRequest.objects.create(user=user)
+        subject = "StackShop Reactivation Request Received"
+        message = (
+            f"Hello {user.get_full_name() or user.username},\n\n"
+            "We have received your request to reactivate your StackShop account. "
+            "An admin will review your request and you will receive an email once it is processed.\n\n"
+            "Thank you,\nStackShop Team"
+        )
+        _send_email(user.email, subject, message)
+        _notify_admin_of_reactivation(user)
+        messages.success(request, "Your reactivation request has been submitted. Please check your email for confirmation.")
+        return redirect("login")
+
+    return render(request, "core_templates/reactivation_request.html")
 
 
 def logout_view(request):

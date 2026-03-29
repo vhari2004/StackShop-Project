@@ -3,8 +3,11 @@ from django.urls import reverse
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.contrib import messages
+from django.core.mail import send_mail
+from django.conf import settings
 from core.models import *
 from seller.models import SellerProfile, Product, ProductVariant
+from customer.models import ReactivationRequest
 from core.decorators import admin_required
 from .forms import (
     CategoryForm,
@@ -15,12 +18,25 @@ from .forms import (
 from .models import Deal
 
 
+def _get_email_sender():
+    return getattr(settings, "DEFAULT_FROM_EMAIL", settings.EMAIL_HOST_USER or "noreply@stackshop.com")
+
+
+def _send_email(recipient_email, subject, message):
+    if not recipient_email:
+        return
+    send_mail(subject, message, _get_email_sender(), [recipient_email], fail_silently=True)
+
+
 @admin_required
 def admin_dashboard_view(request):
     product_variants = ProductVariant.objects.all()
     seller = SellerProfile.objects.all()
     categories = Category.objects.all()
     subcategories = SubCategory.objects.all()
+
+    reactivation_requests = ReactivationRequest.objects.order_by("-requested_at")
+    pending_reactivation_count = ReactivationRequest.objects.filter(status="PENDING").count()
 
     context = {
         "products": product_variants,
@@ -30,6 +46,8 @@ def admin_dashboard_view(request):
         "category_form": CategoryForm(),
         "subcategory_form": SubCategoryForm(),
         "banner_form": BannerForm(),
+        "reactivation_requests": reactivation_requests,
+        "pending_reactivation_count": pending_reactivation_count,
     }
     return render(request, "admin_templates/admindashboard.html", context)
 
@@ -93,6 +111,47 @@ def manage_deals(request):
         'deals': deals,
     }
     return render(request, 'admin_templates/manage_deals.html', context)
+
+
+@admin_required
+@require_http_methods(["POST"])
+def approve_reactivation_request(request, request_id):
+    react_req = get_object_or_404(ReactivationRequest, id=request_id, status="PENDING")
+    react_req.user.is_active = True
+    react_req.user.save()
+    react_req.status = "APPROVED"
+    react_req.admin_notes = "Approved via admin dashboard."
+    react_req.save()
+
+    subject = "StackShop Account Reactivated"
+    message = (
+        f"Hello {react_req.user.get_full_name() or react_req.user.username},\n\n"
+        "Your StackShop account has been reactivated by an administrator. You can now sign in again.\n\n"
+        "Thank you,\nStackShop Team"
+    )
+    _send_email(react_req.user.email, subject, message)
+    messages.success(request, "Reactivation request approved and user account reactivated.")
+    return redirect('admin_dashboard')
+
+
+@admin_required
+@require_http_methods(["POST"])
+def reject_reactivation_request(request, request_id):
+    react_req = get_object_or_404(ReactivationRequest, id=request_id, status="PENDING")
+    react_req.status = "REJECTED"
+    react_req.admin_notes = "Rejected via admin dashboard."
+    react_req.save()
+
+    subject = "StackShop Reactivation Request Rejected"
+    message = (
+        f"Hello {react_req.user.get_full_name() or react_req.user.username},\n\n"
+        "Your StackShop account reactivation request has been rejected by an administrator. "
+        "If you believe this is a mistake, please contact support.\n\n"
+        "Thank you,\nStackShop Team"
+    )
+    _send_email(react_req.user.email, subject, message)
+    messages.success(request, "Reactivation request rejected.")
+    return redirect('admin_dashboard')
 
 
 @admin_required

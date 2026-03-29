@@ -259,52 +259,8 @@
         </div>
     </main>
 
-    <footer class="bg-dark text-light pt-16 pb-8 border-t-4 border-accent mt-auto">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-                <div>
-                    <div class="flex items-center gap-3 mb-6">
-                        <svg class="w-6 h-6 text-accent" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                        </svg>
-                        <span class="text-xl font-black tracking-wide">StackShop</span>
-                    </div>
-                    <p class="text-muted text-sm leading-relaxed mb-6 font-medium">Elevating your lifestyle through curated collections. Quality is our standard, elegance is our soul.</p>
-                </div>
-                <div>
-                    <h4 class="text-xs uppercase tracking-widest font-black mb-6 text-accent">Quick Links</h4>
-                    <ul class="space-y-3 text-muted text-sm font-bold">
-                        <li><a class="hover:text-light transition-colors" href="#">About Us</a></li>
-                        <li><a class="hover:text-light transition-colors" href="#">Our Story</a></li>
-                        <li><a class="hover:text-light transition-colors" href="#">Careers</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-xs uppercase tracking-widest font-black mb-6 text-accent">Seller Support</h4>
-                    <ul class="space-y-3 text-muted text-sm font-bold">
-                        <li><a class="hover:text-light transition-colors" href="#">Seller Help Center</a></li>
-                        <li><a class="hover:text-light transition-colors" href="#">Community Forum</a></li>
-                        <li><a class="hover:text-light transition-colors" href="#">API Documentation</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-xs uppercase tracking-widest font-black mb-6 text-accent">Seller Updates</h4>
-                    <p class="text-muted text-sm mb-4 font-medium">Get the latest platform updates and tips.</p>
-                    <form class="space-y-3" method="POST" action="#">
-                        {% csrf_token %}
-                        <input class="w-full bg-white/10 text-light border border-muted/30 rounded-lg py-2.5 px-4 text-sm font-medium focus:outline-none focus:ring-1 focus:ring-accent transition-all placeholder-muted/50" placeholder="Email Address" type="email" required />
-                        <button type="submit" class="w-full bg-accent text-dark py-2.5 rounded-lg font-black uppercase tracking-widest hover:bg-light transition-all shadow-md active:scale-95 duration-200">Subscribe</button>
-                    </form>
-                </div>
-            </div>
-            <div class="border-t border-muted/20 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-muted text-[10px] uppercase font-black tracking-widest">
-                <p>© 2026 StackShop. All rights reserved.</p>
-                <div class="flex gap-6">
-                    <a class="hover:text-light transition-colors" href="#">Privacy</a>
-                    <a class="hover:text-light transition-colors" href="#">Terms</a>
-                </div>
-            </div>
-        </div>
+    <footer class="bg-dark text-light py-3 text-center text-xs uppercase tracking-wide">
+        © {% now "Y" %} StackShop. All rights reserved.
     </footer>
 
     <script>

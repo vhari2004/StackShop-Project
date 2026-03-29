@@ -429,7 +429,9 @@
         
     </main>
 
-    {% include "customer_templates/Footer.html" %}
+    <footer class="bg-dark text-light py-3 text-center text-xs uppercase tracking-wide">
+        © {% now "Y" %} StackShop. All rights reserved.
+    </footer>
 
     <script>
         function openOrderDetails(modalId) {
