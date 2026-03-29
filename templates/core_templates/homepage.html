@@ -289,37 +289,6 @@
         </div>
     </main>
 
-    <section class="w-full px-4 md:px-8 lg:px-12 mb-16">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-dark text-white rounded-xl p-6 flex items-center gap-4 shadow-lg hover:shadow-xl transition-shadow transform hover:-translate-y-1 duration-300">
-                <div class="w-14 h-14 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0 border border-white/5">
-                    <span class="material-icons text-2xl text-accent">local_shipping</span>
-                </div>
-                <div>
-                    <h4 class="font-bold text-sm uppercase tracking-wide">Free Shipping</h4>
-                    <p class="text-xs text-muted">On orders over ₹100</p>
-                </div>
-            </div>
-            <div class="bg-dark text-white rounded-xl p-6 flex items-center gap-4 shadow-lg hover:shadow-xl transition-shadow transform hover:-translate-y-1 duration-300">
-                <div class="w-14 h-14 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0 border border-white/5">
-                    <span class="material-icons text-2xl text-accent">support_agent</span>
-                </div>
-                <div>
-                    <h4 class="font-bold text-sm uppercase tracking-wide">24/7 Support</h4>
-                    <p class="text-xs text-muted">Here to help anytime</p>
-                </div>
-            </div>
-            <div class="bg-dark text-white rounded-xl p-6 flex items-center gap-4 shadow-lg hover:shadow-xl transition-shadow transform hover:-translate-y-1 duration-300">
-                <div class="w-14 h-14 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0 border border-white/5">
-                    <span class="material-icons text-2xl text-accent">security</span>
-                </div>
-                <div>
-                    <h4 class="font-bold text-sm uppercase tracking-wide">Secure Checkout</h4>
-                    <p class="text-xs text-muted">100% protected payments</p>
-                </div>
-            </div>
-        </div>
-    </section>
 
 <section class="w-full px-4 md:px-8 lg:px-12 mb-20 flex-grow">
     <div class="flex items-end justify-between mb-8">
@@ -391,6 +360,38 @@
         {% endfor %}
     </div>
 </section>
+
+    <section class="w-full px-4 md:px-8 lg:px-12 mb-10">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="bg-dark text-white rounded-2xl p-4 flex items-center gap-3 shadow-md hover:shadow-lg transition-shadow duration-300">
+                <div class="w-12 h-12 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0 border border-white/10">
+                    <span class="material-icons text-xl text-accent">local_shipping</span>
+                </div>
+                <div>
+                    <h4 class="font-bold text-xs uppercase tracking-widest">Free Shipping</h4>
+                    <p class="text-[11px] text-muted">On orders over ₹100</p>
+                </div>
+            </div>
+            <div class="bg-dark text-white rounded-2xl p-4 flex items-center gap-3 shadow-md hover:shadow-lg transition-shadow duration-300">
+                <div class="w-12 h-12 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0 border border-white/10">
+                    <span class="material-icons text-xl text-accent">support_agent</span>
+                </div>
+                <div>
+                    <h4 class="font-bold text-xs uppercase tracking-widest">24/7 Support</h4>
+                    <p class="text-[11px] text-muted">Here to help anytime</p>
+                </div>
+            </div>
+            <div class="bg-dark text-white rounded-2xl p-4 flex items-center gap-3 shadow-md hover:shadow-lg transition-shadow duration-300">
+                <div class="w-12 h-12 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0 border border-white/10">
+                    <span class="material-icons text-xl text-accent">security</span>
+                </div>
+                <div>
+                    <h4 class="font-bold text-xs uppercase tracking-widest">Secure Checkout</h4>
+                    <p class="text-[11px] text-muted">100% protected payments</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
     {% include "customer_templates/Footer.html" %}
 
