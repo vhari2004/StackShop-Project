@@ -9,6 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -55,6 +57,7 @@
                 </div>
                 <h1 class="text-3xl lg:text-4xl font-black text-dark tracking-tight">Analytics & Reports</h1>
                 <p class="text-sm font-bold text-muted mt-1">Real-time insightful data for your store</p>
+                <div id="analytics-data" class="hidden" data-total-orders="{{ total_orders }}" data-total-revenue="{{ total_revenue }}" data-total-items="{{ total_items_sold }}" data-avg-rating="{{ avg_rating }}"></div>
             </div>
             
             <div class="flex flex-wrap items-center gap-4">
@@ -63,7 +66,10 @@
                     <button class="px-5 py-2 rounded-lg text-xs font-bold text-muted hover:text-dark transition-colors uppercase tracking-widest">Quarterly</button>
                     <button class="px-5 py-2 rounded-lg text-xs font-bold text-muted hover:text-dark transition-colors uppercase tracking-widest">Yearly</button>
                 </div>
-                <button class="bg-white border border-muted/50 hover:border-dark text-dark px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center gap-2 transition-all active:scale-95 shadow-sm hover:shadow-md">
+                <button id="downloadPdfBtn" class="bg-white border border-muted/50 hover:border-dark text-dark px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center gap-2 transition-all active:scale-95 shadow-sm hover:shadow-md">
+                    <span class="material-icons text-[18px]">picture_as_pdf</span> Download PDF
+                </button>
+                <button id="exportCsvBtn" class="bg-white border border-muted/50 hover:border-dark text-dark px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center gap-2 transition-all active:scale-95 shadow-sm hover:shadow-md">
                     <span class="material-icons text-[18px]">file_download</span> Export CSV
                 </button>
             </div>
@@ -547,6 +553,97 @@
                     }
                 }
             }
+        });
+
+        // CSV export logic
+        function toCsvRow(values) {
+            return values
+                .map(v => '"' + String(v).replace(/"/g, '""') + '"')
+                .join(',');
+        }
+
+        function exportAnalyticsCsv() {
+            const csvRows = [];
+
+            // summary row values
+            const summary = document.getElementById('analytics-data');
+            if (summary) {
+                csvRows.push(['Metric', 'Value']);
+                csvRows.push(['Total Orders', summary.dataset.totalOrders || '0']);
+                csvRows.push(['Total Revenue', summary.dataset.totalRevenue || '0']);
+                csvRows.push(['Total Items Sold', summary.dataset.totalItems || '0']);
+                csvRows.push(['Avg Rating', summary.dataset.avgRating || '0']);
+                csvRows.push([]);
+            }
+
+            // month sales
+            csvRows.push(['Monthly Sales']);
+            csvRows.push(['Month'].concat({{ monthly_labels|safe }}));
+            csvRows.push(['Revenue'].concat({{ monthly_sales|safe }}));
+            csvRows.push([]);
+
+            // daily sales
+            csvRows.push(['Daily Sales (This Week)']);
+            csvRows.push(['Day'].concat({{ daily_labels|safe }}));
+            csvRows.push(['Revenue'].concat({{ daily_sales|safe }}));
+            csvRows.push([]);
+
+            // inventory logs
+            const tableBody = document.querySelector('table tbody');
+
+            if (tableBody) {
+                csvRows.push(['Inventory Activity']);
+                csvRows.push(['Product', 'SKU', 'Change', 'Reason', 'By', 'Date']);
+                tableBody.querySelectorAll('tr').forEach(row => {
+                    if (row.querySelector('td')) {
+                        const cells = Array.from(row.querySelectorAll('td')).map(td => td.innerText.trim());
+                        csvRows.push(cells);
+                    }
+                });
+            }
+
+            const csvContent = csvRows.map(toCsvRow).join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'seller_analytics.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        document.getElementById('exportCsvBtn').addEventListener('click', exportAnalyticsCsv);
+
+        document.getElementById('downloadPdfBtn').addEventListener('click', async function () {
+            const container = document.querySelector('main');
+            if (!container) {
+                alert('Analytics content not found.');
+                return;
+            }
+
+            const canvas = await html2canvas(container, { scale: 2, useCORS: true, backgroundColor: '#F0F0DB' });
+            const imageData = canvas.toDataURL('image/png');
+
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+
+            const margin = 20;
+            const maxWidth = pageWidth - margin * 2;
+            const maxHeight = pageHeight - margin * 2;
+
+            const imgWidth = canvas.width;
+            const imgHeight = canvas.height;
+            const ratio = Math.min(maxWidth / imgWidth, maxHeight / imgHeight);
+            const renderWidth = imgWidth * ratio;
+            const renderHeight = imgHeight * ratio;
+
+            pdf.addImage(imageData, 'PNG', margin, margin, renderWidth, renderHeight);
+            pdf.save('seller_analytics.pdf');
         });
     </script>
 
