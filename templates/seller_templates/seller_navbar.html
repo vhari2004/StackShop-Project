@@ -37,7 +37,8 @@
                    Orders <span class="bg-accent text-dark text-xs px-1.5 py-0.5 rounded-full ml-1">{{ seller_total_orders|default:0 }}</span>
                 </a>
                 
-                <a href="{% url 'seller_analytics' %}" class="transition-all duration-200 active:scale-95 text-muted hover:text-light">
+                <a href="{% url 'seller_analytics' %}" 
+                   class="transition-all duration-200 active:scale-95 {% if request.resolver_match.url_name == 'seller_analytics' %}text-light border-b-2 border-accent pb-1{% else %}text-muted hover:text-light{% endif %}">
                    Analytics
                 </a>
                 

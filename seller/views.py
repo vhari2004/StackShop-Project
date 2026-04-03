@@ -5,10 +5,13 @@ from core.decorators import seller_required, verified_seller_required
 from .models import *
 from core.models import *
 from core.models import Category
-from django.db.models import Count, Avg, Max, Sum, Q
+from django.db.models import Count, Avg, Max, Sum, Q, F
 from customer.models import Order, OrderItem, Review
 from django.contrib import messages
+from datetime import datetime, timedelta
+from django.utils import timezone
 import random
+import json
 @login_required
 @seller_required
 def seller_profile_view(request):
@@ -742,18 +745,169 @@ def update_order_status(request):
 
     return redirect("seller_customers_orders")
 
+@verified_seller_required
 def seller_analytics(request):
-   seller = request.user.seller_profile
-
-   logs = InventoryLog.objects.filter(
+    seller = request.user.seller_profile
+    
+    # Get last 12 months data for sales chart
+    today = timezone.now()
+    months_back = today - timedelta(days=365)
+    
+    # Sales revenue by month (last 12 months)
+    monthly_sales = []
+    monthly_labels = []
+    for i in range(11, -1, -1):
+        month_date = today - timedelta(days=30*i)
+        start_date = month_date.replace(day=1)
+        if i == 0:
+            end_date = today
+        else:
+            end_date = (month_date.replace(day=1) + timedelta(days=32)).replace(day=1)
+        
+        revenue = OrderItem.objects.filter(
+            seller=seller,
+            status='delivered',
+            order__ordered_at__gte=start_date,
+            order__ordered_at__lt=end_date
+        ).aggregate(total=Sum('price_at_purchase'))['total'] or 0
+        
+        monthly_sales.append(float(revenue))
+        monthly_labels.append(start_date.strftime('%b'))
+    
+    # Daily sales data for current week
+    daily_sales = []
+    daily_labels = []
+    for i in range(6, -1, -1):
+        day_date = today - timedelta(days=i)
+        day_start = day_date.replace(hour=0, minute=0, second=0)
+        day_end = day_date.replace(hour=23, minute=59, second=59)
+        
+        revenue = OrderItem.objects.filter(
+            seller=seller,
+            status='delivered',
+            order__ordered_at__gte=day_start,
+            order__ordered_at__lte=day_end
+        ).aggregate(total=Sum('price_at_purchase'))['total'] or 0
+        
+        daily_sales.append(float(revenue))
+        daily_labels.append(day_date.strftime('%a'))
+    
+    # Top selling products
+    top_products = OrderItem.objects.filter(
+        seller=seller
+    ).values(
+        'variant__product__name'
+    ).annotate(
+        total_sold=Count('id')
+    ).order_by('-total_sold')[:5]
+    
+    top_products_data = []
+    top_products_labels = []
+    for item in top_products:
+        top_products_labels.append(item['variant__product__name'][:15])
+        top_products_data.append(item['total_sold'])
+    
+    # Category distribution
+    products = Product.objects.filter(seller=seller)
+    category_dist = products.values(
+        'subcategory__name'
+    ).annotate(count=Count('id')).order_by('-count')
+    
+    category_labels = []
+    category_data = []
+    for cat in category_dist:
+        if cat['subcategory__name']:
+            category_labels.append(cat['subcategory__name'][:15])
+            category_data.append(cat['count'])
+    
+    # Order status breakdown
+    order_statuses = OrderItem.objects.filter(
+        seller=seller
+    ).values('status').annotate(count=Count('id')).order_by('-count')
+    
+    order_status_labels = []
+    order_status_data = []
+    order_status_colors = {
+        'pending': '#F59E0B',
+        'processing': '#3B82F6', 
+        'shipped': '#8B5CF6',
+        'delivered': '#10B981',
+        'cancelled': '#EF4444',
+        'return_requested': '#EC4899',
+        'returned': '#6B7280'
+    }
+    
+    for status in order_statuses:
+        order_status_labels.append(status['status'].replace('_', ' ').title())
+        order_status_data.append(status['count'])
+    
+    # Get inventory logs
+    logs = InventoryLog.objects.filter(
         variant__product__seller=seller
     ).select_related(
-        "variant", "variant__product", "performed_by"
+        'variant', 'variant__product', 'performed_by'
     )[:15]
+    
+    # Summary metrics
+    total_revenue = OrderItem.objects.filter(
+        seller=seller,
+        status='delivered'
+    ).aggregate(total=Sum('price_at_purchase'))['total'] or 0
+    
+    total_orders = OrderItem.objects.filter(
+        seller=seller
+    ).values('order_id').distinct().count()
+    
+    total_items_sold = OrderItem.objects.filter(
+        seller=seller,
+        status='delivered'
+    ).count()
+    
+    avg_rating = Review.objects.filter(
+        product__seller=seller
+    ).aggregate(avg=Avg('rating'))['avg'] or 0
+    
+    avg_rating = round(avg_rating, 2)
+    
+    # Monthly order count for trend
+    monthly_orders = []
+    for i in range(11, -1, -1):
+        month_date = today - timedelta(days=30*i)
+        start_date = month_date.replace(day=1)
+        if i == 0:
+            end_date = today
+        else:
+            end_date = (month_date.replace(day=1) + timedelta(days=32)).replace(day=1)
+        
+        count = OrderItem.objects.filter(
+            seller=seller,
+            order__ordered_at__gte=start_date,
+            order__ordered_at__lt=end_date
+        ).values('order_id').distinct().count()
+        
+        monthly_orders.append(count)
 
-   return render(request, 'seller_templates/selleranalytics.html', {
-        "logs": logs
-    })
+    context = {
+        'logs': logs,
+        'monthly_sales': json.dumps(monthly_sales),
+        'monthly_labels': json.dumps(monthly_labels),
+        'daily_sales': json.dumps(daily_sales),
+        'daily_labels': json.dumps(daily_labels),
+        'top_products_data': json.dumps(top_products_data),
+        'top_products_labels': json.dumps(top_products_labels),
+        'category_labels': json.dumps(category_labels),
+        'category_data': json.dumps(category_data),
+        'order_status_labels': json.dumps(order_status_labels),
+        'order_status_data': json.dumps(order_status_data),
+        'order_status_colors': json.dumps([order_status_colors.get(status['status'], '#6B7280') for status in order_statuses]),
+        'total_revenue': round(total_revenue, 2),
+        'total_orders': total_orders,
+        'total_items_sold': total_items_sold,
+        'avg_rating': avg_rating,
+        'monthly_orders': json.dumps(monthly_orders),
+    }
+    
+    return render(request, 'seller_templates/selleranalytics.html', context)
 @verified_seller_required
 def delete_product_image(request, image_id):
     image = get_object_or_404(ProductImage, id=image_id)
