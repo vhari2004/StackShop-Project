@@ -93,7 +93,7 @@
                         <label class="block text-[10px] font-black text-dark uppercase tracking-widest mb-2">
                             Phone Number
                         </label>
-                        <input type="tel" name="phone" value="{{ user.phone_number }}"
+                        <input type="tel" name="phone" value="{{ user.phone_number }}" required pattern='[0-9]{11}'
                             class="w-full px-4 py-3 border border-muted/50 rounded-xl text-sm font-medium focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all bg-white">
                     </div>
 
