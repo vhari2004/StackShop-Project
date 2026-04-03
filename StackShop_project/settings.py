@@ -87,7 +87,7 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 # -------------------- Hosts --------------------
 if ENVIRONMENT == 'production':
-    ALLOWED_HOSTS = ["*"]
+    ALLOWED_HOSTS = [DOMAIN]
     CSRF_TRUSTED_ORIGINS = [f'https://{DOMAIN}']
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 else:
