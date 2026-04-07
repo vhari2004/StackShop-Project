@@ -31,7 +31,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False').lower() in ('1', 'true', 'yes')
 
-# ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -57,10 +57,7 @@ INSTALLED_APPS = [
 ENVIRONMENT = os.getenv('ENVIRONMENT', 'local')
 DOMAIN = os.getenv('DOMAIN')
 
-if ENVIRONMENT == 'production':
-    SITE_ID = 2
-else:
-    SITE_ID = 3
+SITE_ID = 2
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
@@ -91,7 +88,10 @@ if ENVIRONMENT == 'production':
     CSRF_TRUSTED_ORIGINS = [f'https://{DOMAIN}']
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 else:
-    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+    ALLOWED_HOSTS = [
+        '127.0.0.1',
+        'localhost',
+    ]
     CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000']
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'
 #------------------------------Custom User Model--------------------------------------
