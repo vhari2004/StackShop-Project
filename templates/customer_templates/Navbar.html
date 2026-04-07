@@ -17,10 +17,11 @@
             <div class="flex-1 max-w-xl mx-4 lg:mx-12 hidden md:block">
                 <form action="{% url 'search' %}" method="GET" class="w-full">
                     <div class="flex gap-2 items-end">
-                        <div class="flex-1">
-                            <input name="q" value="{{ request.GET.q }}"
-                                class="w-full bg-light/10 border border-muted/30 rounded-lg py-2 pl-4 pr-4 text-sm text-light focus:outline-none focus:border-muted focus:ring-1 focus:ring-muted transition-all placeholder-muted/70"
+                        <div class="flex-1 relative">
+                            <input id="search-input" name="q" value="{{ request.GET.q }}"
+                                class="search-input w-full bg-light/10 border border-muted/30 rounded-lg py-2 pl-4 pr-12 text-sm text-light focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all placeholder-muted/70 pr-4"
                                 placeholder="Search products, brands..." type="text" />
+                            <ul id="suggestions" class="absolute left-0 right-0 top-full mt-1 bg-white/95 backdrop-blur-sm text-dark rounded-xl shadow-2xl border border-gray-200 max-h-80 overflow-y-auto z-50 hidden"></ul>
                         </div>
                         <button type="submit" class="flex items-center gap-2 px-4 py-2 bg-accent hover:bg-accent/90 text-dark font-semibold rounded-lg transition-colors active:scale-95">
                             <span class="material-icons text-sm">search</span>
@@ -157,8 +158,9 @@
                 
                 <form action="{% url 'search' %}" method="GET" class="md:hidden w-full mb-4">
                     <div class="relative">
-                        <input name="q" value="{{ request.GET.q }}" class="w-full bg-light/10 border border-muted/30 rounded-lg py-3 pl-10 pr-4 text-sm text-light focus:outline-none focus:border-accent" placeholder="Search products..." type="text" />
+                        <input id="search-input" name="q" value="{{ request.GET.q }}" class="search-input w-full bg-light/10 border border-muted/30 rounded-lg py-3 pl-10 pr-4 text-sm text-light focus:outline-none focus:border-accent" placeholder="Search products..." type="text" />
                         <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-muted text-[18px]">search</span>
+                        <ul id="suggestions" class="absolute left-0 right-0 top-full mt-1 bg-white/95 backdrop-blur-sm text-dark rounded-xl shadow-2xl border border-gray-200 max-h-80 overflow-y-auto z-50 hidden"></ul>
                     </div>
                 </form>
 
@@ -270,6 +272,82 @@
             }
         });
     });
+
+    // Initialize unified search suggestions
+    initSearchSuggestions();
+
+function initSearchSuggestions() {
+    const searchInputs = document.querySelectorAll('.search-input');
+    const suggestionsList = document.getElementById('suggestions');
+
+    searchInputs.forEach(input => {
+        input.addEventListener('input', function() {
+            const query = this.value.trim();
+            suggestionsList.classList.remove('hidden');
+
+            if (query.length < 2) {
+                suggestionsList.innerHTML = '';
+                return;
+            }
+
+            fetch(`/search-suggestions/?q=${encodeURIComponent(query)}`)
+                .then(res => res.json())
+                .then(data => {
+                    suggestionsList.innerHTML = '';
+
+                    if (data.length === 0) {
+                        suggestionsList.innerHTML = '<li class="p-3 text-gray-500 text-sm text-center">No products found</li>';
+                        return;
+                    }
+
+                    data.forEach(item => {
+                        const li = document.createElement('li');
+                        li.className = 'p-3 border-b border-gray-100 hover:bg-accent/20 cursor-pointer transition-all group flex items-center gap-3 first:border-t-0';
+                        li.innerHTML = `
+                            <div class="w-12 h-12 flex-shrink-0 rounded-xl overflow-hidden bg-gray-100 group-hover:bg-accent/10 transition-all">
+                                ${item.image_url ? `<img src="${item.image_url}" alt="${item.name}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.parentNode.innerHTML='<span class="material-icons text-muted w-full h-full flex items-center justify-center text-lg">image_search</span>'">` : '<span class="material-icons text-muted w-full h-full flex items-center justify-center text-lg">image_search</span>'}
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="font-bold text-sm leading-tight truncate group-hover:text-accent mb-0.5">${item.name}</div>
+                                <div class="text-xs text-gray-500 truncate">${item.category}</div>
+                                <div class="text-sm font-bold text-accent mt-0.5">₹${item.min_price.toLocaleString('en-IN', {maximumFractionDigits: 0})}</div>
+                            </div>
+                        `;
+                        
+                        li.addEventListener('click', (e) => {
+                            this.value = item.name;
+                            suggestionsList.classList.add('hidden');
+                            this.form.submit();
+                        });
+
+                        suggestionsList.appendChild(li);
+                    });
+                })
+                .catch(() => {
+                    suggestionsList.innerHTML = '<li class="p-3 text-gray-500 text-sm text-center">Loading...</li>';
+                });
+        });
+
+        // Hide suggestions when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!input.contains(e.target) && !suggestionsList.contains(e.target)) {
+                suggestionsList.classList.add('hidden');
+            }
+        });
+
+        input.addEventListener('focus', () => {
+            if (input.value.length >= 2) {
+                suggestionsList.classList.remove('hidden');
+            }
+        });
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                suggestionsList.classList.add('hidden');
+            }
+        });
+    });
+}
 </script>
 </body>
 </html>

@@ -16,6 +16,7 @@ from .models import CustomUser, EmailOTP, Category, Banner
 from seller.models import *
 from django.db.models import Q
 import random
+from django.http import JsonResponse
 
 
 def _get_email_sender():
@@ -112,6 +113,7 @@ def home_view(request):
 
 
 # search-------------------------------------------------------------------------
+
 def search_and_filter_view(request):
     query = request.GET.get("q", "")
     min_price = request.GET.get("min_price", "")
@@ -269,6 +271,35 @@ def search_and_filter_view(request):
     }
     return render(request, "customer_templates/product_page.html", context)
 
+def search_suggestions(request):
+    query = request.GET.get('q', '').strip()
+    if len(query) < 2:
+        return JsonResponse([], safe=False)
+
+    products = Product.objects.filter(
+        Q(name__icontains=query) | Q(brand__icontains=query),
+        approval_status="approved",
+        is_active=True
+    ).select_related('subcategory__category').prefetch_related(
+        'variants__images'
+    ).distinct()[:8]
+
+    data = []
+    for product in products:
+        first_variant = product.variants.first()
+        first_image = first_variant.images.first() if first_variant and first_variant.images.exists() else None
+        image_url = first_image.image_url.url if first_image else None
+
+        data.append({
+            'id': product.id,
+            'name': product.name,
+            'slug': product.slug,
+            'category': getattr(product.subcategory.category, 'name', 'Uncategorized') if product.subcategory and product.subcategory.category else 'Uncategorized',
+            'min_price': float(product.min_variant_price) if product.min_variant_price else 0,
+            'image_url': image_url,
+        })
+
+    return JsonResponse(data, safe=False)
 
 # ------------------------------------------------------------------------------------
 
