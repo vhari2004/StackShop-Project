@@ -131,13 +131,13 @@
                                 
                                 <td class="px-6 py-5 whitespace-nowrap text-center">
                                     {% if order.order_status == 'Delivered' %}
-                                        <button onclick="openModal({{ item.variant.id }})" class="bg-white border border-[#30364F] text-[#30364F] hover:bg-[#30364F] hover:text-[#F0F0DB] px-4 py-2 rounded-lg text-xs font-bold transition-colors shadow-sm inline-flex items-center gap-1.5">
+                                        <button onclick="openModal('reviewModal', 'modalBox'); setupReviewForm({{ item.variant.id }})" class="bg-white border border-[#30364F] text-[#30364F] hover:bg-[#30364F] hover:text-[#F0F0DB] px-4 py-2 rounded-lg text-xs font-bold transition-colors shadow-sm inline-flex items-center gap-1.5">
                                             <span class="material-icons text-[14px]">star_border</span> Rate Item
                                         </button>
                                     {% elif order.order_status == 'Cancelled' %}
                                         <span class="text-[10px] text-[#ACBAC4] font-bold uppercase tracking-widest">Refunded</span>
                                     {% else %}
-                                        <a href="#" class="text-[#ACBAC4] hover:text-[#30364F] text-xs font-bold transition-colors underline">Track Order</a>
+                                        <button onclick="openTrackModal('{{ order.order_number }}', '{{ order.order_status }}')" class="text-[#ACBAC4] hover:text-[#30364F] text-xs font-bold transition-colors underline focus:outline-none">Track Order</button>
                                     {% endif %}
                                 </td>
                                 
@@ -159,86 +159,108 @@
                 </table>
             </div>
             
-            <div class="flex items-center justify-between mt-8 border-t border-[#ACBAC4]/20 pt-6">
-                <span class="text-sm font-medium text-[#ACBAC4]">Showing your latest orders</span>
-                {% if orders.has_other_pages %}
-                <div class="flex items-center gap-2">
-                    {% if orders.has_previous %}
-                    <a href="?page={{ orders.previous_page_number }}" class="px-3 py-1.5 text-xs font-bold border rounded-lg hover:bg-[#F0F0DB]">Previous</a>
-                    {% endif %}
-                    <span class="text-xs font-semibold text-[#30364F]">{{ orders.number }} / {{ orders.paginator.num_pages }}</span>
-                    {% if orders.has_next %}
-                    <a href="?page={{ orders.next_page_number }}" class="px-3 py-1.5 text-xs font-bold border rounded-lg hover:bg-[#F0F0DB]">Next</a>
-                    {% endif %}
-                </div>
-                {% endif %}
             </div>
-
-        </div>
-
     </main>
 
     <div id="reviewModal" class="fixed inset-0 z-[100] flex items-center justify-center hidden">
-        <div class="absolute inset-0 bg-[#30364F]/70 backdrop-blur-sm transition-opacity" onclick="closeModal('reviewModal')"></div>
-        
+        <div class="absolute inset-0 bg-[#30364F]/70 backdrop-blur-sm transition-opacity" onclick="closeModal('reviewModal', 'modalBox')"></div>
         <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg p-8 transform scale-95 opacity-0 transition-all duration-300" id="modalBox">
-            <button onclick="closeModal('reviewModal')" class="absolute top-4 right-4 text-[#ACBAC4] hover:text-[#30364F] transition-colors">
+            <button onclick="closeModal('reviewModal', 'modalBox')" class="absolute top-4 right-4 text-[#ACBAC4] hover:text-[#30364F] transition-colors focus:outline-none">
                 <span class="material-icons">close</span>
             </button>
-            
             <h2 class="text-2xl font-bold text-[#30364F] mb-2">Write a Review</h2>
             <p class="text-sm text-[#ACBAC4] font-medium mb-6">Share your thoughts and experience with this product.</p>
             
             <form action="" method="POST" id="orderReviewForm">
                 {% csrf_token %}
-
                 <div class="mb-6 flex flex-col items-center justify-center bg-[#F0F0DB]/30 p-4 rounded-xl border border-[#ACBAC4]/30">
                     <p class="text-xs font-bold text-[#30364F] uppercase tracking-widest mb-3">Overall Rating</p>
                     <div class="flex flex-row-reverse justify-center star-rating-group cursor-pointer">
                         <input type="radio" id="orderStar5" name="rating" value="5" class="hidden peer" required />
                         <label for="orderStar5" class="material-icons text-3xl text-[#ACBAC4] peer-checked:text-[#E1D9BC] hover:text-[#E1D9BC] star-rating-input transition-colors">star</label>
-                        
-                        <input type="radio" id="orderStar4" name="rating" value="4" class="hidden peer" />
-                        <label for="orderStar4" class="material-icons text-3xl text-[#ACBAC4] peer-checked:text-[#E1D9BC] hover:text-[#E1D9BC] star-rating-input transition-colors">star</label>
-                        
-                        <input type="radio" id="orderStar3" name="rating" value="3" class="hidden peer" />
-                        <label for="orderStar3" class="material-icons text-3xl text-[#ACBAC4] peer-checked:text-[#E1D9BC] hover:text-[#E1D9BC] star-rating-input transition-colors">star</label>
-                        
-                        <input type="radio" id="orderStar2" name="rating" value="2" class="hidden peer" />
-                        <label for="orderStar2" class="material-icons text-3xl text-[#ACBAC4] peer-checked:text-[#E1D9BC] hover:text-[#E1D9BC] star-rating-input transition-colors">star</label>
-                        
                         <input type="radio" id="orderStar1" name="rating" value="1" class="hidden peer" />
                         <label for="orderStar1" class="material-icons text-3xl text-[#ACBAC4] peer-checked:text-[#E1D9BC] hover:text-[#E1D9BC] star-rating-input transition-colors">star</label>
                     </div>
                 </div>
-
                 <div class="mb-6">
                     <label class="block text-xs font-bold text-[#30364F] mb-2 uppercase tracking-wide">Review Comments</label>
                     <textarea name="comment" rows="4" placeholder="What did you like or dislike?" required class="w-full px-4 py-3 border border-[#ACBAC4]/50 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#30364F] focus:border-[#30364F] bg-transparent transition text-[#30364F] placeholder-[#ACBAC4]/70 resize-none"></textarea>
                 </div>
-                
                 <div class="flex gap-4 justify-end border-t border-[#ACBAC4]/20 pt-6">
-                    <button type="button" onclick="closeModal('reviewModal')" class="px-6 py-2.5 text-sm font-bold text-[#ACBAC4] hover:text-[#30364F] hover:bg-[#F0F0DB]/50 rounded-lg transition-colors">Cancel</button>
+                    <button type="button" onclick="closeModal('reviewModal', 'modalBox')" class="px-6 py-2.5 text-sm font-bold text-[#ACBAC4] hover:text-[#30364F] hover:bg-[#F0F0DB]/50 rounded-lg transition-colors">Cancel</button>
                     <button type="submit" class="px-8 py-2.5 bg-[#30364F] text-[#F0F0DB] rounded-lg text-sm font-bold hover:bg-opacity-90 shadow-md transition flex items-center gap-2">
-                        Submit Review <span class="material-icons text-[16px]">send</span>
+                        Submit <span class="material-icons text-[16px]">send</span>
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <script>
-        // CORRECTED: Takes variantId to inject directly into the form URL
-        function openModal(variantId) {
-            const modal = document.getElementById('reviewModal');
-            const modalBox = document.getElementById('modalBox');
+    <div id="trackModal" class="fixed inset-0 z-[100] flex items-center justify-center hidden">
+        <div class="absolute inset-0 bg-[#30364F]/70 backdrop-blur-sm transition-opacity" onclick="closeModal('trackModal', 'trackModalBox')"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-8 transform scale-95 opacity-0 transition-all duration-300" id="trackModalBox">
+            <button onclick="closeModal('trackModal', 'trackModalBox')" class="absolute top-4 right-4 text-[#ACBAC4] hover:text-[#30364F] transition-colors focus:outline-none">
+                <span class="material-icons">close</span>
+            </button>
             
-            // Set form action dynamically to match your urls.py structure
+            <h2 class="text-2xl font-bold text-[#30364F] mb-1">Track Order</h2>
+            <p class="text-sm text-[#ACBAC4] font-medium mb-8">Order <span id="trackOrderNumber" class="text-[#30364F] font-bold"></span></p>
+            
+            <div class="relative w-full py-8 px-4 sm:px-12 mb-4">
+                <div class="absolute left-[10%] right-[10%] sm:left-[12%] sm:right-[12%] top-1/2 -translate-y-1/2 h-1.5 bg-[#F0F0DB] rounded-full z-0"></div>
+                <div id="trackProgressBar" class="absolute left-[10%] sm:left-[12%] top-1/2 -translate-y-1/2 h-1.5 bg-[#30364F] rounded-full z-0 transition-all duration-700 ease-out" style="width: 0%;"></div>
+
+                <div class="relative z-10 flex justify-between items-center w-full">
+                    
+                    <div class="flex flex-col items-center w-1/4">
+                        <div id="track-node-0" class="w-10 h-10 rounded-full bg-[#F0F0DB] flex items-center justify-center border-4 border-white shadow-sm transition-colors duration-500">
+                            <span id="track-icon-0" class="material-icons text-sm text-[#ACBAC4]">inventory</span>
+                        </div>
+                        <span id="track-text-0" class="text-xs font-medium mt-3 text-[#ACBAC4] uppercase tracking-wide transition-colors duration-500">Pending</span>
+                    </div>
+
+                    <div class="flex flex-col items-center w-1/4">
+                        <div id="track-node-1" class="w-10 h-10 rounded-full bg-[#F0F0DB] flex items-center justify-center border-4 border-white shadow-sm transition-colors duration-500">
+                            <span id="track-icon-1" class="material-icons text-sm text-[#ACBAC4]">autorenew</span>
+                        </div>
+                        <span id="track-text-1" class="text-xs font-medium mt-3 text-[#ACBAC4] uppercase tracking-wide transition-colors duration-500">Processing</span>
+                    </div>
+
+                    <div class="flex flex-col items-center w-1/4">
+                        <div id="track-node-2" class="w-10 h-10 rounded-full bg-[#F0F0DB] flex items-center justify-center border-4 border-white shadow-sm transition-colors duration-500">
+                            <span id="track-icon-2" class="material-icons text-sm text-[#ACBAC4]">local_shipping</span>
+                        </div>
+                        <span id="track-text-2" class="text-xs font-medium mt-3 text-[#ACBAC4] uppercase tracking-wide transition-colors duration-500">Shipped</span>
+                    </div>
+
+                    <div class="flex flex-col items-center w-1/4">
+                        <div id="track-node-3" class="w-10 h-10 rounded-full bg-[#F0F0DB] flex items-center justify-center border-4 border-white shadow-sm transition-colors duration-500">
+                            <span id="track-icon-3" class="material-icons text-sm text-[#ACBAC4]">home</span>
+                        </div>
+                        <span id="track-text-3" class="text-xs font-medium mt-3 text-[#ACBAC4] uppercase tracking-wide transition-colors duration-500">Delivered</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end pt-4 mt-6 border-t border-[#ACBAC4]/20">
+                <button type="button" onclick="closeModal('trackModal', 'trackModalBox')" class="px-6 py-2.5 bg-[#F0F0DB]/50 text-[#30364F] rounded-lg text-sm font-bold hover:bg-[#F0F0DB] transition-colors">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set dynamic URL for the review form
+        function setupReviewForm(variantId) {
             const form = document.getElementById('orderReviewForm');
             if (form) {
                 form.action = `/submit-review/${variantId}/`;
             }
+        }
 
+        // Reusable open modal
+        function openModal(modalId, boxId) {
+            const modal = document.getElementById(modalId);
+            const modalBox = document.getElementById(boxId);
             modal.classList.remove('hidden');
             setTimeout(() => {
                 modalBox.classList.remove('scale-95', 'opacity-0');
@@ -246,9 +268,10 @@
             }, 10);
         }
         
-        function closeModal(modalId) {
+        // Reusable close modal
+        function closeModal(modalId, boxId) {
             const modal = document.getElementById(modalId);
-            const modalBox = document.getElementById('modalBox');
+            const modalBox = document.getElementById(boxId);
             modalBox.classList.remove('scale-100', 'opacity-100');
             modalBox.classList.add('scale-95', 'opacity-0');
             setTimeout(() => {
@@ -256,6 +279,57 @@
             }, 300);
         }
 
+        // Open Track Modal and dynamically set status points
+        function openTrackModal(orderNumber, currentStatus) {
+            document.getElementById('trackOrderNumber').innerText = '#' + orderNumber;
+
+            // Define status sequence. Adjust these strings to match your Django model choices exactly.
+            const statuses = ['Pending', 'Processing', 'Shipped', 'Delivered'];
+            
+            // Map status icons 
+            const statusIcons = ['inventory', 'autorenew', 'local_shipping', 'home'];
+
+            // Find current stage (default to 0 if unknown)
+            let currentIndex = statuses.indexOf(currentStatus);
+            if (currentIndex === -1) currentIndex = 0; 
+
+            // Calculate percentage width of the tracking line
+            // Max width is ~75% based on container design to end at the last node's center.
+            const totalSteps = statuses.length - 1;
+            const percentage = (currentIndex / totalSteps) * 76; 
+            document.getElementById('trackProgressBar').style.width = percentage + '%';
+
+            // Loop through UI nodes and update classes
+            statuses.forEach((status, index) => {
+                const node = document.getElementById('track-node-' + index);
+                const text = document.getElementById('track-text-' + index);
+                const icon = document.getElementById('track-icon-' + index);
+
+                if (index <= currentIndex) {
+                    // Reached or passed point (Active)
+                    node.className = "w-10 h-10 rounded-full bg-[#30364F] flex items-center justify-center border-4 border-white shadow-sm transition-colors duration-500 z-10";
+                    text.className = "text-xs font-bold mt-3 text-[#30364F] uppercase tracking-wide transition-colors duration-500";
+                    icon.className = "material-icons text-sm text-[#F0F0DB]";
+                    
+                    // Show a checkmark for completely passed steps
+                    if(index < currentIndex) {
+                        icon.innerText = "check";
+                    } else {
+                        icon.innerText = statusIcons[index];
+                    }
+                } else {
+                    // Not reached yet (Inactive)
+                    node.className = "w-10 h-10 rounded-full bg-[#F0F0DB] flex items-center justify-center border-4 border-white shadow-sm transition-colors duration-500 z-10";
+                    text.className = "text-xs font-medium mt-3 text-[#ACBAC4] uppercase tracking-wide transition-colors duration-500";
+                    icon.className = "material-icons text-sm text-[#ACBAC4]";
+                    icon.innerText = statusIcons[index];
+                }
+            });
+
+            openModal('trackModal', 'trackModalBox');
+        }
+
+        // Sidebar logic
         function toggleSidebar() {
             const sidebar = document.getElementById('dashboardSidebar');
             const main = document.getElementById('dashboardMain');
@@ -269,6 +343,7 @@
             }
         }
 
+        // Close sidebar when clicking outside on mobile
         document.addEventListener('click', function (event) {
             const sidebar = document.getElementById('dashboardSidebar');
             const toggleBtn = document.getElementById('sidebarToggleBtn');
