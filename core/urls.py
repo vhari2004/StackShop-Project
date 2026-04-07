@@ -27,4 +27,5 @@ urlpatterns = [
     path('privacy-policy/', views.privacy_policy_view, name='privacy_policy'),
     path('terms-conditions/', views.terms_conditions_view, name='terms_conditions'),
     path('sitemap/', views.sitemap_view, name='sitemap'),
+    path('chatbot/', views.chatbot_response),
 ]

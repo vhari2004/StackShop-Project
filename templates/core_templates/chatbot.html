@@ -1,0 +1,114 @@
+{% load static %}
+<div class="fixed bottom-6 right-6 z-50 flex flex-col items-end animate-fade-in-up">
+        
+        <div id="chat-window" class="mb-4 w-72 md:w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden transition-all duration-300 origin-bottom-right scale-0 opacity-0 flex flex-col">
+            
+            <div class="bg-dark text-white p-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <span class="material-icons text-accent">support_agent</span>
+                    <div>
+                        <h3 class="font-bold text-sm leading-none">Support Chat</h3>
+                        <span class="text-[10px] text-white/70">Typically replies instantly</span>
+                    </div>
+                </div>
+                <button onclick="toggleChat()" class="text-white/70 hover:text-white transition-colors">
+                    <span class="material-icons text-sm">close</span>
+                </button>
+            </div>
+            
+            <div id="chat-box" class="h-64 overflow-y-auto p-4 flex flex-col gap-3 bg-light/30 scroll-smooth hide-scrollbar">
+                <div class="bg-white border border-gray-100 shadow-sm text-dark text-sm p-3 rounded-xl rounded-tl-none self-start max-w-[85%] animate-fade-in-up">
+                    Hi there! 👋 How can I help you with your shopping today?
+                    type <b>"orders"</b> to see your order history or ask any questions you have!
+                    typing <b>"order"</b> will show a specific order with its current status.
+                </div>
+            </div>
+            
+            <div class="p-3 bg-white border-t border-gray-100 flex gap-2">
+                <input type="text" id="chat-msg" onkeypress="handleKeyPress(event)" class="flex-1 bg-light border-transparent rounded-lg text-sm px-3 py-2 focus:ring-2 focus:ring-dark focus:border-transparent outline-none transition-all" placeholder="Type your message...">
+                <button onclick="sendMessage()" class="bg-dark text-white w-10 h-10 rounded-lg flex items-center justify-center hover:bg-opacity-90 transition-all active:scale-95 flex-shrink-0">
+                    <span class="material-icons text-sm">send</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="chat-toggle-btn" onclick="toggleChat()" class="w-14 h-14 bg-dark text-accent rounded-full shadow-lg flex items-center justify-center cursor-pointer hover:bg-opacity-90 transition-transform duration-300 relative animate-bounce">
+            <span class="material-icons text-2xl" id="chat-icon">chat</span>
+            <span class="absolute top-0 right-0 w-3.5 h-3.5 bg-red-500 border-2 border-white rounded-full"></span>
+        </div>
+    </div>
+
+    <script>
+        // Toggle Chat Window
+        function toggleChat() {
+            const chatWindow = document.getElementById("chat-window");
+            const toggleBtn = document.getElementById("chat-toggle-btn");
+            const chatIcon = document.getElementById("chat-icon");
+
+            if (chatWindow.classList.contains("scale-0")) {
+                // Open chat
+                chatWindow.classList.remove("scale-0", "opacity-0");
+                chatWindow.classList.add("scale-100", "opacity-100");
+                // Stop the jumping animation once opened
+                toggleBtn.classList.remove("animate-bounce");
+                // Change icon to close
+                chatIcon.textContent = "expand_more"; 
+            } else {
+                // Close chat
+                chatWindow.classList.remove("scale-100", "opacity-100");
+                chatWindow.classList.add("scale-0", "opacity-0");
+                // Change icon back to chat
+                chatIcon.textContent = "chat";
+            }
+        }
+
+        // Send Message Function
+        function sendMessage() {
+            const inputField = document.getElementById("chat-msg");
+            const chatBox = document.getElementById("chat-box");
+            let msg = inputField.value.trim();
+
+            if (!msg) return; // Prevent sending empty messages
+
+            // 1. Add User Message to UI
+            chatBox.innerHTML += `
+                <div class="bg-dark text-white text-sm p-3 rounded-xl rounded-tr-none self-end max-w-[85%] animate-fade-in-up">
+                    ${msg}
+                </div>
+            `;
+            
+            // Clear input and scroll to bottom
+            inputField.value = "";
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // 2. Fetch Bot Response
+            fetch(`/chatbot/?message=${encodeURIComponent(msg)}`)
+            .then(res => res.json())
+            .then(data => {
+                // 3. Add Bot Message to UI
+                chatBox.innerHTML += `
+                    <div class="bg-white border border-gray-100 shadow-sm text-dark text-sm p-3 rounded-xl rounded-tl-none self-start max-w-[85%] animate-fade-in-up">
+                        ${data.response}
+                    </div>
+                `;
+                // Scroll to bottom after bot replies
+                chatBox.scrollTop = chatBox.scrollHeight;
+            })
+            .catch(error => {
+                console.error("Error communicating with chatbot:", error);
+                chatBox.innerHTML += `
+                    <div class="bg-red-50 text-red-500 text-sm p-3 rounded-xl rounded-tl-none self-start max-w-[85%] animate-fade-in-up">
+                        Sorry, I'm having trouble connecting right now.
+                    </div>
+                `;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+        }
+
+        // Allow pressing 'Enter' to send the message
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+    </script>

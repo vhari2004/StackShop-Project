@@ -11,7 +11,7 @@ from django.urls import reverse
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from core.decorators import admin_required, seller_required
-from customer.models import Cart, CartItem, WishlistItem, ReactivationRequest
+from customer.models import Cart, CartItem, OrderItem, WishlistItem, ReactivationRequest
 from .models import CustomUser, EmailOTP, Category, Banner
 from seller.models import *
 from django.db.models import Q
@@ -655,6 +655,49 @@ def blog_view(request):
 
 def contact_us_view(request):
     return render(request, "core_templates/contact_us.html")
+
+def chatbot_response(request):
+    message = request.GET.get('message', '').lower()
+
+    if not request.user.is_authenticated:
+        return JsonResponse({
+            'response': "Please login to get personalized assistance like order tracking."
+        })
+    user = request.user
+    order_items = OrderItem.objects.filter(
+        order__user=user
+    ).select_related("variant__product")
+
+    if any(greet in message for greet in ["hello", "hi", "whatsapp", "howdy"]):
+        reply = f"Hi {user.get_full_name() or user.username}! How can I help you?"
+    elif "orders" in message:
+        if order_items.exists():
+            reply = "Here are your orders:\n"
+            for item in order_items:
+                reply += f"\n- Order #{item.order.id}: {item.variant.product.name} (Qty: {item.quantity}) - Status: {item.status} \n"
+        else:
+            reply = "You don't have any orders yet."
+
+    # 📦 Ask for order ID
+    elif "order" in message and not any(char.isdigit() for char in message):
+        reply = "Please enter your Order ID to get the status."
+
+    # 🔍 Search by order ID
+    elif any(char.isdigit() for char in message):
+        orders = order_items.filter(order__order_number__icontains=message)
+
+        if orders.exists():
+            reply = "Here are your order details:\n"
+            for item in orders:
+                reply += f"\n- Order #{item.order.id}: {item.variant.product.name} (Qty: {item.quantity}) - Status: {item.status}"
+        else:
+            reply = "No orders found with that ID. Please check and try again."
+
+    # ❓ Default fallback
+    else:
+        reply = "I can help you with your orders. Try typing 'orders' or enter your Order ID."
+
+    return JsonResponse({'response': reply})
 
 
 def shipping_info_view(request):
