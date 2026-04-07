@@ -57,7 +57,7 @@ INSTALLED_APPS = [
 ENVIRONMENT = os.getenv('ENVIRONMENT', 'local')
 DOMAIN = os.getenv('DOMAIN')
 
-SITE_ID = 2
+SITE_ID = 5
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
