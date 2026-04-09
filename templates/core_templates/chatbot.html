@@ -1,7 +1,7 @@
 {% load static %}
-<div class="fixed bottom-6 right-6 z-50 flex flex-col items-end animate-fade-in-up">
+<div class="fixed bottom-6 right-6 z-50 flex flex-col items-end animate-fade-in-up pointer-events-none">
         
-        <div id="chat-window" class="mb-4 w-72 md:w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden transition-all duration-300 origin-bottom-right scale-0 opacity-0 flex flex-col">
+        <div id="chat-window" class="mb-4 w-72 md:w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden transition-all duration-300 origin-bottom-right scale-0 opacity-0 pointer-events-none flex flex-col">
             
             <div class="bg-dark text-white p-4 flex items-center justify-between">
                 <div class="flex items-center gap-3">
@@ -32,7 +32,7 @@
             </div>
         </div>
 
-        <div id="chat-toggle-btn" onclick="toggleChat()" class="w-14 h-14 bg-dark text-accent rounded-full shadow-lg flex items-center justify-center cursor-pointer hover:bg-opacity-90 transition-transform duration-300 relative animate-bounce">
+        <div id="chat-toggle-btn" onclick="toggleChat()" class="w-14 h-14 bg-dark text-accent rounded-full shadow-lg flex items-center justify-center cursor-pointer hover:bg-opacity-90 transition-transform duration-300 relative animate-bounce pointer-events-auto">
             <span class="material-icons text-2xl" id="chat-icon">chat</span>
             <span class="absolute top-0 right-0 w-3.5 h-3.5 bg-red-500 border-2 border-white rounded-full"></span>
         </div>
@@ -46,18 +46,17 @@
             const chatIcon = document.getElementById("chat-icon");
 
             if (chatWindow.classList.contains("scale-0")) {
-                // Open chat
-                chatWindow.classList.remove("scale-0", "opacity-0");
-                chatWindow.classList.add("scale-100", "opacity-100");
-                // Stop the jumping animation once opened
+                // Open chat: Remove none, add auto so we can interact with it
+                chatWindow.classList.remove("scale-0", "opacity-0", "pointer-events-none");
+                chatWindow.classList.add("scale-100", "opacity-100", "pointer-events-auto");
+                
                 toggleBtn.classList.remove("animate-bounce");
-                // Change icon to close
                 chatIcon.textContent = "expand_more"; 
             } else {
-                // Close chat
-                chatWindow.classList.remove("scale-100", "opacity-100");
-                chatWindow.classList.add("scale-0", "opacity-0");
-                // Change icon back to chat
+                // Close chat: Remove auto, add none back
+                chatWindow.classList.remove("scale-100", "opacity-100", "pointer-events-auto");
+                chatWindow.classList.add("scale-0", "opacity-0", "pointer-events-none");
+                
                 chatIcon.textContent = "chat";
             }
         }
@@ -68,30 +67,25 @@
             const chatBox = document.getElementById("chat-box");
             let msg = inputField.value.trim();
 
-            if (!msg) return; // Prevent sending empty messages
+            if (!msg) return; 
 
-            // 1. Add User Message to UI
             chatBox.innerHTML += `
                 <div class="bg-dark text-white text-sm p-3 rounded-xl rounded-tr-none self-end max-w-[85%] animate-fade-in-up">
                     ${msg}
                 </div>
             `;
             
-            // Clear input and scroll to bottom
             inputField.value = "";
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            // 2. Fetch Bot Response
             fetch(`/chatbot/?message=${encodeURIComponent(msg)}`)
             .then(res => res.json())
             .then(data => {
-                // 3. Add Bot Message to UI
                 chatBox.innerHTML += `
                     <div class="bg-white border border-gray-100 shadow-sm text-dark text-sm p-3 rounded-xl rounded-tl-none self-start max-w-[85%] animate-fade-in-up">
                         ${data.response}
                     </div>
                 `;
-                // Scroll to bottom after bot replies
                 chatBox.scrollTop = chatBox.scrollHeight;
             })
             .catch(error => {
@@ -105,7 +99,6 @@
             });
         }
 
-        // Allow pressing 'Enter' to send the message
         function handleKeyPress(event) {
             if (event.key === 'Enter') {
                 sendMessage();
