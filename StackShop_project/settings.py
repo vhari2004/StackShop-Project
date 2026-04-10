@@ -57,14 +57,8 @@ INSTALLED_APPS = [
 #AWS S3 Storage settings
 # The name of the S3 bucket you created
 AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
-
-# The region your bucket is in (e.g., 'us-east-1', 'ap-south-1')
 AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME', 'ap-southeast-2')
-
-# Prevents Boto3 from treating S3 files as identical if they have the same name
 AWS_S3_FILE_OVERWRITE = False
-
-# Ensures the URLs generated for your files are correct
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 
 

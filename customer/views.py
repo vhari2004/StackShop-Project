@@ -349,6 +349,9 @@ def buy_now_view(request, variant_id):
 @customer_required
 def cart_view(request):
     cart = get_object_or_404(Cart, user=request.user)
+    if not cart.items.exists():
+        messages.info(request, "Your cart is currently empty.")
+        return redirect(request.META.get("HTTP_REFERER", "/"))
     cart_items = CartItem.objects.filter(cart=cart).prefetch_related(
         "variant__product__subcategory", "variant__images"
     )
