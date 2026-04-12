@@ -1,12 +1,12 @@
 {% load static %}
 <!DOCTYPE html>
-<html class="light scroll-smooth" lang="en">
+<html class="light" lang="en">
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Seller Settings - StackShop</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <script>
         tailwind.config = {
@@ -25,48 +25,97 @@
             },
         }
     </script>
+    <style>
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
 </head>
 
-<body class="bg-light text-dark font-display flex flex-col min-h-screen">
-    {% include "seller_templates/seller_navbar.html" %}
-    {% include "core_templates/messages.html" %}
+<body class="bg-light text-dark font-display flex h-screen overflow-hidden">
+    
+    <aside id="sellerSidebarWrapper" class="hidden md:flex w-64 flex-col flex-shrink-0 h-full shadow-2xl z-40 bg-dark relative">
+        {% include "seller_templates/seller_navbar.html" %}
+    </aside>
 
-    <main class="max-w-4xl mx-auto w-full px-4 mt-8 mb-20 flex-grow">
-        <div class="bg-white rounded-2xl shadow-sm border border-muted/50 p-8">
-            <div class="flex items-center justify-between mb-6">
-                <h1 class="text-2xl font-bold">Seller Settings</h1>
-                <a href="{% url 'seller-profile' %}" class="text-sm font-medium text-muted hover:text-dark">Back to Store Profile</a>
+    <div class="flex-1 flex flex-col h-full overflow-y-auto relative bg-light scroll-smooth">
+        
+        <div class="md:hidden bg-dark text-light p-4 flex items-center justify-between shadow-md sticky top-0 z-30">
+            <div class="flex items-center gap-3">
+                <img alt="Logo" class="w-8 h-8" src="{% static 'core/homehtml/stackshoplogo.png' %}" />
+                <span class="font-black tracking-wide text-light text-lg">StackShop</span>
+            </div>
+            <button onclick="document.getElementById('sellerSidebarWrapper').classList.toggle('hidden')" class="text-light p-1">
+                <span class="material-icons">menu</span>
+            </button>
+        </div>
+
+        {% include "core_templates/messages.html" %}
+
+        <main class="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 flex-grow">
+            
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 border-b border-muted/30 pb-6 gap-4">
+                <div>
+                    <h1 class="text-3xl lg:text-4xl font-black text-dark tracking-tight mb-1">Account Settings</h1>
+                    <p class="text-sm font-bold text-muted uppercase tracking-widest">Manage your security and account preferences</p>
+                </div>
+                <a href="{% url 'seller-profile' %}" class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted hover:text-dark transition-colors bg-white px-4 py-2 rounded-xl border border-muted/30 shadow-sm">
+                    <span class="material-icons text-[16px]">arrow_back</span> Store Profile
+                </a>
             </div>
 
-            <form method="POST" class="space-y-6">
-                {% csrf_token %}
+            <div class="bg-white rounded-3xl shadow-sm border border-muted/30 overflow-hidden">
+                <div class="p-6 md:p-10">
+                    <form method="POST" class="space-y-8">
+                        {% csrf_token %}
 
-                <div class="bg-gray-50 border border-muted/40 p-6 rounded-xl">
-                    <h2 class="text-lg font-bold mb-4">Change Password</h2>
-                    <div class="grid gap-4">
-                        <div>
-                            <label class="block text-sm font-semibold mb-2">Current Password</label>
-                            <input type="password" name="current_password" required
-                                class="w-full px-4 py-3 border border-muted/40 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark" />
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold mb-2">New Password</label>
-                            <input type="password" name="new_password" required
-                                class="w-full px-4 py-3 border border-muted/40 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark" />
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold mb-2">Confirm New Password</label>
-                            <input type="password" name="confirm_password" required
-                                class="w-full px-4 py-3 border border-muted/40 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark" />
-                        </div>
-                    </div>
-                </div>
+                        <div class="bg-light/30 border border-muted/20 p-6 md:p-8 rounded-2xl relative overflow-hidden">
+                            <div class="absolute -right-10 -top-10 w-32 h-32 bg-accent/20 rounded-full blur-2xl pointer-events-none"></div>
+                            
+                            <h2 class="text-lg font-black text-dark mb-6 flex items-center gap-2 relative z-10">
+                                <span class="material-icons text-accent">lock</span> Security Update
+                            </h2>
 
-                <div class="flex justify-end gap-3">
-                    <button type="submit" class="bg-dark text-light px-5 py-2.5 rounded-lg font-bold hover:bg-accent hover:text-dark transition">Save Password</button>
+                            <div class="grid gap-6 relative z-10">
+                                <div>
+                                    <label class="block text-[10px] font-black uppercase tracking-widest text-muted mb-2">Current Password</label>
+                                    <input type="password" name="current_password" required
+                                        class="w-full px-4 py-3.5 bg-white border border-muted/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-dark focus:border-transparent font-bold transition-all" 
+                                        placeholder="••••••••" />
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-[10px] font-black uppercase tracking-widest text-muted mb-2">New Password</label>
+                                        <input type="password" name="new_password" required
+                                            class="w-full px-4 py-3.5 bg-white border border-muted/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-dark focus:border-transparent font-bold transition-all" 
+                                            placeholder="••••••••" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-black uppercase tracking-widest text-muted mb-2">Confirm New Password</label>
+                                        <input type="password" name="confirm_password" required
+                                            class="w-full px-4 py-3.5 bg-white border border-muted/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-dark focus:border-transparent font-bold transition-all" 
+                                            placeholder="••••••••" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-end gap-4">
+                            <button type="reset" class="px-6 py-3 text-[10px] font-black uppercase tracking-widest text-muted hover:text-dark transition-colors">
+                                Reset Fields
+                            </button>
+                            <button type="submit" class="bg-dark text-light px-8 py-4 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-accent hover:text-dark transition-all shadow-md active:scale-95 flex items-center gap-2">
+                                <span class="material-icons text-[18px]">security</span> Update Password
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </form>
-        </div>
-    </main>
+            </div>
+        </main>
+
+        <footer class="bg-dark text-light py-4 text-center text-[10px] font-black tracking-widest uppercase mt-auto border-t-4 border-accent">
+            © {% now "Y" %} StackShop. All rights reserved.
+        </footer>
+    </div>
 </body>
 </html>

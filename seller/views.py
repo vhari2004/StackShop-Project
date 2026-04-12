@@ -738,6 +738,7 @@ def update_order_status(request):
         seller_items = OrderItem.objects.filter(order=order, seller=seller)
         if not seller_items.exists():
             return redirect("seller_customers_orders")
+            
 
         if status in ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"]:
             order.order_status = status

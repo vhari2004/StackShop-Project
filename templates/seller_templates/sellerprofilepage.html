@@ -1,12 +1,12 @@
 {% load static %}
 <!DOCTYPE html>
-<html class="light scroll-smooth" lang="en">
+<html class="light" lang="en">
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Store Profile - StackShop Seller Central</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <script>
         tailwind.config = {
@@ -31,158 +31,135 @@
     </style>
 </head>
 
-<body class="bg-light text-dark font-display flex flex-col min-h-screen">
+<body class="bg-light text-dark font-display flex h-screen overflow-hidden">
     
-    {% include "seller_templates/seller_navbar.html" %}
-        {% include "core_templates/messages.html" %}
+    <aside id="sellerSidebarWrapper" class="hidden md:flex w-64 flex-col flex-shrink-0 h-full shadow-2xl z-40 bg-dark relative">
+        {% include "seller_templates/seller_navbar.html" %}
+    </aside>
 
-
-    <main class="max-w-4xl mx-auto w-full px-4 mt-8 mb-20 flex-grow">
+    <div class="flex-1 flex flex-col h-full overflow-y-auto relative bg-light scroll-smooth">
         
-        <div class="bg-white rounded-2xl shadow-sm border border-muted/50 p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 mb-8 relative overflow-hidden">
-            <div class="absolute -right-20 -top-20 w-64 h-64 bg-[#E1D9BC]/20 rounded-full blur-3xl pointer-events-none"></div>
-            
-            <div class="relative w-28 h-28 flex-shrink-0">
-                {% if profile.store_image %}
-                <img src="{{ profile.store_image.url }}" alt="Store Logo" class="w-full h-full object-cover rounded-full border-4 border-white shadow-md">
-                {% else %}
-                <div class="w-full h-full bg-light rounded-full border-4 border-white shadow-md flex items-center justify-center text-muted">
-                    <span class="material-icons text-4xl">storefront</span>
-                </div>
-                {% endif %}
-                
-                {% if profile.user.is_verified_seller %}
-                <div class="absolute bottom-0 right-0 bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center border-2 border-white shadow-sm" title="Verified Seller">
-                    <span class="material-icons text-[16px]">verified</span>
-                </div>
-                {% endif %}
+        <div class="md:hidden bg-dark text-light p-4 flex items-center justify-between shadow-md sticky top-0 z-30">
+            <div class="flex items-center gap-3">
+                <img alt="Logo" class="w-8 h-8" src="{% static 'core/homehtml/stackshoplogo.png' %}" />
+                <span class="font-black tracking-wide text-light text-lg">StackShop</span>
             </div>
-
-            <div class="text-center md:text-left z-10 flex-grow">
-                <div class="flex flex-col md:flex-row md:items-center gap-3 mb-1">
-                    <h1 class="text-3xl font-extrabold text-dark tracking-tight">{{ profile.store_name|default:"Your Store Name" }}</h1>
-                    {% if not profile.user.is_verified_seller %}
-                        <span class="inline-flex items-center gap-1 bg-yellow-100 text-yellow-700 border border-yellow-300 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-widest mx-auto md:mx-0">
-                            <span class="material-icons text-[12px]">pending_actions</span> Pending Verification
-                        </span>
-                    {% endif %}
-                </div>
-                
-                <p class="text-muted font-medium text-sm mb-3">Owner: {{ request.user.first_name|default:request.user.username }} {{ request.user.last_name }}</p>
-                
-                <div class="flex items-center justify-center md:justify-start gap-6">
-                    <div class="flex items-center gap-1.5 bg-light px-3 py-1 rounded-lg">
-                        <span class="material-icons text-yellow-500 text-[18px]">star</span>
-                        <span class="font-bold text-dark text-sm">{{ profile.rating|default:"0.0" }} <span class="text-muted font-normal">/ 5.0</span></span>
-                    </div>
-                    <div class="text-sm font-medium text-muted">
-                        Member since: <span class="text-dark font-bold">{{ profile.created_at|date:"M Y"|default:"Today" }}</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="z-10">
-                <a href="#" class="text-sm font-bold text-dark border border-dark rounded-lg px-4 py-2 hover:bg-dark hover:text-light transition-colors flex items-center gap-2 whitespace-nowrap">
-                    <span class="material-icons text-[18px]">open_in_new</span> View Store
-                </a>
-            </div>
+            <button onclick="document.getElementById('sellerSidebarWrapper').classList.toggle('hidden')" class="text-light p-1">
+                <span class="material-icons">menu</span>
+            </button>
         </div>
 
-        <form action="#" method="POST" enctype="multipart/form-data" class="space-y-6">
-            {% csrf_token %}
+        {% include "core_templates/messages.html" %}
 
-            <div class="bg-white rounded-xl shadow-sm border border-muted/50 p-6 md:p-8">
-                <h2 class="text-lg font-bold text-dark border-b border-muted/30 pb-3 mb-6 flex items-center gap-2">
-                    <span class="material-icons text-accent">store</span> Store Information
-                </h2>
+        <main class="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 flex-grow">
+            
+            <div class="bg-white rounded-3xl shadow-sm border border-muted/30 p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 mb-8 relative overflow-hidden">
+                <div class="absolute -right-20 -top-20 w-64 h-64 bg-accent/20 rounded-full blur-3xl pointer-events-none"></div>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Store Name <span class="text-red-500">*</span></label>
-                        <input type="text" name="store_name" value="{{ profile.store_name }}" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark placeholder-muted" placeholder="e.g., Tech Haven">
+                <div class="relative w-28 h-28 flex-shrink-0">
+                    {% if profile.store_image %}
+                    <img src="{{ profile.store_image.url }}" alt="Store Logo" class="w-full h-full object-cover rounded-full border-4 border-white shadow-md">
+                    {% else %}
+                    <div class="w-full h-full bg-light rounded-full border-4 border-white shadow-md flex items-center justify-center text-muted">
+                        <span class="material-icons text-4xl">storefront</span>
                     </div>
+                    {% endif %}
+                    
+                    {% if profile.user.is_verified_seller %}
+                    <div class="absolute bottom-0 right-0 bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center border-2 border-white shadow-sm" title="Verified Seller">
+                        <span class="material-icons text-[16px]">verified</span>
+                    </div>
+                    {% endif %}
+                </div>
 
-                    <div>
-                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Store URL Slug <span class="text-red-500">*</span></label>
-                        <div class="relative flex items-center">
-                            <span class="absolute left-4 text-muted text-sm font-medium">stackshop.com/</span>
-                            <input type="text" name="store_slug" value="{{ profile.store_slug }}" required class="w-full pl-[115px] pr-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark" placeholder="tech-haven">
+                <div class="text-center md:text-left z-10 flex-grow">
+                    <div class="flex flex-col md:flex-row md:items-center gap-3 mb-1">
+                        <h1 class="text-3xl font-black text-dark tracking-tight">{{ profile.store_name|default:"Your Store Name" }}</h1>
+                        {% if not profile.user.is_verified_seller %}
+                            <span class="inline-flex items-center gap-1 bg-yellow-100 text-yellow-700 border border-yellow-300 text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-widest mx-auto md:mx-0">
+                                <span class="material-icons text-[12px]">pending_actions</span> Pending Verification
+                            </span>
+                        {% endif %}
+                    </div>
+                    <p class="text-muted font-bold text-sm mb-3">Owner: {{ request.user.first_name|default:request.user.username }}</p>
+                    <div class="flex items-center justify-center md:justify-start gap-6">
+                        <div class="flex items-center gap-1.5 bg-light px-3 py-1 rounded-lg">
+                            <span class="material-icons text-yellow-500 text-[18px]">star</span>
+                            <span class="font-black text-dark text-sm">{{ profile.rating|default:"0.0" }}</span>
+                        </div>
+                        <div class="text-[11px] font-black uppercase tracking-widest text-muted">
+                            Member since: <span class="text-dark">{{ profile.created_at|date:"M Y" }}</span>
                         </div>
                     </div>
-
-                    <div class="md:col-span-2">
-                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Update Store Logo/Image</label>
-                        <input type="file" name="store_image" accept="image/*" class="block w-full text-sm text-muted
-                               file:mr-4 file:py-3 file:px-4
-                               file:rounded-lg file:border-0
-                               file:text-xs file:font-bold
-                               file:bg-dark file:text-light
-                               hover:file:bg-dark/90 hover:file:shadow-md
-                               cursor-pointer transition-all bg-light/30 border border-muted/50 rounded-lg">
-                    </div>
-
-                    <div class="md:col-span-2">
-                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Business Address <span class="text-red-500">*</span></label>
-                        <textarea name="business_address" rows="3" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark resize-none" placeholder="Full registered business address...">{{ profile.business_address }}</textarea>
-                    </div>
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-muted/50 p-6 md:p-8">
-                <h2 class="text-lg font-bold text-dark border-b border-muted/30 pb-3 mb-6 flex items-center gap-2">
-                    <span class="material-icons text-accent">gavel</span> Legal & Tax Information
-                </h2>
-                <div class="bg-blue-50 border border-blue-200 text-blue-800 rounded-lg p-4 mb-6 flex items-start gap-3 text-sm">
-                    <span class="material-icons text-blue-500 mt-0.5">info</span>
-                    <p>Changing your GST or PAN details will trigger a re-verification process. Your store may be temporarily paused.</p>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">GST Number <span class="text-red-500">*</span></label>
-                        <input type="text" name="gst_number" value="{{ profile.gst_number }}" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark font-mono uppercase" placeholder="22AAAAA0000A1Z5">
-                    </div>
+            <form action="#" method="POST" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
 
-                    <div>
-                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">PAN Number <span class="text-red-500">*</span></label>
-                        <input type="text" name="pan_number" value="{{ profile.pan_number }}" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark font-mono uppercase" placeholder="ABCDE1234F">
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-xl shadow-sm border border-muted/50 p-6 md:p-8">
-                <h2 class="text-lg font-bold text-dark border-b border-muted/30 pb-3 mb-6 flex items-center gap-2">
-                    <span class="material-icons text-accent">account_balance</span> Banking Details
-                </h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Bank Account Number <span class="text-red-500">*</span></label>
-                        <input type="text" name="bank_account_number" value="{{ profile.bank_account_number }}" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark font-mono" placeholder="XXXXXXXXXXXXXX">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">IFSC Code <span class="text-red-500">*</span></label>
-                        <input type="text" name="ifsc_code" value="{{ profile.ifsc_code }}" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark font-mono uppercase" placeholder="SBIN0001234">
+                <div class="bg-white rounded-3xl shadow-sm border border-muted/30 p-6 md:p-8">
+                    <h2 class="text-lg font-black text-dark border-b border-muted/10 pb-4 mb-6 flex items-center gap-2">
+                        <span class="material-icons text-accent">store</span> Store Information
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-muted mb-2">Store Name</label>
+                            <input type="text" name="store_name" value="{{ profile.store_name }}" required class="w-full px-4 py-3 bg-light/30 border border-muted/30 rounded-xl focus:ring-1 focus:ring-dark transition-all font-bold">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-muted mb-2">Store Slug</label>
+                            <input type="text" name="store_slug" value="{{ profile.store_slug }}" required class="w-full px-4 py-3 bg-light/30 border border-muted/30 rounded-xl focus:ring-1 focus:ring-dark transition-all font-bold">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-muted mb-2">Store Logo</label>
+                            <input type="file" name="store_image" class="block w-full text-sm text-muted file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-dark file:text-light cursor-pointer">
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="flex items-center justify-end gap-4 pt-4 border-t border-muted/30">
-                <button type="button" class="px-6 py-3 text-sm font-bold text-dark hover:bg-muted/20 rounded-lg transition-colors">
-                    Discard Changes
-                </button>
-                <button type="submit" class="bg-dark text-light px-8 py-3 rounded-lg text-sm font-bold hover:bg-opacity-90 transition-all shadow-md flex items-center gap-2">
-                    <span class="material-icons text-[18px]">save</span> Save Profile
-                </button>
-            </div>
+                <div class="bg-white rounded-3xl shadow-sm border border-muted/30 p-6 md:p-8">
+                    <h2 class="text-lg font-black text-dark border-b border-muted/10 pb-4 mb-6 flex items-center gap-2">
+                        <span class="material-icons text-accent">gavel</span> Legal Details
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-muted mb-2">GST Number</label>
+                            <input type="text" name="gst_number" value="{{ profile.gst_number }}" class="w-full px-4 py-3 bg-light/30 border border-muted/30 rounded-xl focus:ring-1 focus:ring-dark transition-all font-bold uppercase">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-muted mb-2">PAN Number</label>
+                            <input type="text" name="pan_number" value="{{ profile.pan_number }}" class="w-full px-4 py-3 bg-light/30 border border-muted/30 rounded-xl focus:ring-1 focus:ring-dark transition-all font-bold uppercase">
+                        </div>
+                    </div>
+                </div>
 
-        </form>
-    </main>
+                <div class="bg-white rounded-3xl shadow-sm border border-muted/30 p-6 md:p-8">
+                    <h2 class="text-lg font-black text-dark border-b border-muted/10 pb-4 mb-6 flex items-center gap-2">
+                        <span class="material-icons text-accent">account_balance</span> Banking
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-muted mb-2">Account Number</label>
+                            <input type="text" name="bank_account_number" value="{{ profile.bank_account_number }}" class="w-full px-4 py-3 bg-light/30 border border-muted/30 rounded-xl focus:ring-1 focus:ring-dark transition-all font-bold">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-muted mb-2">IFSC Code</label>
+                            <input type="text" name="ifsc_code" value="{{ profile.ifsc_code }}" class="w-full px-4 py-3 bg-light/30 border border-muted/30 rounded-xl focus:ring-1 focus:ring-dark transition-all font-bold uppercase">
+                        </div>
+                    </div>
+                </div>
 
-    <footer class="bg-dark text-light py-3 text-center text-xs uppercase tracking-wide">
-        © {% now "Y" %} StackShop. All rights reserved.
-    </footer>
+                <div class="flex items-center justify-end gap-4 mb-12">
+                    <button type="submit" class="bg-dark text-light px-8 py-4 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-accent hover:text-dark transition-all shadow-md flex items-center gap-2">
+                        <span class="material-icons text-[18px]">save</span> Update Profile
+                    </button>
+                </div>
+            </form>
+        </main>
 
+        <footer class="bg-dark text-light py-4 text-center text-[10px] font-black tracking-widest uppercase mt-auto border-t-4 border-accent">
+            © {% now "Y" %} StackShop. All rights reserved.
+        </footer>
+    </div>
 </body>
 </html>

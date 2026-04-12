@@ -1,157 +1,96 @@
-<header class="max-w-7xl mx-auto w-full pt-6 px-4 z-50 relative">
-    {% load static %}
-
-    <nav class="bg-dark text-light rounded-xl px-4 md:px-6 py-4 flex items-center justify-between shadow-lg border-b-4 border-accent relative">
-        
-        <a href="{% url 'dashboard' %}" class="flex items-center gap-2 md:gap-3 cursor-pointer hover:opacity-90 transition-all duration-200 active:scale-95">
-            <svg class="w-8 h-8 text-accent hidden sm:block" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-            </svg>
+{% load static %}
+<div class="h-full flex flex-col w-full bg-dark text-light border-r border-muted/20">
+    
+    <div class="p-6 border-b border-muted/20 flex items-center justify-between flex-shrink-0">
+        <a href="{% url 'dashboard' %}" class="flex items-center gap-3 hover:opacity-90 transition-opacity">
+            <img alt="StackShop Logo" class="w-10 h-10 text-accent drop-shadow-md" src="{% static 'core/homehtml/stackshoplogo.png' %}" />
             <div class="flex flex-col">
-                <span class="text-lg md:text-xl font-bold tracking-wide leading-none">StackShop</span>
-                <span class="text-[9px] md:text-[10px] text-accent font-bold uppercase tracking-widest mt-1">Seller Central</span>
+                <span class="text-xl font-black tracking-wide text-light leading-none">StackShop</span>
+                <span class="text-[10px] text-accent font-bold uppercase tracking-widest mt-1">Seller Central</span>
             </div>
         </a>
-        
-        <div class="flex items-center gap-4 md:gap-8">
-            
-            <div class="hidden lg:flex items-center gap-6 text-sm font-semibold">
-                
-                <a href="{% url 'customer_reviews' %}" 
-                   class="transition-all duration-200 active:scale-95 {% if request.resolver_match.url_name == 'customer_reviews' %}text-light border-b-2 border-accent pb-1{% else %}text-muted hover:text-light{% endif %}">
-                   Reviews
-                </a>
-                
-                <a href="{% url 'dashboard' %}" 
-                   class="transition-all duration-200 active:scale-95 {% if request.resolver_match.url_name == 'dashboard' %}text-light border-b-2 border-accent pb-1{% else %}text-muted hover:text-light{% endif %}">
-                   My Products
-                </a>
-
-                <a href="{% url 'seller_inventory' %}" 
-                   class="transition-all duration-200 active:scale-95 {% if request.resolver_match.url_name == 'seller_inventory' %}text-light border-b-2 border-accent pb-1{% else %}text-muted hover:text-light{% endif %}">
-                   Inventory
-                </a>
-                
-                <a href="{% url 'seller_customers_orders' %}" 
-                   class="transition-all duration-200 active:scale-95 {% if request.resolver_match.url_name == 'seller_customers_orders' %}text-light border-b-2 border-accent pb-1{% else %}text-muted hover:text-light{% endif %}">
-                   Orders <span class="bg-accent text-dark text-xs px-1.5 py-0.5 rounded-full ml-1">{{ seller_total_orders|default:0 }}</span>
-                </a>
-                
-                <a href="{% url 'seller_analytics' %}" 
-                   class="transition-all duration-200 active:scale-95 {% if request.resolver_match.url_name == 'seller_analytics' %}text-light border-b-2 border-accent pb-1{% else %}text-muted hover:text-light{% endif %}">
-                   Analytics
-                </a>
-                
-            </div>
-            
-            <div class="flex items-center gap-3 md:gap-4 lg:border-l lg:border-muted/30 lg:pl-8 text-muted">
-                
-                <div class="relative group flex items-center">
-                    <button class="flex items-center gap-2 hover:text-light transition-all duration-200 active:scale-95 py-2">
-                        
-                        {% if request.user.is_authenticated and request.user.seller_profile.store_image %}
-                            <img src="{{ request.user.seller_profile.store_image.url }}" alt="{{ request.user.seller_profile.store_name }}" class="w-8 h-8 rounded-full object-cover border border-accent" />
-                        {% else %}
-                            <div class="w-8 h-8 rounded-full bg-accent/20 border border-accent flex items-center justify-center text-accent font-black">
-                                {% if request.user.is_authenticated %}
-                                    {{ request.user.username|make_list|first|upper }}
-                                {% else %}
-                                    <span class="material-icons text-sm">person</span>
-                                {% endif %}
-                            </div>
-                        {% endif %}
-                        
-                        <span class="text-sm hidden sm:inline font-bold text-light">
-                            {{ request.user.username|default:"Profile" }}
-                        </span>
-                        
-                        <span class="material-icons text-sm transition-transform duration-300 group-hover:-rotate-180 hidden sm:block">expand_more</span>
-                    </button>
-
-                    <div class="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-xl border border-muted/20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50 overflow-hidden">
-                        <div class="p-2 flex flex-col gap-1">
-                            
-                            <a href="{% url 'home' %}" class="flex items-center gap-3 px-3 py-2.5 text-sm text-dark font-bold rounded-lg hover:bg-light transition-all duration-200 active:scale-95">
-                                <span class="material-icons text-[18px] text-muted">storefront</span> Return to Store
-                            </a>
-                            
-                            <a href="{% url 'seller-profile' %}" class="flex items-center gap-3 px-3 py-2.5 text-sm text-dark font-bold rounded-lg hover:bg-light transition-all duration-200 active:scale-95">
-                                <span class="material-icons text-[18px] text-muted">person_outline</span> View Profile
-                            </a>
-                            <a href="{% url 'seller_settings' %}" class="flex items-center gap-3 px-3 py-2.5 text-sm text-dark font-bold rounded-lg hover:bg-light transition-all duration-200 active:scale-95">
-                                <span class="material-icons text-[18px] text-muted">settings</span> Seller Settings
-                            </a>
-                            
-                            <div class="h-px bg-muted/20 my-1 mx-2"></div>
-                            
-                            <form action="{% url 'logout' %}" method="POST" class="w-full m-0">
-                                {% csrf_token %}
-                                <button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-red-600 font-bold rounded-lg hover:bg-red-50 transition-all duration-200 active:scale-95">
-                                    <span class="material-icons text-[18px]">logout</span> Logout
-                                </button>
-                            </form>
-                            
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </nav>
-
-    <div class="lg:hidden px-4 pb-4 bg-light border-b border-muted/20">
-        <div class="rounded-2xl bg-white border border-muted/20 p-3 shadow-sm">
-            <div class="flex gap-3 overflow-x-auto hide-scrollbar pb-1">
-                <a href="{% url 'customer_reviews' %}"
-                   class="shrink-0 px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all {% if request.resolver_match.url_name == 'customer_reviews' %}bg-dark text-light shadow-sm{% else %}bg-light text-dark hover:bg-accent/10{% endif %}">
-                    Reviews
-                </a>
-                <a href="{% url 'dashboard' %}"
-                   class="shrink-0 px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all {% if request.resolver_match.url_name == 'dashboard' %}bg-dark text-light shadow-sm{% else %}bg-light text-dark hover:bg-accent/10{% endif %}">
-                    My Products
-                </a>
-                <a href="{% url 'seller_inventory' %}"
-                   class="shrink-0 px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all {% if request.resolver_match.url_name == 'seller_inventory' %}bg-dark text-light shadow-sm{% else %}bg-light text-dark hover:bg-accent/10{% endif %}">
-                    Inventory
-                </a>
-                <a href="{% url 'seller_customers_orders' %}"
-                   class="shrink-0 px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all {% if request.resolver_match.url_name == 'seller_customers_orders' %}bg-dark text-light shadow-sm{% else %}bg-light text-dark hover:bg-accent/10{% endif %}">
-                    Orders
-                </a>
-                <a href="{% url 'seller_analytics' %}"
-                   class="shrink-0 px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all {% if request.resolver_match.url_name == 'seller_analytics' %}bg-dark text-light shadow-sm{% else %}bg-light text-dark hover:bg-accent/10{% endif %}">
-                    Analytics
-                </a>
-            </div>
-        </div>
+        <button id="closeSellerSidebarBtn" class="md:hidden text-muted hover:text-light transition-colors p-1">
+            <span class="material-icons">close</span>
+        </button>
     </div>
 
-</header>
+    <nav class="flex-1 overflow-y-auto hide-scrollbar py-6 px-4 space-y-1.5">
+        
+        <p class="px-4 text-[10px] font-black uppercase tracking-widest text-muted/60 mb-2">Workspace</p>
+        
+        <a href="{% url 'dashboard' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-bold {% if request.resolver_match.url_name == 'dashboard' %}bg-accent text-dark shadow-md{% else %}text-muted hover:bg-light/10 hover:text-light{% endif %}">
+            <span class="material-icons text-[20px]">inventory_2</span>
+            <span class="text-sm">My Products</span>
+        </a>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const btn = document.getElementById('seller-mobile-menu-btn');
-        const menu = document.getElementById('seller-mobile-menu');
-        if (btn && menu) {
-            const icon = btn.querySelector('.material-icons');
+        <a href="{% url 'seller_inventory' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-bold {% if request.resolver_match.url_name == 'seller_inventory' %}bg-accent text-dark shadow-md{% else %}text-muted hover:bg-light/10 hover:text-light{% endif %}">
+            <span class="material-icons text-[20px]">warehouse</span>
+            <span class="text-sm">Inventory</span>
+        </a>
 
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                menu.classList.toggle('hidden');
-                if (menu.classList.contains('hidden')) {
-                    icon.textContent = 'menu';
-                } else {
-                    icon.textContent = 'close';
-                }
-            });
+        <a href="{% url 'seller_customers_orders' %}" class="flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 font-bold {% if request.resolver_match.url_name == 'seller_customers_orders' %}bg-accent text-dark shadow-md{% else %}text-muted hover:bg-light/10 hover:text-light{% endif %}">
+            <div class="flex items-center gap-3">
+                <span class="material-icons text-[20px]">local_shipping</span>
+                <span class="text-sm">Orders</span>
+            </div>
+            {% if seller_total_orders %}
+            <span class="{% if request.resolver_match.url_name == 'seller_customers_orders' %}bg-dark text-accent{% else %}bg-accent text-dark{% endif %} text-[10px] px-2 py-0.5 rounded-full font-black shadow-sm">{{ seller_total_orders }}</span>
+            {% endif %}
+        </a>
 
-            // Close menu when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!menu.contains(e.target) && !btn.contains(e.target) && !menu.classList.contains('hidden')) {
-                    menu.classList.add('hidden');
-                    icon.textContent = 'menu';
-                }
-            });
-        }
-    });
-</script>
+        <a href="{% url 'customer_reviews' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-bold {% if request.resolver_match.url_name == 'customer_reviews' %}bg-accent text-dark shadow-md{% else %}text-muted hover:bg-light/10 hover:text-light{% endif %}">
+            <span class="material-icons text-[20px]">star_rate</span>
+            <span class="text-sm">Reviews</span>
+        </a>
+
+        <a href="{% url 'seller_analytics' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-bold {% if request.resolver_match.url_name == 'seller_analytics' %}bg-accent text-dark shadow-md{% else %}text-muted hover:bg-light/10 hover:text-light{% endif %}">
+            <span class="material-icons text-[20px]">analytics</span>
+            <span class="text-sm">Analytics</span>
+        </a>
+
+        <p class="px-4 text-[10px] font-black uppercase tracking-widest text-muted/60 mb-2 mt-8">Management</p>
+
+        <a href="{% url 'seller-profile' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-bold {% if request.resolver_match.url_name == 'seller-profile' %}bg-accent text-dark shadow-md{% else %}text-muted hover:bg-light/10 hover:text-light{% endif %}">
+            <span class="material-icons text-[20px]">storefront</span>
+            <span class="text-sm">Store Profile</span>
+        </a>
+
+        <a href="{% url 'seller_settings' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-bold {% if request.resolver_match.url_name == 'seller_settings' %}bg-accent text-dark shadow-md{% else %}text-muted hover:bg-light/10 hover:text-light{% endif %}">
+            <span class="material-icons text-[20px]">settings</span>
+            <span class="text-sm">Settings</span>
+        </a>
+
+        <a href="{% url 'home' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-bold text-muted hover:bg-light/10 hover:text-light mt-4 border border-transparent hover:border-muted/30">
+            <span class="material-icons text-[20px]">shopping_bag</span>
+            <span class="text-sm">Return to Shop</span>
+        </a>
+
+    </nav>
+
+    <div class="p-5 border-t border-muted/20 flex-shrink-0 bg-dark/50">
+        <div class="flex items-center gap-3 mb-4">
+            {% if request.user.is_authenticated and request.user.seller_profile.store_image %}
+                <img src="{{ request.user.seller_profile.store_image.url }}" alt="{{ request.user.seller_profile.store_name }}" class="w-10 h-10 rounded-full object-cover border-2 border-accent shadow-sm" />
+            {% else %}
+                <div class="w-10 h-10 rounded-full bg-accent border-2 border-accent flex items-center justify-center text-dark font-black shadow-sm">
+                    {% if request.user.is_authenticated %}
+                        {{ request.user.username|make_list|first|upper }}
+                    {% else %}
+                        <span class="material-icons text-[20px]">person</span>
+                    {% endif %}
+                </div>
+            {% endif %}
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-black text-light truncate">{{ request.user.seller_profile.store_name|default:request.user.username }}</p>
+                <p class="text-[10px] font-bold text-muted uppercase tracking-widest truncate">{{ request.user.email }}</p>
+            </div>
+        </div>
+        
+        <form action="{% url 'logout' %}" method="POST" class="w-full m-0">
+            {% csrf_token %}
+            <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white border border-red-500/20 hover:border-red-500 rounded-xl transition-all duration-200 font-bold text-xs uppercase tracking-widest shadow-sm">
+                <span class="material-icons text-[16px]">logout</span> Sign Out
+            </button>
+        </form>
+    </div>
+</div>

@@ -66,7 +66,7 @@ AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 ENVIRONMENT = os.getenv('ENVIRONMENT', 'local')
 DOMAIN = os.getenv('DOMAIN')
 
-SITE_ID = 5
+SITE_ID = 7
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',

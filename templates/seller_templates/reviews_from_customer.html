@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html class="light scroll-smooth" lang="en">
+<html class="light" lang="en">
 
 <head>
     <meta charset="utf-8" />
@@ -29,242 +29,209 @@
         }
     </script>
     <style>
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 
-<body class="bg-light text-dark font-display flex flex-col min-h-screen overflow-x-hidden">
+<body class="bg-light text-dark font-display flex h-screen overflow-hidden">
 
-    {% include "seller_templates/seller_navbar.html" %}
+    <aside id="sellerSidebarWrapper" class="hidden md:flex w-64 flex-col flex-shrink-0 h-full shadow-2xl z-40 bg-dark relative">
+        {% include "seller_templates/seller_navbar.html" %}
+    </aside>
 
-    <main class="max-w-7xl mx-auto w-full px-4 mt-8 mb-20 flex-grow">
+    <div class="flex-1 flex flex-col h-full overflow-y-auto relative bg-light scroll-smooth">
+        
+        <div class="md:hidden bg-dark text-light p-4 flex items-center justify-between shadow-md sticky top-0 z-30">
+            <div class="flex items-center gap-3">
+                <img alt="Logo" class="w-8 h-8" src="{% static 'core/homehtml/stackshoplogo.png' %}" />
+                <span class="font-black tracking-wide text-light text-lg">StackShop</span>
+            </div>
+            <button onclick="document.getElementById('sellerSidebarWrapper').classList.toggle('hidden')" class="text-light p-1">
+                <span class="material-icons">menu</span>
+            </button>
+        </div>
+
         {% include "core_templates/messages.html" %}
 
-        <div
-            class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 border-b border-muted/30 pb-6 gap-4">
-            <div>
-                <h1 class="text-3xl lg:text-4xl font-extrabold text-dark tracking-tight mb-2">Customer Reviews</h1>
-                <p class="text-sm font-bold text-muted uppercase tracking-widest">Manage feedback, reply to customers,
-                    and build trust.</p>
-            </div>
+        <main class="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 flex-grow">
+            
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 border-b border-muted/30 pb-6 gap-4">
+                <div>
+                    <h1 class="text-3xl lg:text-4xl font-extrabold text-dark tracking-tight mb-2">Customer Reviews</h1>
+                    <p class="text-sm font-bold text-muted uppercase tracking-widest">Manage feedback and build trust with your buyers.</p>
+                </div>
 
-            <div class="flex items-center gap-6 bg-white px-6 py-3 rounded-2xl shadow-sm border border-muted/30">
-                <div class="text-center border-r border-muted/30 pr-6">
-                    <p class="text-[10px] font-black uppercase tracking-widest text-muted mb-1">Store Rating</p>
-                    <div class="flex items-center justify-center gap-1 text-dark">
-                        <span class="text-2xl font-extrabold">{{ store_rating|default:'0.0' }}</span>
-                        <span class="material-icons text-yellow-400 text-[20px]">star</span>
+                <div class="flex items-center gap-6 bg-white px-6 py-3 rounded-2xl shadow-sm border border-muted/30">
+                    <div class="text-center border-r border-muted/30 pr-6">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-muted mb-1">Store Rating</p>
+                        <div class="flex items-center justify-center gap-1 text-dark">
+                            <span class="text-2xl font-extrabold">{{ store_rating|default:'0.0' }}</span>
+                            <span class="material-icons text-yellow-400 text-[20px]">star</span>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-muted mb-1">Total Reviews</p>
+                        <p class="text-2xl font-extrabold text-dark">{{ total_reviews|default:'0' }}</p>
                     </div>
                 </div>
-                <div class="text-center">
-                    <p class="text-[10px] font-black uppercase tracking-widest text-muted mb-1">Total Reviews</p>
-                    <p class="text-2xl font-extrabold text-dark">{{ total_reviews|default:'0' }}</p>
+            </div>
+
+            <div class="mb-10 bg-white rounded-3xl border border-muted/30 shadow-sm p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-black text-dark flex items-center gap-2">
+                        <span class="material-icons text-accent">trending_up</span> Top Reviewed Products
+                    </h2>
+                    <a href="{% url 'product_list' %}" class="text-[10px] font-black uppercase tracking-widest text-dark border border-muted/30 px-4 py-2 rounded-xl hover:bg-dark hover:text-light transition-all shadow-sm">See All Products</a>
+                </div>
+                <div class="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
+                    {% for product in top_reviewed_products %}
+                    <a href="{% url 'productsingle' product.slug %}" class="min-w-[240px] bg-light/30 rounded-2xl border border-muted/20 p-4 hover:border-accent transition-all flex-shrink-0 group">
+                        <div class="aspect-video bg-white rounded-xl mb-3 overflow-hidden flex items-center justify-center border border-muted/10 group-hover:shadow-md transition-shadow">
+                            {% if product.display_image %}
+                                <img src="{{ product.display_image }}" alt="{{ product.name }}" class="w-full h-full object-contain p-2 mix-blend-multiply" />
+                            {% else %}
+                                <span class="material-icons text-muted/30 text-4xl">inventory_2</span>
+                            {% endif %}
+                        </div>
+                        <p class="text-sm font-black text-dark truncate mb-1">{{ product.name }}</p>
+                        <div class="flex justify-between items-center">
+                            <p class="text-[10px] font-bold text-muted uppercase tracking-widest">{{ product.review_set.count }} reviews</p>
+                            <p class="text-sm font-black text-dark">₹{{ product.min_variant_price|default:0 }}</p>
+                        </div>
+                    </a>
+                    {% empty %}
+                    <p class="text-sm text-muted font-bold italic py-4">No data available for top products.</p>
+                    {% endfor %}
                 </div>
             </div>
-        </div>
 
-        <div class="mb-8 bg-white rounded-2xl border border-muted/30 shadow-sm p-4">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-black text-dark">Top Reviewed Products</h2>
-                <a href="{% url 'product_list' %}" class="text-xs font-bold uppercase tracking-widest text-dark border border-muted/30 px-3 py-2 rounded-lg hover:bg-dark hover:text-light transition-all">See All Products</a>
-            </div>
-            <div class="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
-                {% for product in top_reviewed_products %}
-                <a href="{% url 'productsingle' product.slug %}" class="min-w-[230px] bg-light rounded-2xl border border-muted/30 p-3 shadow-sm hover:shadow-md transition-all flex-shrink-0">
-                    <div class="aspect-[4/3] bg-white rounded-xl mb-3 overflow-hidden flex items-center justify-center">
-                        {% if product.display_image %}
-                            <img src="{{ product.display_image }}" alt="{{ product.name }}" class="w-full h-full object-cover" />
-                        {% else %}
-                            <span class="material-icons text-muted text-5xl">inventory_2</span>
-                        {% endif %}
-                    </div>
-                    <p class="text-sm font-bold text-dark truncate">{{ product.name }}</p>
-                    <p class="text-xs text-muted mb-1">{{ product.review_set.count }} reviews</p>
-                    <p class="text-sm font-black text-dark">₹{{ product.min_variant_price|default:0 }}</p>
+            <div class="flex gap-3 mb-8 overflow-x-auto hide-scrollbar pb-2">
+                <a href="?filter=all" class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap {% if not request.GET.filter or request.GET.filter == 'all' %}bg-dark text-light shadow-md{% else %}bg-white border border-muted/50 text-muted hover:text-dark shadow-sm{% endif %}">
+                    All Reviews
                 </a>
+                <a href="?filter=needs_reply" class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap {% if request.GET.filter == 'needs_reply' %}bg-dark text-light shadow-md{% else %}bg-white border border-muted/50 text-muted hover:text-dark shadow-sm{% endif %}">
+                    Needs Reply
+                </a>
+                <a href="?filter=positive" class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap {% if request.GET.filter == 'positive' %}bg-dark text-light shadow-md{% else %}bg-white border border-muted/50 text-muted hover:text-dark shadow-sm{% endif %}">
+                    Positive (4-5 ★)
+                </a>
+                <a href="?filter=critical" class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap {% if request.GET.filter == 'critical' %}bg-dark text-light shadow-md{% else %}bg-white border border-muted/50 text-muted hover:text-dark shadow-sm{% endif %}">
+                    Critical (1-3 ★)
+                </a>
+            </div>
+
+            <div class="space-y-6 mb-12">
+                {% for review in reviews %}
+                <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-muted/30 transition-all hover:shadow-md">
+                    <div class="flex flex-col md:flex-row gap-6 md:gap-8">
+                        <div class="w-full md:w-48 flex-shrink-0 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-muted/20 pb-4 md:pb-0 md:pr-8">
+                            <div class="aspect-square bg-light/50 rounded-xl border border-muted/20 flex items-center justify-center p-2 overflow-hidden">
+                                {% if review.product.variants.first.images.first %}
+                                <img src="{{ review.product.variants.first.images.first.image_url.url }}" alt="{{ review.product.name }}" class="w-full h-full object-contain mix-blend-multiply">
+                                {% else %}
+                                <span class="material-icons text-muted text-4xl">inventory_2</span>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <p class="text-[9px] font-black text-muted uppercase tracking-widest mb-1">Reviewed Item</p>
+                                <a href="#" class="text-xs font-extrabold text-dark hover:text-accent transition-colors line-clamp-2 leading-tight">{{review.product.name }}</a>
+                            </div>
+                        </div>
+
+                        <div class="flex-grow flex flex-col">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-accent text-dark flex items-center justify-center font-black text-sm border-2 border-white shadow-sm">
+                                        {{review.user.username|slice:":1"|upper}}
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-black text-dark">{{ review.user.first_name }} {{review.user.last_name }}</p>
+                                        <p class="text-[10px] font-bold text-muted uppercase tracking-widest">{{review.created_at|date:"M d, Y" }}</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center text-yellow-400 bg-yellow-50 px-2 py-1 rounded-lg border border-yellow-100">
+                                    <span class="text-xs font-black mr-1 text-dark">{{ review.rating|default:"5" }}</span>
+                                    <span class="material-icons text-[14px]">star</span>
+                                </div>
+                            </div>
+
+                            <h4 class="text-lg font-black text-dark mb-2">{{ review.headline|default:"Review Title" }}</h4>
+                            <p class="text-dark/80 text-sm font-medium leading-relaxed mb-6 italic">
+                                "{{ review.comment|default:"No comment provided." }}"
+                            </p>
+
+                            <div class="mt-auto border-t border-muted/10 pt-4">
+                                {% if review.seller_reply %}
+                                <div class="bg-light/40 rounded-2xl p-4 border border-muted/20 border-l-4 border-l-dark">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="material-icons text-dark text-[14px]">reply</span>
+                                        <span class="text-[9px] font-black uppercase tracking-widest text-dark">Your Official Response</span>
+                                    </div>
+                                    <p class="text-sm font-bold text-dark/70">{{ review.seller_reply }}</p>
+                                </div>
+                                {% else %}
+                                <button onclick="toggleReplyForm({{ review.id }})" class="text-[10px] font-black uppercase tracking-widest bg-dark text-light px-5 py-2.5 rounded-xl hover:bg-accent hover:text-dark transition-all shadow-md flex items-center gap-2">
+                                    <span class="material-icons text-[16px]">chat_bubble_outline</span> Write a Reply
+                                </button>
+
+                                <div id="reply-form-{{ review.id }}" class="hidden mt-4 bg-white rounded-2xl p-4 border border-muted/30 shadow-inner">
+                                    <form action="{% url 'customer_reviews' %}" method="POST" class="m-0">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="review_id" value="{{ review.id }}">
+                                        <textarea name="reply_text" rows="3" class="w-full rounded-xl border-muted/30 bg-light/20 p-4 text-sm font-bold text-dark focus:ring-1 focus:ring-dark placeholder-muted/60 transition-all resize-none mb-3" placeholder="Write your professional response..."></textarea>
+                                        <div class="flex justify-end gap-3">
+                                            <button type="button" onclick="toggleReplyForm({{ review.id }})" class="text-[10px] font-black text-muted hover:text-dark px-4 py-2 uppercase tracking-widest">Cancel</button>
+                                            <button type="submit" class="text-[10px] font-black uppercase tracking-widest bg-accent text-dark px-6 py-2 rounded-lg hover:bg-dark hover:text-light transition-all shadow-sm">Post Reply</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 {% empty %}
-                <p class="text-sm text-muted">No top reviewed products yet.</p>
+                <div class="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border-2 border-dashed border-muted/30">
+                    <span class="material-icons text-muted/30 text-5xl mb-4">rate_review</span>
+                    <h3 class="text-xl font-black text-dark mb-1">No Reviews Found</h3>
+                    <p class="text-sm font-medium text-muted">Feedback from your customers will appear here.</p>
+                </div>
                 {% endfor %}
             </div>
-        </div>
 
-        <div class="flex gap-3 mb-8 overflow-x-auto hide-scrollbar pb-2">
-            <a href="?filter=all"
-                class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 active:scale-95 whitespace-nowrap {% if not request.GET.filter or request.GET.filter == 'all' %}bg-dark text-light shadow-md{% else %}bg-white border border-muted/50 text-muted hover:text-dark hover:border-dark shadow-sm{% endif %}">All
-                Reviews</a>
-            <a href="?filter=needs_reply"
-                class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 active:scale-95 whitespace-nowrap {% if request.GET.filter == 'needs_reply' %}bg-dark text-light shadow-md{% else %}bg-white border border-muted/50 text-muted hover:text-dark hover:border-dark shadow-sm{% endif %}">Needs
-                Reply <span class="bg-red-100 text-red-600 px-1.5 py-0.5 rounded-md text-[10px] ml-1">3</span></a>
-            <a href="?filter=positive"
-                class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 active:scale-95 whitespace-nowrap {% if request.GET.filter == 'positive' %}bg-dark text-light shadow-md{% else %}bg-white border border-muted/50 text-muted hover:text-dark hover:border-dark shadow-sm{% endif %}">Positive
-                (4-5 Star)</a>
-            <a href="?filter=critical"
-                class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 active:scale-95 whitespace-nowrap {% if request.GET.filter == 'critical' %}bg-dark text-light shadow-md{% else %}bg-white border border-muted/50 text-muted hover:text-dark hover:border-dark shadow-sm{% endif %}">Critical
-                (1-3 Star)</a>
-        </div>
-
-        <div class="space-y-6">
-
-            {% for review in reviews %}
-            <div
-                class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-muted/30 transition-all hover:shadow-md">
-                <div class="flex flex-col md:flex-row gap-6 md:gap-8">
-
-                    <div
-                        class="w-full md:w-48 flex-shrink-0 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-muted/20 pb-4 md:pb-0 md:pr-8">
-                        <div
-                            class="aspect-square bg-light/50 rounded-xl border border-muted/20 flex items-center justify-center p-2 overflow-hidden">
-                            {% if review.product.variants.first.images.first %}
-                            <img src="{{ review.product.variants.first.images.first.image_url.url }}"
-                                alt="{{ review.product.name }}" class="w-full h-full object-contain mix-blend-multiply">
-                            {% else %}
-                            <span class="material-icons text-muted text-4xl">inventory_2</span>
-                            {% endif %}
-                        </div>
-                        <div>
-                            <p class="text-[10px] font-black text-muted uppercase tracking-widest mb-1">Purchased Item
-                            </p>
-                            <a href="#"
-                                class="text-sm font-bold text-dark hover:text-accent transition-colors line-clamp-2">{{review.product.name }}</a>
-                        </div>
-                    </div>
-
-                    <div class="flex-grow flex flex-col">
-
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="flex items-center gap-3">
-                                <div
-                                    class="w-10 h-10 rounded-full bg-accent/20 border border-accent flex items-center justify-center text-accent font-black text-sm">
-                                    {{review.user.first_name|make_list|first|upper|default:review.user.username|make_list|first|upper}}
-                                </div>
-                                <div>
-                                    <p class="text-sm font-extrabold text-dark">{{ review.user.first_name }} {{review.user.last_name }}</p>
-                                    <p class="text-[10px] font-bold text-muted uppercase tracking-widest">{{review.created_at|date:"M d, Y" }}</p>
-                                </div>
-                            </div>
-
-                            <div
-                                class="flex items-center text-yellow-400 bg-yellow-50 px-2.5 py-1 rounded-lg border border-yellow-100">
-                                <span class="material-icons text-[14px]">star</span>
-                                <span class="material-icons text-[14px]">star</span>
-                                <span class="material-icons text-[14px]">star</span>
-                                <span class="material-icons text-[14px]">star</span>
-                                <span class="material-icons text-[14px]">star</span>
-                            </div>
-                        </div>
-
-                        <h4 class="text-lg font-bold text-dark mb-2">{{ review.headline|default:"Great product, highly recommended!" }}</h4>
-                        <p class="text-dark/80 text-sm font-medium leading-relaxed mb-6">
-                            {{ review.comment|default:"The quality is amazing and it arrived much faster than expected.I've been using it every day and couldn't be happier with my purchase from this store. Will definitely buy again!" }}
-                            
-                            
-                        </p>
-
-                        <div class="mt-auto border-t border-muted/20 pt-4">
-
-                            {% if review.seller_reply %}
-                            <div class="bg-light/50 rounded-2xl p-4 border border-muted/30 mb-2">
-                                <div class="flex items-center gap-2 mb-2">
-                                    <span class="material-icons text-accent text-[16px]">storefront</span>
-                                    <span class="text-[10px] font-black uppercase tracking-widest text-dark">Your
-                                        Reply</span>
-                                </div>
-                                <p class="text-sm font-medium text-dark/80 italic">"{{ review.seller_reply }}"</p>
-                            </div>
-                            {% else %}
-                            <button onclick="toggleReplyForm({{ review.id }})"
-                                class="text-xs font-bold uppercase tracking-widest bg-dark text-light px-5 py-2.5 rounded-xl hover:bg-accent hover:text-dark transition-all duration-200 active:scale-95 shadow-sm flex items-center gap-2 w-max">
-                                <span class="material-icons text-[16px]">reply</span> Reply to Customer
-                            </button>
-
-                            <div id="reply-form-{{ review.id }}"
-                                class="hidden mt-4 bg-light/30 rounded-2xl p-4 border border-muted/30 transition-all">
-                                <form action="{% url 'customer_reviews' %}" method="POST" class="m-0">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="review_id" value="{{ review.id }}">
-
-                                    <label
-                                        class="block text-[10px] font-black text-muted uppercase tracking-widest mb-2">Write
-                                        your response (Publicly visible)</label>
-                                    <textarea name="reply_text" rows="3"
-                                        class="w-full rounded-xl border-muted/50 bg-white p-3 text-sm font-medium text-dark focus:outline-none focus:ring-1 focus:ring-dark focus:border-dark placeholder-muted transition-all resize-none shadow-sm"
-                                        placeholder="Thank the customer for their feedback..." required></textarea>
-
-                                    <div class="flex justify-end gap-3 mt-3">
-                                        <button type="button" onclick="toggleReplyForm({{ review.id }})"
-                                            class="text-xs font-bold text-muted hover:text-dark px-4 py-2 transition-colors active:scale-95">Cancel</button>
-                                        <button type="submit"
-                                            class="text-xs font-bold uppercase tracking-widest bg-accent text-dark px-6 py-2 rounded-lg hover:bg-dark hover:text-light transition-all duration-200 active:scale-95 shadow-sm">
-                                            Post Reply
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                            {% endif %}
-
-                        </div>
-                    </div>
+            {% if reviews.has_other_pages %}
+            <div class="px-6 py-5 bg-white rounded-3xl shadow-sm border border-muted/30 flex items-center justify-between mb-8">
+                <p class="text-[10px] font-black text-muted uppercase tracking-widest">
+                    Page <span class="text-dark">{{ reviews.number }}</span> of {{ reviews.paginator.num_pages }}
+                </p>
+                <div class="flex gap-2">
+                    {% if reviews.has_previous %}
+                    <a href="?page={{ reviews.previous_page_number }}" class="w-10 h-10 flex items-center justify-center rounded-xl border border-muted/30 text-dark hover:bg-light transition-all shadow-sm">
+                        <span class="material-icons">chevron_left</span>
+                    </a>
+                    {% endif %}
+                    {% if reviews.has_next %}
+                    <a href="?page={{ reviews.next_page_number }}" class="w-10 h-10 flex items-center justify-center rounded-xl border border-muted/30 text-dark hover:bg-light transition-all shadow-sm">
+                        <span class="material-icons">chevron_right</span>
+                    </a>
+                    {% endif %}
                 </div>
             </div>
-            {% empty %}
-            <div
-                class="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-dashed border-muted/50 shadow-sm">
-                <div
-                    class="w-20 h-20 bg-light rounded-full flex items-center justify-center mb-4 border border-muted/30">
-                    <span class="material-icons text-muted text-4xl">rate_review</span>
-                </div>
-                <h3 class="text-xl font-extrabold text-dark mb-1">No Reviews Yet</h3>
-                <p class="text-sm font-medium text-muted max-w-sm text-center">When customers leave feedback on your
-                    products, it will appear here.</p>
-            </div>
-            {% endfor %}
+            {% endif %}
 
-        </div>
+        </main>
 
-        {% if reviews.has_other_pages %}
-        <div
-            class="mt-8 px-6 py-5 bg-white rounded-2xl shadow-sm border border-muted/30 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p class="text-xs font-bold text-muted uppercase tracking-widest">
-                Page <span class="text-dark">{{ reviews.number }}</span> of <span class="text-dark">{{
-                    reviews.paginator.num_pages }}</span>
-            </p>
-            <div class="flex items-center gap-2">
-                {% if reviews.has_previous %}
-                <a href="?page={{ reviews.previous_page_number }}{% if request.GET.filter %}&filter={{ request.GET.filter }}{% endif %}"
-                    class="w-10 h-10 flex items-center justify-center rounded-xl border border-muted/50 text-dark hover:bg-accent hover:border-dark transition-all duration-200 active:scale-95 shadow-sm bg-white">
-                    <span class="material-icons text-sm">chevron_left</span>
-                </a>
-                {% endif %}
-
-                {% if reviews.has_next %}
-                <a href="?page={{ reviews.next_page_number }}{% if request.GET.filter %}&filter={{ request.GET.filter }}{% endif %}"
-                    class="w-10 h-10 flex items-center justify-center rounded-xl border border-muted/50 text-dark hover:bg-accent hover:border-dark transition-all duration-200 active:scale-95 shadow-sm bg-white">
-                    <span class="material-icons text-sm">chevron_right</span>
-                </a>
-                {% endif %}
-            </div>
-        </div>
-        {% endif %}
-
-    </main>
-
-    <footer class="bg-dark text-light py-3 text-center text-xs uppercase tracking-wide">
-        © {% now "Y" %} StackShop. All rights reserved.
-    </footer>
+        <footer class="bg-dark text-light py-4 text-center text-[10px] font-black tracking-widest uppercase mt-auto border-t-4 border-accent">
+            © {% now "Y" %} StackShop. All rights reserved.
+        </footer>
+    </div>
 
     <script>
         function toggleReplyForm(reviewId) {
             const formDiv = document.getElementById(`reply-form-${reviewId}`);
             if (formDiv.classList.contains('hidden')) {
                 formDiv.classList.remove('hidden');
-                // Optional: add a tiny delay to allow CSS transitions to trigger if you animate opacity
                 setTimeout(() => formDiv.querySelector('textarea').focus(), 50);
             } else {
                 formDiv.classList.add('hidden');
@@ -272,5 +239,4 @@
         }
     </script>
 </body>
-
 </html>
