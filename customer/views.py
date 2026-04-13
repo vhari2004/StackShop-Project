@@ -1073,6 +1073,67 @@ def order_success_cod(request, order_id):
     }
     return render(request, "customer_templates/order_success.html", context)
 
+
+@customer_required
+@require_http_methods(["POST"])
+def reorder_view(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    
+    if order.order_status not in ['Delivered', 'Cancelled']:
+        return JsonResponse({'success': False, 'error': 'Can only reorder Delivered or Cancelled orders'}, status=400)
+    
+    cart, _ = Cart.objects.get_or_create(user=request.user)
+    added_count = 0
+    errors = []
+    
+    for order_item in order.items.all():
+        variant = order_item.variant
+        quantity = order_item.quantity
+        
+        # Skip if seller is self
+        if variant.product.seller.user == request.user:
+            errors.append(f"Skipped {variant.product.name} (your own product)")
+            continue
+            
+        # Stock check
+        if variant.stock_quantity == 0:
+            errors.append(f"Out of stock: {variant.product.name}")
+            continue
+            
+        max_allowed = min(3, variant.stock_quantity)
+        qty_to_add = min(quantity, max_allowed)
+        
+        cart_item, created = CartItem.objects.get_or_create(
+            cart=cart,
+            variant=variant,
+            defaults={"quantity": qty_to_add, "price_at_time": variant.selling_price},
+        )
+        
+        if not created:
+            new_qty = min(cart_item.quantity + qty_to_add, max_allowed)
+            if new_qty > cart_item.quantity:
+                cart_item.quantity = new_qty
+                cart_item.price_at_time = variant.selling_price
+                cart_item.save()
+        
+        added_count += 1
+    
+    result = {
+        'success': True, 
+        'added': added_count, 
+        'total_items': order.items.count(),
+        'errors': errors
+    }
+    
+    if added_count > 0:
+        result['message'] = f"Added {added_count} items to cart!"
+    else:
+        result['success'] = False
+        result['error'] = 'No items could be added to cart.'
+    
+    return JsonResponse(result)
+
+
 # --------------------------------------------------------------------------------
 
 
