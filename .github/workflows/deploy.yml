@@ -33,6 +33,9 @@ jobs:
 
             echo "Install dependencies"
             pip install -r requirements.txt
+            
+            echo "git reset --hard"
+            git reset --hard
 
             echo "Apply migrations"
             python manage.py makemigrations
