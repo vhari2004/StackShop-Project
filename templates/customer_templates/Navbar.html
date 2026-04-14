@@ -38,7 +38,7 @@
                     <a href="{{ home_url }}" class="transition-all py-1 active:scale-95 {% if request.path == home_url %}text-light border-b-2 border-accent{% else %}text-muted hover:text-light{% endif %}">Shop</a>
                     
                     {% url 'product_list' as products_url %}
-                    <a href="{{ products_url }}" class="transition-all py-1 active:scale-95 {% if request.path == products_url %}text-light border-b-2 border-accent{% else %}text-muted hover:text-light{% endif %}">All Products for</a>
+                    <a href="{{ products_url }}" class="transition-all py-1 active:scale-95 {% if request.path == products_url %}text-light border-b-2 border-accent{% else %}text-muted hover:text-light{% endif %}">All Products</a>
                     
                     {% url 'deals' as deals_url %}
                     <a href="{{deals_url}}" class="transition-all py-1 active:scale-95 {% if request.path == deals_url %}text-light border-b-2 border-accent{% else %}text-muted hover:text-light{% endif %}">Deals</a>
