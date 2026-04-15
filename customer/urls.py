@@ -49,6 +49,5 @@ urlpatterns = [
     path("payment-success/",views.payment_success,name="payment_success"),
     path("order-success/",views.order_success,name="order_success"),
     path("order-success-cod/<int:order_id>/",views.order_success_cod,name="order_success_cod"),
-    path('reorder/<int:order_id>/', views.reorder_view, name='reorder'),
     #------------------------------------------------------------
 ]
