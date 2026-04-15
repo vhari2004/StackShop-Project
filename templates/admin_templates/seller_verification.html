@@ -65,8 +65,11 @@
                 
                 <div class="bg-white rounded-3xl border border-muted/30 shadow-sm p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-start sm:items-center">
                     <div class="w-24 h-24 rounded-full bg-accent/20 border-4 border-accent flex items-center justify-center text-dark font-black flex-shrink-0 shadow-inner">
-                        <span class="material-icons text-4xl">{{ seller.store_image|default:"store" }}</span>
-                    </div>
+{% if seller.store_image %}
+            <img src="{{ seller.store_image.url }}" alt="{{ seller.store_name }}" class="w-full h-full object-cover">
+        {% else %}
+            <span class="material-icons text-4xl">storefront</span>
+        {% endif %}                    </div>
                     <div class="flex-1">
                         <div class="flex flex-wrap items-center gap-2 mb-2">
                             <span class="bg-dark text-light text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-md">ID: {{ seller.id }}</span>
