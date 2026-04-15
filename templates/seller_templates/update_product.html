@@ -28,92 +28,99 @@
     <style>
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* Custom Toggle Switch */
         .toggle-checkbox:checked { right: 0; border-color: #30364F; }
         .toggle-checkbox:checked + .toggle-label { background-color: #30364F; }
     </style>
 </head>
 
 <body class="bg-light text-dark font-display flex flex-col min-h-screen">
-
+    
     <header class="max-w-7xl mx-auto w-full pt-6 px-4 z-50">
         <nav class="bg-dark text-light rounded-xl px-6 py-4 flex items-center justify-between shadow-lg border-b-4 border-accent">
-            <a href="{% url 'dashboard' %}" class="flex items-center gap-3 cursor-pointer hover:text-accent transition-colors">
-                <svg class="w-8 h-8 text-accent" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+            <div class="flex items-center gap-3 cursor-pointer">
+                <svg class="w-8 h-8 text-accent" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
                 </svg>
                 <div class="flex flex-col">
                     <span class="text-xl font-bold tracking-wide leading-none">StackShop</span>
                     <span class="text-[10px] text-accent font-bold uppercase tracking-widest mt-1">Seller Central</span>
                 </div>
-            </a>
+            </div>
             <div class="flex items-center gap-4 border-l border-muted/30 pl-6 text-muted">
-                <a href="{% url 'seller_inventory' %}" class="text-sm font-bold text-light flex items-center gap-2 hover:text-accent transition-colors">
-                    <span class="material-icons text-[18px]">arrow_back</span> Back to Inventory
+                <a href="{% url 'seller_inventory' %}"
+                    class="text-sm font-bold text-[#ACBAC4] hover:text-[#F0F0DB] transition-colors flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Back to Inventory
                 </a>
             </div>
         </nav>
     </header>
 
     <main class="max-w-4xl mx-auto w-full px-4 mt-8 mb-20 flex-grow">
+        
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
             <div>
-                <div class="flex items-center gap-3 mb-2">
-                    <h1 class="text-3xl font-extrabold text-dark tracking-tight">Update Product</h1>
-                    <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-widest border border-blue-200">
-                        {{ product.get_approval_status_display|default:"Status" }}
-                    </span>
-                </div>
-                <p class="text-muted font-medium">Editing: <span class="text-dark font-bold">{{ product.name }}</span></p>
+                <h1 class="text-3xl font-extrabold text-dark tracking-tight">Update Product</h1>
+                <p class="text-muted font-medium mt-1">Editing: <span class="text-dark font-bold">{{ product.name }}</span></p>
             </div>
-            <a href="#" class="text-dark text-sm font-bold flex items-center gap-1 hover:text-accent transition-colors underline">
-                View Live Page <span class="material-icons text-[16px]">open_in_new</span>
-            </a>
+            <div class="flex items-center gap-3">
+                <span class="text-xs font-bold text-muted" id="status-text">Draft</span>
+                <div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+                    <input type="checkbox" name="is_active" id="toggle-active" 
+                        class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-2 border-muted appearance-none cursor-pointer z-10" 
+                        {% if product.is_active %}checked{% endif %} onchange="updateStatusText()"/>
+                    <label for="toggle-active" class="toggle-label block overflow-hidden h-6 rounded-full bg-muted cursor-pointer transition-colors duration-200"></label>
+                </div>
+            </div>
         </div>
 
         <form action="#" method="POST" enctype="multipart/form-data" class="space-y-6">
             {% csrf_token %}
 
-            <div class="bg-white rounded-xl shadow-sm border border-muted/50 p-5 flex items-center justify-between">
-                <div>
-                    <span class="block text-sm font-bold text-dark">Listing Status</span>
-                    <span class="block text-[10px] text-muted uppercase">Turn off to hide from store</span>
-                </div>
-                <div class="flex items-center gap-3">
-                    <span class="text-xs font-bold text-muted" id="status-text">Draft</span>
-                    <div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
-                        <input type="checkbox" name="is_active" id="toggle-active" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-2 border-muted appearance-none cursor-pointer z-10" {% if product.is_active %}checked{% endif %} onchange="updateStatusText()" />
-                        <label for="toggle-active" class="toggle-label block overflow-hidden h-6 rounded-full bg-muted cursor-pointer transition-colors duration-200"></label>
-                    </div>
-                </div>
-            </div>
-
             <div class="bg-white rounded-xl shadow-sm border border-muted/50 p-6 md:p-8">
                 <h2 class="text-lg font-bold text-dark border-b border-muted/30 pb-3 mb-6 flex items-center gap-2">
                     <span class="material-icons text-accent">info</span> Basic Information
                 </h2>
+                
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="md:col-span-2">
-                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Product Name *</label>
+                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Product Name <span class="text-red-500">*</span></label>
                         <input type="text" name="name" value="{{ product.name }}" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark">
                     </div>
+
                     <div>
-                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Category *</label>
-                        <select name="category" id="category-select" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark text-dark">
-                            {% for cat in categories %}
-                            <option value="{{ cat.id }}" {% if cat.id == product.category.id %}selected{% endif %}>{{ cat.name }}</option>
+                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Category <span class="text-red-500">*</span></label>
+                        <select id="category-select" name="category" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark text-dark">
+                            {% for category in categories %}
+                                <option value="{{ category.id }}" {% if category.id == product.category.id %}selected{% endif %}>{{ category.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
+
                     <div>
-                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Subcategory *</label>
-                        <select name="subcategory" id="subcategory-select" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark text-dark">
+                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Subcategory <span class="text-red-500">*</span></label>
+                        <select id="subcategory-select" name="subcategory" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark text-dark">
                             {% for sub in subcategories %}
-                            <option value="{{ sub.id }}" data-category="{{ sub.category.id }}" class="subcategory-option" {% if sub.id == product.subcategory.id %}selected{% endif %}>{{ sub.name }}</option>
+                                <option value="{{ sub.id }}" data-category="{{ sub.category.id }}" class="subcategory-option" {% if sub.id == product.subcategory.id %}selected{% endif %}>{{ sub.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Brand <span class="text-red-500">*</span></label>
+                        <input type="text" name="brand" value="{{ product.brand }}" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Model Number <span class="text-red-500">*</span></label>
+                        <input type="text" name="model_number" value="{{ product.model_number }}" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark">
+                    </div>
+
                     <div class="md:col-span-2">
-                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Description *</label>
+                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Description <span class="text-red-500">*</span></label>
                         <textarea name="description" rows="5" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark transition-all text-dark resize-none">{{ product.description }}</textarea>
                     </div>
                 </div>
@@ -123,20 +130,21 @@
                 <h2 class="text-lg font-bold text-dark border-b border-muted/30 pb-3 mb-6 flex items-center gap-2">
                     <span class="material-icons text-accent">image</span> Product Images
                 </h2>
-
+                
                 <div class="mb-8">
-                    <h4 class="text-xs font-bold text-dark uppercase tracking-widest mb-4">Current Images</h4>
+                    <h4 class="text-xs font-bold text-dark uppercase tracking-widest mb-4">Currently Live</h4>
                     <div class="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
                         {% if primary_image %}
-                        <div class="relative w-32 h-32 rounded-xl overflow-hidden border-2 border-dark flex-shrink-0">
-                            <div class="absolute top-0 left-0 w-full bg-dark text-light text-[8px] font-bold text-center uppercase py-1 z-10">Primary</div>
-                            <img src="{{ primary_image.image.url }}" class="w-full h-full object-cover">
+                        <div class="relative w-28 h-28 rounded-xl overflow-hidden border-2 border-dark flex-shrink-0 group">
+                            <div class="absolute top-0 left-0 w-full bg-dark text-light text-[8px] font-bold text-center uppercase py-0.5 z-10">Primary</div>
+                            <img src="{{ primary_image.image.url }}" class="w-full h-full object-cover p-1 bg-white">
                         </div>
                         {% endif %}
+
                         {% for img in additional_images %}
-                        <div class="relative w-32 h-32 rounded-xl overflow-hidden border border-muted/50 flex-shrink-0 group">
-                            <img src="{{ img.image.url }}" class="w-full h-full object-cover">
-                            <button type="submit" formaction="{% url 'delete_product_image' img.id %}" class="absolute inset-0 bg-red-500/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-white">
+                        <div class="relative w-28 h-28 rounded-xl overflow-hidden border border-muted/50 flex-shrink-0 group">
+                            <img src="{{ img.image.url }}" class="w-full h-full object-cover p-1 bg-white">
+                            <button type="submit" formaction="{% url 'delete_product_image' img.id %}" onclick="return confirm('Delete this image?')" class="absolute inset-0 bg-red-500/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-white">
                                 <span class="material-icons">delete</span>
                             </button>
                         </div>
@@ -144,31 +152,60 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                    <div id="primary-image-preview" class="hidden border border-muted/30 rounded-xl overflow-hidden bg-white p-2">
-                        <p class="text-[10px] font-bold uppercase text-center mb-2">New Primary Preview</p>
-                        <img src="" class="w-full h-40 object-cover rounded-lg">
-                    </div>
-                    <div id="additional-images-preview" class="hidden border border-muted/30 rounded-xl overflow-hidden bg-white p-2 flex flex-wrap gap-2">
-                        </div>
-                </div>
-
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="border-2 border-dashed border-dark rounded-xl p-6 flex flex-col items-center justify-center text-center bg-light/20 relative group hover:bg-light/50 transition-colors">
+                        <div id="primary-image-preview" class="hidden w-full mb-4 rounded-xl overflow-hidden border border-muted/30">
+                            <img src="" alt="Primary Preview" class="w-full h-40 object-cover">
+                        </div>
                         <span class="material-icons text-4xl text-dark mb-2">add_photo_alternate</span>
-                        <h4 class="text-sm font-bold text-dark mb-1">Replace Primary</h4>
+                        <h4 class="text-sm font-bold text-dark mb-1">Replace Primary Image</h4>
                         <input id="primary-image-input" type="file" name="primary_image" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
                         <span class="bg-dark text-light px-4 py-2 rounded text-xs font-bold pointer-events-none">Choose File</span>
                     </div>
 
                     <div class="border-2 border-dashed border-muted rounded-xl p-6 flex flex-col items-center justify-center text-center bg-light/20 relative group hover:bg-light/50 transition-colors">
+                        <div id="additional-images-preview" class="hidden w-full mb-4 flex flex-wrap gap-3"></div>
                         <span class="material-icons text-4xl text-muted mb-2">collections</span>
                         <h4 class="text-sm font-bold text-muted mb-1">Add More Images</h4>
                         <input id="additional-images-input" type="file" name="additional_images" accept="image/*" multiple class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
                         <span class="border border-muted text-muted px-4 py-2 rounded text-xs font-bold pointer-events-none group-hover:bg-muted group-hover:text-white transition-colors">Choose Files</span>
                     </div>
                 </div>
-                <div id="additional-images-count" class="mt-4 text-center text-xs font-bold text-dark hidden"></div>
+                <div id="additional-images-count" class="hidden mt-4 text-center text-xs font-bold text-dark"></div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-muted/50 p-6 md:p-8">
+                <h2 class="text-lg font-bold text-dark border-b border-muted/30 pb-3 mb-6 flex items-center gap-2">
+                    <span class="material-icons text-accent">payments</span> Pricing & Inventory
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="md:col-span-3">
+                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">SKU Code</label>
+                        <input type="text" name="sku_code" value="{{ variant.sku_code }}" class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark text-dark">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">MRP <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-bold">₹</span>
+                            <input type="number" step="0.01" name="mrp" value="{{ variant.mrp }}" required class="w-full pl-8 pr-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark text-dark">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Selling Price <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-dark font-bold">₹</span>
+                            <input type="number" step="0.01" name="selling_price" value="{{ variant.selling_price }}" required class="w-full pl-8 pr-4 py-3 bg-light/30 border border-dark/30 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark text-dark font-bold">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-dark uppercase tracking-widest mb-2">Stock <span class="text-red-500">*</span></label>
+                        <input type="number" name="stock_quantity" value="{{ variant.stock_quantity }}" required class="w-full px-4 py-3 bg-light/30 border border-muted/50 rounded-lg focus:outline-none focus:border-dark focus:ring-1 focus:ring-dark text-dark">
+                    </div>
+                </div>
             </div>
 
             <div class="flex items-center justify-between pt-4 border-t border-muted/30">
@@ -182,6 +219,7 @@
                     </button>
                 </div>
             </div>
+
         </form>
     </main>
 
@@ -195,21 +233,19 @@
         const additionalPreview = document.getElementById("additional-images-preview");
         const additionalImagesCount = document.getElementById('additional-images-count');
 
-        // Logic 1: Category Filtering (Same as Add Product)
+        // 1. Dynamic Subcategory Filtering
         function filterSubcategories() {
             const selectedCategory = categorySelect.value;
             subcategorySelect.innerHTML = '<option value="">Select Subcategory</option>';
-            
             subcategoryOptions.forEach(option => {
                 if(option.getAttribute("data-category") === selectedCategory) {
                     subcategorySelect.appendChild(option);
                 }
             });
         }
-
         categorySelect.addEventListener("change", filterSubcategories);
 
-        // Logic 2: Primary Image Preview
+        // 2. Primary Image Preview
         primaryImageInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
@@ -222,21 +258,19 @@
             }
         });
 
-        // Logic 3: Additional Images Preview
+        // 3. Additional Images Preview
         additionalImagesInput.addEventListener('change', function(e) {
             const files = Array.from(e.target.files);
-            additionalPreview.innerHTML = '<p class="w-full text-[10px] font-bold uppercase text-center mb-2">New Images Preview</p>';
-            
+            additionalPreview.innerHTML = '';
             if (files.length > 0) {
                 additionalPreview.classList.remove('hidden');
                 additionalImagesCount.classList.remove('hidden');
                 additionalImagesCount.textContent = `${files.length} new images selected`;
-
                 files.forEach(file => {
                     const reader = new FileReader();
                     reader.onload = function(event) {
                         const div = document.createElement('div');
-                        div.className = 'w-16 h-16 rounded-lg overflow-hidden border border-muted/20';
+                        div.className = 'w-16 h-16 rounded-lg overflow-hidden border border-muted/20 bg-white shadow-sm';
                         div.innerHTML = `<img src="${event.target.result}" class="w-full h-full object-cover">`;
                         additionalPreview.appendChild(div);
                     };
@@ -245,7 +279,7 @@
             }
         });
 
-        // Status Text Update
+        // 4. Status Toggle Label
         function updateStatusText() {
             const isActive = document.getElementById('toggle-active').checked;
             const textEl = document.getElementById('status-text');
@@ -253,11 +287,9 @@
             textEl.className = isActive ? 'text-xs font-bold text-green-600' : 'text-xs font-bold text-muted';
         }
 
-        // Initialize state
+        // Run on Page Load
         document.addEventListener('DOMContentLoaded', () => {
             updateStatusText();
-            // Note: Don't trigger filterSubcategories on load for Update 
-            // unless you want to reset the current subcategory.
         });
     </script>
 </body>
