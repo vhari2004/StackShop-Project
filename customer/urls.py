@@ -42,6 +42,9 @@ urlpatterns = [
     path('settings/', views.settings_view, name='settings'),
     # order history and address----------------------
     path('order-history/',views.order_history_view,name='order-history'),
+    path('order-history/cancel-order/<int:order_id>/', views.cancel_order, name='cancel_order'),
+    path('order-history/cancel-item/<int:item_id>/', views.cancel_order_item, name='cancel_order_item'),
+    path('order-history/reorder-item/<int:item_id>/', views.reorder_item, name='reorder_item'),
     path('my-reviews/', views.my_reviews_view, name='my_reviews'),
     path('submit-review/<int:variant_id>/', views.submit_review, name='submit_review'),
     #------------------------------------------------------------

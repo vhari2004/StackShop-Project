@@ -936,10 +936,92 @@ def order_history_view(request):
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
+    for order in page_obj:
+        order.can_cancel_order = order.items.filter(status__in=["pending", "processing"]).exists()
+
     context = {
         "orders": page_obj,
     }
     return render(request, "customer_templates/order_history_customer.html", context)
+
+
+@customer_required
+@require_http_methods(["POST"])
+def cancel_order(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+
+    if order.order_status == "CANCELLED":
+        messages.error(request, "This order has already been cancelled.")
+        return redirect("order-history")
+
+    cancellable_items = order.items.filter(status__in=["pending", "processing"])
+    if not cancellable_items.exists():
+        messages.error(request, "This order cannot be cancelled.")
+        return redirect("order-history")
+
+    cancellable_items.update(status="cancelled")
+
+    if not order.items.exclude(status="cancelled").exists():
+        order.order_status = "CANCELLED"
+        order.save(update_fields=["order_status"])
+
+    messages.success(request, "The order has been cancelled.")
+    return redirect("order-history")
+
+
+@customer_required
+@require_http_methods(["POST"])
+def cancel_order_item(request, item_id):
+    item = get_object_or_404(OrderItem, id=item_id, order__user=request.user)
+
+    if item.status in ["delivered", "cancelled"]:
+        messages.error(request, "This item cannot be cancelled.")
+        return redirect("order-history")
+
+    item.status = "cancelled"
+    item.save(update_fields=["status"])
+
+    if not item.order.items.exclude(status="cancelled").exists():
+        item.order.order_status = "CANCELLED"
+        item.order.save(update_fields=["order_status"])
+
+    messages.success(request, "The order item has been cancelled.")
+    return redirect("order-history")
+
+
+@customer_required
+@require_http_methods(["POST"])
+def reorder_item(request, item_id):
+    item = get_object_or_404(OrderItem, id=item_id, order__user=request.user)
+    variant = item.variant
+
+    if variant.stock_quantity <= 0:
+        messages.error(request, "This product is currently out of stock and cannot be reordered.")
+        return redirect("order-history")
+
+    cart, _ = Cart.objects.get_or_create(user=request.user)
+    max_allowed = min(3, variant.stock_quantity)
+    quantity = min(item.quantity, max_allowed)
+
+    cart_item, created = CartItem.objects.get_or_create(
+        cart=cart,
+        variant=variant,
+        defaults={"quantity": quantity, "price_at_time": variant.selling_price},
+    )
+
+    if not created:
+        new_quantity = min(cart_item.quantity + quantity, max_allowed)
+        if new_quantity == cart_item.quantity:
+            messages.warning(request, "This product is already at the maximum allowed quantity in your cart.")
+        else:
+            cart_item.quantity = new_quantity
+            cart_item.price_at_time = variant.selling_price
+            cart_item.save()
+            messages.success(request, "The product quantity has been updated in your cart.")
+    else:
+        messages.success(request, "The product has been added to your cart for reorder.")
+
+    return redirect("cart_view")
 
 
 @customer_required

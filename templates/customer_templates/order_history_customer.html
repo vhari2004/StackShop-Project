@@ -133,15 +133,40 @@
                                     {% endif %}
                                 </td>
                                 
-                                <td class="px-6 py-5 whitespace-nowrap text-center">
+                                <td class="px-6 py-5 whitespace-nowrap text-center space-y-2">
+                                    {% if forloop.first and order.can_cancel_order %}
+                                        <form action="{% url 'cancel_order' order.id %}" method="post" class="m-0">
+                                            {% csrf_token %}
+                                            <button type="submit" class="bg-amber-600 text-white px-4 py-2 rounded-full text-xs font-bold transition-colors hover:bg-amber-700">Cancel Order</button>
+                                        </form>
+                                    {% endif %}
+
                                     {% if item.status == 'delivered' %}
-                                        <button onclick="openModal('reviewModal', 'modalBox'); setupReviewForm({{ item.variant.id }})" class="bg-white border border-[#30364F] text-[#30364F] hover:bg-[#30364F] hover:text-[#F0F0DB] px-4 py-2 rounded-lg text-xs font-bold transition-colors shadow-sm inline-flex items-center gap-1.5">
-                                            <span class="material-icons text-[14px]">star_border</span> Rate Item
-                                        </button>
+                                        <div class="flex flex-col items-center gap-2">
+                                            <button type="button" data-variant-id="{{ item.variant.id }}" onclick="openReviewModal(this)" class="bg-white border border-slate-700 text-slate-700 hover:bg-slate-700 hover:text-white px-4 py-2 rounded-full text-xs font-bold transition-colors shadow-sm inline-flex items-center gap-1.5">
+                                                <span class="material-icons text-[14px]">star_border</span> Rate
+                                            </button>
+                                            <form action="{% url 'reorder_item' item.id %}" method="post" class="m-0">
+                                                {% csrf_token %}
+                                                <button type="submit" class="bg-slate-900 text-white px-4 py-2 rounded-full text-xs font-bold transition-colors hover:bg-slate-800">Reorder</button>
+                                            </form>
+                                        </div>
                                     {% elif item.status == 'cancelled' %}
-                                        <span class="text-[10px] text-[#ACBAC4] font-bold uppercase tracking-widest">Refunded</span>
+                                        <div class="flex flex-col items-center gap-2">
+                                            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Cancelled</span>
+                                            <form action="{% url 'reorder_item' item.id %}" method="post" class="m-0">
+                                                {% csrf_token %}
+                                                <button type="submit" class="bg-slate-900 text-white px-4 py-2 rounded-full text-xs font-bold transition-colors hover:bg-slate-800">Reorder</button>
+                                            </form>
+                                        </div>
                                     {% else %}
-                                        <button onclick="openTrackModal('{{ order.order_number }}', '{{ item.status|title }}')" class="text-[#ACBAC4] hover:text-[#30364F] text-xs font-bold transition-colors underline focus:outline-none">Track Order</button>
+                                        <div class="flex flex-col items-center gap-2">
+                                            <button type="button" data-order-number="{{ order.order_number }}" data-order-status="{{ item.status|title }}" onclick="openTrackModal(this);" class="text-slate-700 hover:text-slate-900 text-xs font-bold transition-colors underline focus:outline-none">Track</button>
+                                            <form action="{% url 'cancel_order_item' item.id %}" method="post" class="m-0">
+                                                {% csrf_token %}
+                                                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-full text-xs font-bold transition-colors hover:bg-red-700">Cancel</button>
+                                            </form>
+                                        </div>
                                     {% endif %}
                                 </td>
                                 
@@ -267,6 +292,13 @@
             }
         }
 
+        function openReviewModal(button) {
+            const variantId = button?.dataset?.variantId;
+            if (!variantId) return;
+            setupReviewForm(variantId);
+            openModal('reviewModal', 'modalBox');
+        }
+
         // Reusable open modal
         function openModal(modalId, boxId) {
             const modal = document.getElementById(modalId);
@@ -290,7 +322,11 @@
         }
 
         // Open Track Modal and dynamically set status points
-        function openTrackModal(orderNumber, currentStatus) {
+        function openTrackModal(button) {
+            const orderNumber = button?.dataset?.orderNumber;
+            const currentStatus = button?.dataset?.orderStatus;
+            if (!orderNumber) return;
+
             document.getElementById('trackOrderNumber').innerText = '#' + orderNumber;
 
             // Define status sequence. Adjust these strings to match your Django model choices exactly.
