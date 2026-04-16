@@ -15,5 +15,7 @@ urlpatterns = [
     path('delete-deal/', views.delete_deal, name='delete_deal'),
     path('reactivation/approve/<int:request_id>/', views.approve_reactivation_request, name='approve_reactivation_request'),
     path('reactivation/reject/<int:request_id>/', views.reject_reactivation_request, name='reject_reactivation_request'),
+    path('dashboard/toggle-product-active/', views.toggle_product_active, name='toggle_product_active'),
+    path('dashboard/toggle-seller-active/', views.toggle_seller_active, name='toggle_seller_active'),
     path('dashboard/save-deal/', views.add_deal, name='save_deal'),
 ]

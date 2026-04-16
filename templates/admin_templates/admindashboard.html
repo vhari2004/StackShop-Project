@@ -82,10 +82,10 @@
                 class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium hover:bg-accent/10 transition-all text-muted">
                 <span class="material-icons text-[20px]">autorenew</span> Reactivation Requests
             </button>
-            <button onclick="window.location.href='{% url 'manage_deals' %}'" id="tab-deals"
+            <a href="{% url 'manage_deals' %}" id="tab-deals"
                 class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium hover:bg-accent/10 transition-all text-muted">
                 <span class="material-icons text-[20px]">local_offer</span> Manage Deals
-            </button>
+            </a>
         </nav>
 
         <div class="p-4 border-t border-muted/20">
@@ -204,22 +204,32 @@
                                 </td>
 
                                 <td class="p-4 text-right">
-                                    {% if seller.verification_status|lower == 'pending' %}
-                                    <a href="{% url 'sellerverification' seller.id %}"
-                                        class="text-xs font-bold bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition-colors shadow-sm">
-                                        Review
-                                    </a>
-                                    {% elif seller.verification_status|lower == 'approved' %}
-                                    <a href="{% url 'sellerverification' seller.id %}"
-                                        class="text-xs font-bold border border-green-500 text-green-600 px-4 py-2 rounded-lg hover:bg-green-50 transition-colors">
-                                        Edit Remarks
-                                    </a>
-                                    {% elif seller.verification_status|lower == 'rejected' %}
-                                    <a href="{% url 'sellerverification' seller.id %}"
-                                        class="text-xs font-bold border border-red-500 text-red-600 px-4 py-2 rounded-lg hover:bg-red-50 transition-colors">
-                                        Edit Remarks
-                                    </a>
-                                    {% endif %}
+                                    <div class="flex flex-col items-end gap-2">
+                                        <form action="{% url 'toggle_seller_active' %}" method="POST" class="m-0">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="seller_id" value="{{ seller.id }}">
+                                            <button type="submit" class="inline-flex items-center gap-2 text-xs font-bold uppercase px-4 py-2 rounded-full transition-all shadow-sm {% if seller.user.is_active %}bg-red-600 text-white hover:bg-red-700{% else %}bg-green-600 text-white hover:bg-green-700{% endif %}">
+                                                <span class="w-2.5 h-2.5 rounded-full bg-white/90"></span>
+                                                {% if seller.user.is_active %}Disable{% else %}Enable{% endif %}
+                                            </button>
+                                        </form>
+                                        {% if seller.verification_status|lower == 'pending' %}
+                                        <a href="{% url 'sellerverification' seller.id %}"
+                                            class="text-xs font-bold bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition-colors shadow-sm">
+                                            Review
+                                        </a>
+                                        {% elif seller.verification_status|lower == 'approved' %}
+                                        <a href="{% url 'sellerverification' seller.id %}"
+                                            class="text-xs font-bold border border-green-500 text-green-600 px-4 py-2 rounded-lg hover:bg-green-50 transition-colors">
+                                            Edit Remarks
+                                        </a>
+                                        {% elif seller.verification_status|lower == 'rejected' %}
+                                        <a href="{% url 'sellerverification' seller.id %}"
+                                            class="text-xs font-bold border border-red-500 text-red-600 px-4 py-2 rounded-lg hover:bg-red-50 transition-colors">
+                                            Edit Remarks
+                                        </a>
+                                        {% endif %}
+                                    </div>
                                 </td>
 
                             </tr>
@@ -401,7 +411,15 @@
                                     {% endif %}
                                 </td>
 
-                                <td class="p-4 text-right">
+                                <td class="p-4 text-right space-y-2">
+                                    <form action="{% url 'toggle_product_active' %}" method="POST" class="m-0">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="product_id" value="{{ product.product.id }}">
+                                        <button type="submit" class="inline-flex items-center gap-2 text-xs font-bold uppercase px-4 py-2 rounded-full transition-all shadow-sm {% if product.product.is_active %}bg-red-600 text-white hover:bg-red-700{% else %}bg-green-600 text-white hover:bg-green-700{% endif %}">
+                                            <span class="w-2.5 h-2.5 rounded-full bg-white/90"></span>
+                                            {% if product.product.is_active %}Disable{% else %}Enable{% endif %}
+                                        </button>
+                                    </form>
                                     {% if product.product.approval_status|lower == 'pending' %}
                                     <a href="{% url 'productverification' product.product.id %}"
                                         class="text-xs font-bold bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition-colors shadow-sm">

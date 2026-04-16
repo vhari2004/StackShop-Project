@@ -213,6 +213,36 @@ def product_verification(request, id):
 
 @admin_required
 @require_http_methods(["POST"])
+def toggle_product_active(request):
+    product_id = request.POST.get("product_id")
+    product = get_object_or_404(Product, id=product_id)
+    product.is_active = not product.is_active
+    product.save(update_fields=["is_active"])
+
+    messages.success(
+        request,
+        f"Product '{product.name}' has been {'enabled' if product.is_active else 'disabled'}."
+    )
+    return redirect(f"{reverse('admin_dashboard')}#products")
+
+
+@admin_required
+@require_http_methods(["POST"])
+def toggle_seller_active(request):
+    seller_id = request.POST.get("seller_id")
+    seller = get_object_or_404(SellerProfile, id=seller_id)
+    seller.user.is_active = not seller.user.is_active
+    seller.user.save(update_fields=["is_active"])
+
+    messages.success(
+        request,
+        f"Seller '{seller.store_name}' has been {'enabled' if seller.user.is_active else 'disabled'}."
+    )
+    return redirect(f"{reverse('admin_dashboard')}#sellers")
+
+
+@admin_required
+@require_http_methods(["POST"])
 def create_category(request):
     """Legacy alias for save_category."""
     return save_category(request)
