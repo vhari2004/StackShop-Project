@@ -742,9 +742,13 @@ def update_order_status(request):
 
         if status in ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"]:
             order.order_status = status
-            payment_status = "Paid" if status in ["Delivered"] else "Pending"
-            order.payment_status = payment_status
+            if status == "Delivered":
+                order.payment_status = "SUCCESS"
+            elif status == "Cancelled":
+                order.payment_status = "CANCELLED"
+            # preserve existing payment status for other transitions
             order.save()
+            seller_items.update(status=status.lower())
 
     return redirect("seller_customers_orders")
 
