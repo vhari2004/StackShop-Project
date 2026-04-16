@@ -243,6 +243,36 @@ def toggle_seller_active(request):
 
 @admin_required
 @require_http_methods(["POST"])
+def toggle_category_active(request):
+    category_id = request.POST.get("category_id")
+    category = get_object_or_404(Category, id=category_id)
+    category.is_active = not category.is_active
+    category.save(update_fields=["is_active"])
+
+    messages.success(
+        request,
+        f"Category '{category.name}' has been {'activated' if category.is_active else 'deactivated'}."
+    )
+    return redirect(f"{reverse('admin_dashboard')}#marketing")
+
+
+@admin_required
+@require_http_methods(["POST"])
+def toggle_subcategory_active(request):
+    subcategory_id = request.POST.get("subcategory_id")
+    subcategory = get_object_or_404(SubCategory, id=subcategory_id)
+    subcategory.is_active = not subcategory.is_active
+    subcategory.save(update_fields=["is_active"])
+
+    messages.success(
+        request,
+        f"SubCategory '{subcategory.name}' has been {'activated' if subcategory.is_active else 'deactivated'}."
+    )
+    return redirect(f"{reverse('admin_dashboard')}#marketing")
+
+
+@admin_required
+@require_http_methods(["POST"])
 def create_category(request):
     """Legacy alias for save_category."""
     return save_category(request)

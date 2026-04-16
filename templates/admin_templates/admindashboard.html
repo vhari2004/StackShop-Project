@@ -533,6 +533,72 @@
                     </div>
                 </div>
 
+                <div class="grid grid-cols-1 gap-8 mt-8">
+                    <div class="bg-white rounded-2xl border border-muted/30 shadow-sm p-6">
+                        <div class="flex items-center gap-2 mb-6 border-b border-muted/20 pb-4">
+                            <span class="material-icons text-accent">view_list</span>
+                            <h3 class="font-extrabold text-dark text-lg">Category & SubCategory Listing</h3>
+                        </div>
+                        <div class="space-y-4">
+                            {% for category in categories %}
+                            <div class="border border-muted/20 rounded-2xl overflow-hidden">
+                                <div class="bg-light px-4 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4 cursor-pointer" onclick="toggleCategoryDetails(event, 'category-{{ category.id }}-details')">
+                                    <div>
+                                        <p class="font-bold text-dark">{{ category.name }}</p>
+                                        <p class="text-xs text-muted">{{ category.description|default:'No description available' }}</p>
+                                    </div>
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <span class="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full {% if category.is_active %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">
+                                            {{ category.is_active|yesno:'Active,Inactive' }}
+                                        </span>
+                                        <form action="{% url 'toggle_category_active' %}" method="POST" class="m-0" onclick="event.stopPropagation();">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="category_id" value="{{ category.id }}">
+                                            <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase transition-all shadow-sm {% if category.is_active %}bg-green-600 text-white hover:bg-green-700{% else %}bg-gray-200 text-dark hover:bg-gray-300{% endif %}">
+                                                <span class="w-2.5 h-2.5 rounded-full {% if category.is_active %}bg-white{% else %}bg-red-500{% endif %}"></span>
+                                                {% if category.is_active %}Deactivate{% else %}Activate{% endif %}
+                                            </button>
+                                        </form>
+                                        <span class="material-icons category-chevron transition-transform text-muted">expand_more</span>
+                                    </div>
+                                </div>
+                                <div id="category-{{ category.id }}-details" class="hidden bg-white p-4 space-y-3">
+                                    {% if category.subcategories.all %}
+                                    <div class="grid gap-3">
+                                        {% for sub in category.subcategories.all %}
+                                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 p-4 border border-muted/10 rounded-2xl">
+                                            <div>
+                                                <p class="font-bold text-dark">{{ sub.name }}</p>
+                                                <p class="text-xs text-muted">Slug: {{ sub.slug }}</p>
+                                            </div>
+                                            <div class="flex flex-wrap items-center gap-2">
+                                                <span class="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full {% if sub.is_active %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">
+                                                    {{ sub.is_active|yesno:'Active,Inactive' }}
+                                                </span>
+                                                <form action="{% url 'toggle_subcategory_active' %}" method="POST" class="m-0">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="subcategory_id" value="{{ sub.id }}">
+                                                    <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase transition-all shadow-sm {% if sub.is_active %}bg-green-600 text-white hover:bg-green-700{% else %}bg-gray-200 text-dark hover:bg-gray-300{% endif %}">
+                                                        <span class="w-2.5 h-2.5 rounded-full {% if sub.is_active %}bg-white{% else %}bg-red-500{% endif %}"></span>
+                                                        {% if sub.is_active %}Deactivate{% else %}Activate{% endif %}
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    {% else %}
+                                    <p class="text-sm text-muted">No subcategories created for this category yet.</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% empty %}
+                            <p class="text-sm text-muted">No categories found yet.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
 
                     <div class="bg-white rounded-2xl border border-muted/30 shadow-sm p-6">
@@ -763,7 +829,23 @@
             }
         }
 
-        // Seller/Product verification uses direct navigation to dedicated pages (no modals).\n\n        // ==================== PAGE LOAD TAB DETECTION ====================\n
+        // Seller/Product verification uses direct navigation to dedicated pages (no modals).
+
+        function toggleCategoryDetails(event, detailId) {
+            const ignoreClick = event.target.closest('button') || event.target.closest('form') || event.target.closest('a');
+            if (ignoreClick) {
+                return;
+            }
+            const detailSection = document.getElementById(detailId);
+            if (!detailSection) return;
+            detailSection.classList.toggle('hidden');
+            const chevron = event.currentTarget.querySelector('.category-chevron');
+            if (chevron) {
+                chevron.classList.toggle('rotate-180');
+            }
+        }
+
+        // ==================== PAGE LOAD TAB DETECTION ====================
         // On page load, check if there's a hash to switch to a specific tab
         window.addEventListener('load', function() {
             const hash = window.location.hash.substring(1); // Remove the # symbol
