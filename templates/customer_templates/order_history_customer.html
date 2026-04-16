@@ -162,10 +162,6 @@
                                     {% else %}
                                         <div class="flex flex-col items-center gap-2">
                                             <button type="button" data-order-number="{{ order.order_number }}" data-order-status="{{ item.status|title }}" onclick="openTrackModal(this);" class="text-slate-700 hover:text-slate-900 text-xs font-bold transition-colors underline focus:outline-none">Track</button>
-                                            <form action="{% url 'cancel_order_item' item.id %}" method="post" class="m-0">
-                                                {% csrf_token %}
-                                                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-full text-xs font-bold transition-colors hover:bg-red-700">Cancel</button>
-                                            </form>
                                         </div>
                                     {% endif %}
                                 </td>
