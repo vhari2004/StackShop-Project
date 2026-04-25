@@ -31,7 +31,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False').lower() in ('1', 'true', 'yes')
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS')]
 
 
 # Application definition
@@ -94,7 +94,7 @@ SOCIALACCOUNT_PROVIDERS = {
 # -------------------- Hosts --------------------
 if ENVIRONMENT == 'production':
     ALLOWED_HOSTS = [DOMAIN]
-    CSRF_TRUSTED_ORIGINS = [f'https://{DOMAIN}']
+    CSRF_TRUSTED_ORIGINS = [os.getenv('CSRF_TRUSTED_ORIGINS')]
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 else:
     ALLOWED_HOSTS = [
